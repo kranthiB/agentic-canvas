@@ -2,96 +2,460 @@
 
 {% block title %}About - Agentic Canvas{% endblock %}
 
+{% block extra_css %}
+<style>
+    .about-hero {
+        background: linear-gradient(135deg, #f8fafc 0%, #e7f3ff 50%, #dbeafe 100%);
+        padding: 5rem 0 3rem;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .about-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: 
+            radial-gradient(circle at 20% 30%, rgba(0, 102, 255, 0.08) 0%, transparent 50%),
+            radial-gradient(circle at 80% 70%, rgba(66, 133, 244, 0.08) 0%, transparent 50%);
+        pointer-events: none;
+    }
+    
+    .about-card {
+        border: none;
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+    }
+    
+    .about-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    }
+    
+    .demo-item {
+        background: var(--bg-card);
+        border: 1px solid var(--border-light);
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        transition: all var(--transition-normal);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .demo-item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 5px;
+        height: 100%;
+        background: var(--gradient-primary);
+        transform: scaleY(0);
+        transition: transform var(--transition-normal);
+    }
+    
+    .demo-item:hover::before {
+        transform: scaleY(1);
+    }
+    
+    .demo-item:hover {
+        transform: translateX(10px);
+        box-shadow: var(--shadow-lg);
+    }
+    
+    .demo-item.carbon::before { background: var(--gradient-carbon); }
+    .demo-item.grid::before { background: var(--gradient-grid); }
+    .demo-item.safety::before { background: var(--gradient-safety); }
+    .demo-item.mobility::before { background: var(--gradient-mobility); }
+    .demo-item.copilot::before { background: var(--gradient-copilot); }
+    
+    .tier-badge {
+        padding: 0.4rem 1rem;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.8rem;
+        letter-spacing: 0.5px;
+    }
+    
+    .tech-item {
+        display: flex;
+        align-items: center;
+        padding: 1rem;
+        border-radius: 12px;
+        background: var(--bg-subtle);
+        border: 1px solid var(--border-light);
+        transition: all var(--transition-normal);
+        margin-bottom: 0.8rem;
+    }
+    
+    .tech-item:hover {
+        background: var(--bg-card);
+        transform: translateX(5px);
+        box-shadow: var(--shadow-sm);
+    }
+    
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 2rem;
+        margin: 3rem 0;
+    }
+    
+    .stat-item {
+        text-align: center;
+        padding: 2rem;
+        background: var(--bg-card);
+        border-radius: 16px;
+        box-shadow: var(--shadow-sm);
+        transition: all var(--transition-normal);
+    }
+    
+    .stat-item:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-md);
+    }
+    
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--accent-primary);
+        margin-bottom: 0.5rem;
+    }
+    
+    .framework-visual {
+        background: linear-gradient(135deg, #0066ff 0%, #4285f4 100%);
+        color: white;
+        padding: 3rem;
+        border-radius: 20px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .framework-visual::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 200%;
+        height: 200%;
+        background: 
+            radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%),
+            radial-gradient(circle at 30% 40%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+        animation: rotate 30s linear infinite;
+    }
+    
+    @keyframes rotate {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    
+    .cta-section {
+        background: var(--bg-subtle);
+        padding: 4rem 0;
+        border-radius: 30px;
+        text-align: center;
+        margin: 3rem 0;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="container mt-5">
-    <div class="row">
-        <div class="col-lg-8 mx-auto">
-            <h1 class="mb-4">About Agentic Canvas</h1>
-            
-            <div class="card mb-4">
-                <div class="card-body">
-                    <h3>AI Agent Capabilities Framework</h3>
-                    <p class="lead">
-                        Agentic Canvas demonstrates 5 industrial AI agent implementations 
-                        across different tiers of the AI Agent Capabilities Periodic Table (AIA CPT).
+<!-- Hero Section -->
+<div class="about-hero">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10 text-center">
+                <div class="mb-4">
+                    <i class="bi bi-robot" style="font-size: 4rem; color: #0066ff;"></i>
+                </div>
+                <h1 class="display-3 fw-bold mb-4" style="color: #1a202c;">About Agentic Canvas</h1>
+                <p class="lead" style="color: #4a5568; font-size: 1.3rem; max-width: 800px; margin: 0 auto;">
+                    A comprehensive framework demonstrating industrial AI agent implementations across different capability tiers
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container py-5">
+    <!-- Framework Overview -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="framework-visual">
+                <div style="position: relative; z-index: 1;">
+                    <div class="mb-4">
+                        <i class="bi bi-grid-3x3" style="font-size: 3rem; position: relative;"></i>
+                        <i class="bi bi-cpu" style="font-size: 1.5rem; position: absolute; margin-left: -1.2rem; margin-top: 0.5rem;"></i>
+                    </div>
+                    <h2 class="display-5 fw-bold mb-4">AI Agent Capabilities Framework</h2>
+                    <p class="fs-5 mb-0" style="max-width: 600px; margin: 0 auto;">
+                        Built on the AI Agent Capabilities Periodic Table (AIA CPT) from the Digital Twin Consortium, 
+                        showcasing 5 industrial implementations across multiple agent tiers.
                     </p>
                 </div>
             </div>
+        </div>
+    </div>
 
-            <div class="card mb-4">
-                <div class="card-body">
-                    <h4>Demo Overview</h4>
-                    <ul class="list-unstyled">
-                        <li class="mb-3">
-                            <strong>
-                                <span style="position: relative; display: inline-block;">
-                                    <i class="bi bi-compass" style="color: #1B5E20;"></i>
-                                    <i class="bi bi-leaf" style="color: #4CAF50; font-size: 0.6rem; position: absolute; margin-left: -0.4rem; margin-top: 0.2rem;"></i>
-                                </span>
-                                Demo 1: Carbon Compass
-                            </strong> - T3 Cognitive Agent
-                            <br><small class="text-muted">Real-time emissions optimization with reinforcement learning</small>
-                        </li>
-                        <li class="mb-3">
-                            <strong>
-                                <span style="position: relative; display: inline-block;">
-                                    <i class="bi bi-diagram-3" style="color: #0D47A1;"></i>
-                                    <i class="bi bi-lightning-charge" style="color: #2196F3; font-size: 0.6rem; position: absolute; margin-left: -0.3rem; margin-top: -0.1rem;"></i>
-                                </span>
-                                Demo 2: GridMind AI
-                            </strong> - T4 Multi-Agent System
-                            <br><small class="text-muted">5 agents coordinating 30 GW renewable energy plant</small>
-                        </li>
-                        <li class="mb-3">
-                            <strong>
-                                <span style="position: relative; display: inline-block;">
-                                    <i class="bi bi-shield-check" style="color: #E65100;"></i>
-                                    <i class="bi bi-eye" style="color: #FF9800; font-size: 0.5rem; position: absolute; margin-left: -0.5rem; margin-top: 0.1rem;"></i>
-                                </span>
-                                Demo 3: Safety Guardian
-                            </strong> - T2 Procedural Agent
-                            <br><small class="text-muted">Refinery safety monitoring and permit risk assessment</small>
-                        </li>
-                        <li class="mb-3">
-                            <strong>
-                                <span style="position: relative; display: inline-block;">
-                                    <i class="bi bi-ev-station" style="color: #006064;"></i>
-                                    <i class="bi bi-geo-alt" style="color: #00ACC1; font-size: 0.5rem; position: absolute; margin-left: -0.2rem; margin-top: -0.2rem;"></i>
-                                </span>
-                                Demo 4: Mobility Maestro
-                            </strong> - T3 Cognitive Agent
-                            <br><small class="text-muted">EV charging network optimization across India</small>
-                        </li>
-                        <li class="mb-3">
-                            <strong>
-                                <span style="position: relative; display: inline-block;">
-                                    <i class="bi bi-cpu" style="color: #3949AB;"></i>
-                                    <i class="bi bi-gear" style="color: #7C4DFF; font-size: 0.5rem; position: absolute; margin-left: -0.2rem; margin-top: -0.3rem;"></i>
-                                </span>
-                                Demo 5: Engineer's Copilot
-                            </strong> - T2 Generative Agent
-                            <br><small class="text-muted">R&D acceleration with formulation recommendations</small>
-                        </li>
-                    </ul>
+    <!-- Statistics -->
+    <div class="stats-grid">
+        <div class="stat-item">
+            <div class="stat-number">5</div>
+            <div class="text-muted">Industrial Demos</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">4</div>
+            <div class="text-muted">Agent Tiers</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">15+</div>
+            <div class="text-muted">Core Capabilities</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">∞</div>
+            <div class="text-muted">Possibilities</div>
+        </div>
+    </div>
+
+    <!-- Demo Showcase -->
+    <div class="row">
+        <div class="col-12">
+            <div class="about-card">
+                <div class="card-body p-5">
+                    <h3 class="mb-4 text-center">
+                        <i class="bi bi-collection text-primary me-3"></i>
+                        Demo Portfolio
+                    </h3>
+                    
+                    <div class="row g-4">
+                        <!-- Carbon Compass -->
+                        <div class="col-md-6">
+                            <div class="demo-item carbon">
+                                <div class="d-flex align-items-start">
+                                    <div class="me-3">
+                                        <span style="position: relative; display: inline-block;">
+                                            <i class="bi bi-compass" style="color: #1B5E20; font-size: 1.8rem;"></i>
+                                            <i class="bi bi-leaf" style="color: #4CAF50; font-size: 1rem; position: absolute; margin-left: -0.6rem; margin-top: 0.3rem;"></i>
+                                        </span>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <h5 class="mb-0">Carbon Compass</h5>
+                                            <span class="tier-badge" style="background: var(--gradient-carbon); color: white;">T3</span>
+                                        </div>
+                                        <p class="text-muted small mb-2">Cognitive Autonomous Agent</p>
+                                        <p class="mb-0 small">Real-time emissions optimization with reinforcement learning</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- GridMind AI -->
+                        <div class="col-md-6">
+                            <div class="demo-item grid">
+                                <div class="d-flex align-items-start">
+                                    <div class="me-3">
+                                        <span style="position: relative; display: inline-block;">
+                                            <i class="bi bi-diagram-3" style="color: #0D47A1; font-size: 1.8rem;"></i>
+                                            <i class="bi bi-lightning-charge" style="color: #2196F3; font-size: 1rem; position: absolute; margin-left: -0.5rem; margin-top: -0.1rem;"></i>
+                                        </span>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <h5 class="mb-0">GridMind AI</h5>
+                                            <span class="tier-badge" style="background: var(--gradient-grid); color: white;">T4</span>
+                                        </div>
+                                        <p class="text-muted small mb-2">Multi-Agent System</p>
+                                        <p class="mb-0 small">5 agents coordinating 30 GW renewable energy plant</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Safety Guardian -->
+                        <div class="col-md-6">
+                            <div class="demo-item safety">
+                                <div class="d-flex align-items-start">
+                                    <div class="me-3">
+                                        <span style="position: relative; display: inline-block;">
+                                            <i class="bi bi-shield-check" style="color: #E65100; font-size: 1.8rem;"></i>
+                                            <i class="bi bi-eye" style="color: #FF9800; font-size: 0.8rem; position: absolute; margin-left: -0.8rem; margin-top: 0.2rem;"></i>
+                                        </span>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <h5 class="mb-0">Safety Guardian</h5>
+                                            <span class="tier-badge" style="background: var(--gradient-safety); color: white;">T2</span>
+                                        </div>
+                                        <p class="text-muted small mb-2">Reasoning Agent</p>
+                                        <p class="mb-0 small">Refinery safety monitoring and permit risk assessment</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Mobility Maestro -->
+                        <div class="col-md-6">
+                            <div class="demo-item mobility">
+                                <div class="d-flex align-items-start">
+                                    <div class="me-3">
+                                        <span style="position: relative; display: inline-block;">
+                                            <i class="bi bi-ev-station" style="color: #006064; font-size: 1.8rem;"></i>
+                                            <i class="bi bi-geo-alt" style="color: #00ACC1; font-size: 0.8rem; position: absolute; margin-left: -0.4rem; margin-top: -0.3rem;"></i>
+                                        </span>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <h5 class="mb-0">Mobility Maestro</h5>
+                                            <span class="tier-badge" style="background: var(--gradient-mobility); color: white;">T3</span>
+                                        </div>
+                                        <p class="text-muted small mb-2">Cognitive Autonomous</p>
+                                        <p class="mb-0 small">EV charging network optimization across India</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Engineer's Copilot - Full Width -->
+                        <div class="col-12">
+                            <div class="demo-item copilot">
+                                <div class="d-flex align-items-start">
+                                    <div class="me-3">
+                                        <span style="position: relative; display: inline-block;">
+                                            <i class="bi bi-cpu" style="color: #3949AB; font-size: 1.8rem;"></i>
+                                            <i class="bi bi-gear" style="color: #7C4DFF; font-size: 0.8rem; position: absolute; margin-left: -0.4rem; margin-top: -0.5rem;"></i>
+                                        </span>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <h5 class="mb-0">Engineer's Copilot</h5>
+                                            <span class="tier-badge" style="background: var(--gradient-copilot); color: white;">T2-Gen</span>
+                                        </div>
+                                        <p class="text-muted small mb-2">Generative Agent</p>
+                                        <p class="mb-0 small">AI Research Assistant for TCAP Mumbai Lubricant Development with advanced RAG system</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
+        </div>
+    </div>
 
-            <div class="card">
-                <div class="card-body">
-                    <h4>Technology Stack</h4>
-                    <ul>
-                        <li>Flask 3.0 + SQLAlchemy</li>
-                        <li>Bootstrap 5 + Chart.js</li>
-                        <li>Socket.IO for real-time updates</li>
-                        <li>OpenAI GPT-4 for AI capabilities</li>
-                    </ul>
+    <!-- Technology Stack -->
+    <div class="row mt-5">
+        <div class="col-lg-6">
+            <div class="about-card h-100">
+                <div class="card-body p-4">
+                    <h4 class="mb-4">
+                        <i class="bi bi-stack text-primary me-2"></i>
+                        Technology Stack
+                    </h4>
+                    
+                    <div class="tech-item">
+                        <i class="bi bi-server text-success me-3"></i>
+                        <div>
+                            <strong>Backend</strong>
+                            <small class="d-block text-muted">Flask 3.0 + SQLAlchemy</small>
+                        </div>
+                    </div>
+                    
+                    <div class="tech-item">
+                        <i class="bi bi-palette text-info me-3"></i>
+                        <div>
+                            <strong>Frontend</strong>
+                            <small class="d-block text-muted">Bootstrap 5 + Chart.js</small>
+                        </div>
+                    </div>
+                    
+                    <div class="tech-item">
+                        <i class="bi bi-broadcast text-warning me-3"></i>
+                        <div>
+                            <strong>Real-time</strong>
+                            <small class="d-block text-muted">Socket.IO Updates</small>
+                        </div>
+                    </div>
+                    
+                    <div class="tech-item">
+                        <i class="bi bi-robot text-primary me-3"></i>
+                        <div>
+                            <strong>AI Engine</strong>
+                            <small class="d-block text-muted">OpenAI GPT-4</small>
+                        </div>
+                    </div>
                 </div>
             </div>
+        </div>
+        
+        <div class="col-lg-6">
+            <div class="about-card h-100">
+                <div class="card-body p-4">
+                    <h4 class="mb-4">
+                        <i class="bi bi-award text-primary me-2"></i>
+                        Framework Benefits
+                    </h4>
+                    
+                    <div class="tech-item">
+                        <i class="bi bi-speedometer2 text-success me-3"></i>
+                        <div>
+                            <strong>Systematic Approach</strong>
+                            <small class="d-block text-muted">Structured agent development</small>
+                        </div>
+                    </div>
+                    
+                    <div class="tech-item">
+                        <i class="bi bi-layers text-info me-3"></i>
+                        <div>
+                            <strong>Multi-Tier Design</strong>
+                            <small class="d-block text-muted">T2 through T4 capabilities</small>
+                        </div>
+                    </div>
+                    
+                    <div class="tech-item">
+                        <i class="bi bi-building text-warning me-3"></i>
+                        <div>
+                            <strong>Industrial Focus</strong>
+                            <small class="d-block text-muted">Real-world applications</small>
+                        </div>
+                    </div>
+                    
+                    <div class="tech-item">
+                        <i class="bi bi-arrow-up-right text-primary me-3"></i>
+                        <div>
+                            <strong>Scalable Architecture</strong>
+                            <small class="d-block text-muted">Enterprise-ready solutions</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-            <div class="text-center mt-4">
-                <a href="{{ url_for('home.index') }}" class="btn btn-primary">
-                    <i class="bi bi-house"></i> Back to Home
-                </a>
+    <!-- Call to Action -->
+    <div class="cta-section">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <h3 class="mb-4">Ready to Explore?</h3>
+                <p class="lead mb-4">
+                    Experience the power of systematic AI agent development through our interactive demonstrations.
+                </p>
+                <div class="d-flex justify-content-center gap-3">
+                    <a href="{{ url_for('home.index') }}" class="btn btn-primary btn-lg px-5">
+                        <i class="bi bi-house me-2"></i> View Demos
+                    </a>
+                    <a href="#demos" class="btn btn-outline-primary btn-lg px-5">
+                        <i class="bi bi-collection me-2"></i> Learn More
+                    </a>
+                </div>
             </div>
         </div>
     </div>

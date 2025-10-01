@@ -304,6 +304,52 @@ body {
     animation: iconFloat 2s ease-in-out infinite;
 }
 
+/* Framework Card Styles */
+.framework-card {
+    background: linear-gradient(135deg, #0066ff 0%, #4285f4 50%, #2196f3 100%) !important;
+    overflow: hidden;
+    position: relative;
+}
+
+.framework-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+    animation: rotate 20s linear infinite;
+}
+
+@keyframes rotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.framework-icon {
+    position: relative;
+    transition: transform var(--transition-normal);
+    z-index: 1;
+}
+
+.framework-card:hover .framework-icon {
+    transform: scale(1.1) rotate(-10deg);
+}
+
+.framework-btn {
+    position: relative;
+    z-index: 1;
+    border: 2px solid rgba(255, 255, 255, 0.8) !important;
+    transition: all var(--transition-normal);
+}
+
+.framework-btn:hover {
+    background: rgba(255, 255, 255, 0.2) !important;
+    border-color: white !important;
+    transform: translateY(-2px);
+}
+
 .demo-header {
     border-bottom: 1px solid var(--border-color);
     padding-bottom: 1rem;

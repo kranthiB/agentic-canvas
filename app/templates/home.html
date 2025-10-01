@@ -238,17 +238,20 @@
         
         <!-- Framework Info Card -->
         <div class="col-lg-4 col-md-6">
-            <div class="card h-100 bg-primary text-white border-primary">
+            <div class="card h-100 bg-primary text-white border-primary framework-card">
                 <div class="card-body p-4 d-flex flex-column">
                     <div class="mb-auto">
-                        <div class="fs-1 mb-3">📊</div>
+                        <div class="framework-icon mb-3">
+                            <i class="bi bi-grid-3x3" style="font-size: 2.5rem; color: #ffffff; position: relative;"></i>
+                            <i class="bi bi-cpu" style="font-size: 1.2rem; color: #e3f2fd; position: absolute; margin-left: -1rem; margin-top: 0.3rem;"></i>
+                        </div>
                         <h3 class="card-title mb-3">AIA CPT Framework</h3>
                         <p class="card-text text-white-75 mb-4">
                             All demos built using the AI Agent Capabilities Periodic Table framework from the Digital Twin Consortium.
                         </p>
                     </div>
                     
-                    <a href="{{ url_for('home.about') }}" class="btn btn-outline-light w-100">
+                    <a href="{{ url_for('home.about') }}" class="btn btn-outline-light w-100 framework-btn">
                         Learn About the Framework <i class="bi bi-arrow-right ms-2"></i>
                     </a>
                 </div>
