@@ -4,11 +4,13 @@
 
 {% block extra_css %}
 <style>
+    /* Hero Section */
     .about-hero {
-        background: linear-gradient(135deg, #f8fafc 0%, #e7f3ff 50%, #dbeafe 100%);
-        padding: 5rem 0 3rem;
+        background: linear-gradient(135deg, #000428 0%, #004e92 50%, #0066ff 100%);
+        padding: 6rem 0 4rem;
         position: relative;
         overflow: hidden;
+        color: white;
     }
     
     .about-hero::before {
@@ -19,150 +21,455 @@
         right: 0;
         bottom: 0;
         background: 
-            radial-gradient(circle at 20% 30%, rgba(0, 102, 255, 0.08) 0%, transparent 50%),
-            radial-gradient(circle at 80% 70%, rgba(66, 133, 244, 0.08) 0%, transparent 50%);
+            radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 80% 70%, rgba(255, 255, 255, 0.05) 0%, transparent 50%),
+            url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
         pointer-events: none;
     }
-    
-    .about-card {
-        border: none;
-        border-radius: 20px;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-        transition: all 0.3s ease;
+
+    /* Capability Categories Container */
+    .capability-categories {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2rem 0;
+    }
+
+    .capability-element {
         background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(10px);
-    }
-    
-    .about-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-    }
-    
-    .demo-item {
-        background: var(--bg-card);
-        border: 1px solid var(--border-light);
-        border-radius: 16px;
+        border-radius: 12px;
         padding: 1.5rem;
-        margin-bottom: 1rem;
-        transition: all var(--transition-normal);
+        text-align: center;
+        transition: all 0.3s ease;
         position: relative;
         overflow: hidden;
+        border: 2px solid transparent;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     }
-    
-    .demo-item::before {
+
+    .capability-element:hover {
+        transform: translateY(-5px) scale(1.02);
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        border-color: rgba(0, 102, 255, 0.3);
+    }
+
+    .capability-element::before {
         content: '';
         position: absolute;
         top: 0;
         left: 0;
-        width: 5px;
-        height: 100%;
-        background: var(--gradient-primary);
-        transform: scaleY(0);
-        transition: transform var(--transition-normal);
+        right: 0;
+        height: 4px;
+        border-radius: 12px 12px 0 0;
+        transition: all 0.3s ease;
     }
-    
-    .demo-item:hover::before {
-        transform: scaleY(1);
+
+    /* Color coding for capabilities */
+    .pk-category::before { background: linear-gradient(135deg, #6366f1, #8b5cf6); }
+    .cg-category::before { background: linear-gradient(135deg, #10b981, #34d399); }
+    .la-category::before { background: linear-gradient(135deg, #f59e0b, #fbbf24); }
+    .ae-category::before { background: linear-gradient(135deg, #ef4444, #f87171); }
+    .ic-category::before { background: linear-gradient(135deg, #06b6d4, #22d3ee); }
+    .gs-category::before { background: linear-gradient(135deg, #6b7280, #9ca3af); }
+
+    .capability-code {
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: #6b7280;
+        margin-bottom: 0.5rem;
+        letter-spacing: 1px;
     }
-    
-    .demo-item:hover {
-        transform: translateX(10px);
-        box-shadow: var(--shadow-lg);
-    }
-    
-    .demo-item.carbon::before { background: var(--gradient-carbon); }
-    .demo-item.grid::before { background: var(--gradient-grid); }
-    .demo-item.safety::before { background: var(--gradient-safety); }
-    .demo-item.mobility::before { background: var(--gradient-mobility); }
-    .demo-item.copilot::before { background: var(--gradient-copilot); }
-    
-    .tier-badge {
-        padding: 0.4rem 1rem;
-        border-radius: 20px;
+
+    .capability-name {
+        font-size: 0.9rem;
         font-weight: 600;
-        font-size: 0.8rem;
-        letter-spacing: 0.5px;
+        color: #1f2937;
+        line-height: 1.3;
+        margin-bottom: 0.5rem;
     }
-    
-    .tech-item {
+
+    .capability-desc {
+        font-size: 0.7rem;
+        color: #6b7280;
+        line-height: 1.2;
+    }
+
+
+
+    /* Agent Type Cards */
+    .agent-type-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+    }
+
+    .agent-type-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        border-color: rgba(0, 102, 255, 0.2);
+    }
+
+    .agent-type-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 6px;
+        border-radius: 20px 20px 0 0;
+    }
+
+    .type-0::before { background: linear-gradient(135deg, #6b7280, #9ca3af); }
+    .type-1::before { background: linear-gradient(135deg, #10b981, #34d399); }
+    .type-2::before { background: linear-gradient(135deg, #f59e0b, #fbbf24); }
+    .type-3::before { background: linear-gradient(135deg, #ef4444, #f87171); }
+    .type-4::before { background: linear-gradient(135deg, #8b5cf6, #a78bfa); }
+
+    .type-header {
         display: flex;
         align-items: center;
-        padding: 1rem;
-        border-radius: 12px;
-        background: var(--bg-subtle);
-        border: 1px solid var(--border-light);
-        transition: all var(--transition-normal);
-        margin-bottom: 0.8rem;
+        margin-bottom: 1rem;
+        gap: 1rem;
     }
-    
-    .tech-item:hover {
-        background: var(--bg-card);
-        transform: translateX(5px);
-        box-shadow: var(--shadow-sm);
+
+    .type-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: white;
+        position: relative;
     }
-    
+
+    .type-0-icon { background: linear-gradient(135deg, #6b7280, #9ca3af); }
+    .type-1-icon { background: linear-gradient(135deg, #10b981, #34d399); }
+    .type-2-icon { background: linear-gradient(135deg, #f59e0b, #fbbf24); }
+    .type-3-icon { background: linear-gradient(135deg, #ef4444, #f87171); }
+    .type-4-icon { background: linear-gradient(135deg, #8b5cf6, #a78bfa); }
+
+    .type-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #1f2937;
+        margin: 0;
+    }
+
+    .type-description {
+        color: #6b7280;
+        margin-bottom: 1rem;
+        line-height: 1.6;
+    }
+
+    .type-examples {
+        font-style: italic;
+        color: #6b7280;
+        font-size: 0.9rem;
+    }
+
+    /* Statistics Grid */
     .stats-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         gap: 2rem;
         margin: 3rem 0;
     }
-    
-    .stat-item {
-        text-align: center;
-        padding: 2rem;
-        background: var(--bg-card);
+
+    .stat-card {
+        background: white;
         border-radius: 16px;
-        box-shadow: var(--shadow-sm);
-        transition: all var(--transition-normal);
-    }
-    
-    .stat-item:hover {
-        transform: translateY(-5px);
-        box-shadow: var(--shadow-md);
-    }
-    
-    .stat-number {
-        font-size: 2.5rem;
-        font-weight: 700;
-        color: var(--accent-primary);
-        margin-bottom: 0.5rem;
-    }
-    
-    .framework-visual {
-        background: linear-gradient(135deg, #0066ff 0%, #4285f4 100%);
-        color: white;
-        padding: 3rem;
-        border-radius: 20px;
+        padding: 2rem;
         text-align: center;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
         position: relative;
         overflow: hidden;
     }
-    
-    .framework-visual::before {
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(135deg, #0066ff, #4285f4);
+        border-radius: 16px 16px 0 0;
+    }
+
+    .stat-number {
+        font-size: 3rem;
+        font-weight: 800;
+        color: #0066ff;
+        margin-bottom: 0.5rem;
+        line-height: 1;
+    }
+
+    .stat-label {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #374151;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    /* Demo Cards */
+    .demo-showcase {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 2rem;
+        margin: 3rem 0;
+    }
+
+    .demo-card-modern {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+    }
+
+    .demo-card-modern:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 16px 64px rgba(0, 0, 0, 0.15);
+    }
+
+    .demo-card-modern.carbon {
+        border-color: rgba(27, 94, 32, 0.2);
+    }
+    .demo-card-modern.carbon::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 6px;
+        background: var(--gradient-carbon);
+        border-radius: 20px 20px 0 0;
+    }
+
+    .demo-card-modern.grid {
+        border-color: rgba(13, 71, 161, 0.2);
+    }
+    .demo-card-modern.grid::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 6px;
+        background: var(--gradient-grid);
+        border-radius: 20px 20px 0 0;
+    }
+
+    .demo-card-modern.safety {
+        border-color: rgba(230, 81, 0, 0.2);
+    }
+    .demo-card-modern.safety::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 6px;
+        background: var(--gradient-safety);
+        border-radius: 20px 20px 0 0;
+    }
+
+    .demo-card-modern.mobility {
+        border-color: rgba(0, 96, 100, 0.2);
+    }
+    .demo-card-modern.mobility::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 6px;
+        background: var(--gradient-mobility);
+        border-radius: 20px 20px 0 0;
+    }
+
+    .demo-card-modern.copilot {
+        border-color: rgba(57, 73, 171, 0.2);
+    }
+    .demo-card-modern.copilot::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 6px;
+        background: var(--gradient-copilot);
+        border-radius: 20px 20px 0 0;
+    }
+
+    .demo-header-modern {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+    }
+
+    .demo-icon-modern {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: white;
+        margin-right: 1rem;
+    }
+
+    .tier-badge-modern {
+        padding: 0.4rem 1rem;
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 0.8rem;
+        letter-spacing: 0.5px;
+        color: white;
+    }
+
+    .demo-title-modern {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #1f2937;
+        margin: 0;
+    }
+
+    .demo-subtitle-modern {
+        font-size: 0.9rem;
+        color: #6b7280;
+        margin-bottom: 1rem;
+    }
+
+    .demo-description-modern {
+        color: #374151;
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+    }
+
+    .demo-features {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .feature-tag {
+        background: rgba(0, 102, 255, 0.1);
+        color: #0066ff;
+        padding: 0.3rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    /* Floating Animation */
+    @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+    }
+
+    .floating {
+        animation: float 6s ease-in-out infinite;
+    }
+
+    /* Modern CTA Section */
+    .cta-modern {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 4rem 2rem;
+        border-radius: 30px;
+        text-align: center;
+        margin: 4rem 0;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .cta-modern::before {
         content: '';
         position: absolute;
         top: -50%;
         right: -50%;
         width: 200%;
         height: 200%;
-        background: 
-            radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%),
-            radial-gradient(circle at 30% 40%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
         animation: rotate 30s linear infinite;
     }
-    
+
     @keyframes rotate {
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
     }
-    
-    .cta-section {
-        background: var(--bg-subtle);
-        padding: 4rem 0;
-        border-radius: 30px;
+
+    .section-title {
+        font-size: 2.5rem;
+        font-weight: 800;
         text-align: center;
-        margin: 3rem 0;
+        margin-bottom: 3rem;
+        color: #1f2937;
+        position: relative;
+    }
+
+    .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 4px;
+        background: linear-gradient(135deg, #0066ff, #4285f4);
+        border-radius: 2px;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .capability-categories .row > div {
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+        
+        .capability-element {
+            padding: 1rem;
+        }
+        
+        .demo-showcase {
+            grid-template-columns: 1fr;
+        }
+        
+        .section-title {
+            font-size: 2rem;
+        }
+        
+        h3 {
+            font-size: 1.3rem !important;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .capability-categories .row > div {
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
     }
 </style>
 {% endblock %}
@@ -173,288 +480,734 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-10 text-center">
-                <div class="mb-4">
-                    <i class="bi bi-robot" style="font-size: 4rem; color: #0066ff;"></i>
+                <div class="mb-4 floating">
+                    <i class="bi bi-grid-3x3" style="font-size: 4rem; color: white; position: relative;"></i>
+                    <i class="bi bi-cpu" style="font-size: 2rem; position: absolute; margin-left: -2rem; margin-top: 1rem; color: rgba(255,255,255,0.8);"></i>
                 </div>
-                <h1 class="display-3 fw-bold mb-4" style="color: #1a202c;">About Agentic Canvas</h1>
-                <p class="lead" style="color: #4a5568; font-size: 1.3rem; max-width: 800px; margin: 0 auto;">
-                    A comprehensive framework demonstrating industrial AI agent implementations across different capability tiers
+                <h1 class="display-3 fw-bold mb-4">Agentic Canvas</h1>
+                <p class="lead mb-4" style="font-size: 1.3rem; max-width: 800px; margin: 0 auto; opacity: 0.9;">
+                    Powered by AI Agent Capabilities Periodic Table (AIA CPT) v1.0<br>
+                    <small style="font-size: 1rem; opacity: 0.8;">Digital Twin Consortium Framework</small>
                 </p>
+                <div class="d-flex justify-content-center gap-3 flex-wrap">
+                    <span class="badge bg-light text-dark px-3 py-2">Industrial Applications</span>
+                    <span class="badge bg-light text-dark px-3 py-2">Multi-Agent Systems</span>
+                    <span class="badge bg-light text-dark px-3 py-2">Cognitive Autonomy</span>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <div class="container py-5">
-    <!-- Framework Overview -->
-    <div class="row mb-5">
-        <div class="col-12">
-            <div class="framework-visual">
-                <div style="position: relative; z-index: 1;">
-                    <div class="mb-4">
-                        <i class="bi bi-grid-3x3" style="font-size: 3rem; position: relative;"></i>
-                        <i class="bi bi-cpu" style="font-size: 1.5rem; position: absolute; margin-left: -1.2rem; margin-top: 0.5rem;"></i>
+    <!-- AI Agent Capabilities Periodic Table -->
+    <section class="mb-5">
+        <h2 class="section-title">AI Agent Capabilities Periodic Table</h2>
+        
+        <!-- Physical Knowledge (PK) Section -->
+        <div class="mb-5">
+            <h3 class="mb-3" style="color: #6366f1; font-weight: 700; display: flex; align-items: center; gap: 0.5rem;">
+                <div class="legend-color" style="width: 20px; height: 20px; background: linear-gradient(135deg, #6366f1, #8b5cf6); border-radius: 4px;"></div>
+                Physical Knowledge (PK) - Perception & Sensing
+            </h3>
+            <div class="row g-3 mb-4">
+                <div class="col-lg-3 col-md-6">
+                    <div class="capability-element pk-category">
+                        <div class="capability-code">PK.OB</div>
+                        <div class="capability-name">Environmental Sensing</div>
+                        <div class="capability-desc">Real-time data acquisition</div>
                     </div>
-                    <h2 class="display-5 fw-bold mb-4">AI Agent Capabilities Framework</h2>
-                    <p class="fs-5 mb-0" style="max-width: 600px; margin: 0 auto;">
-                        Built on the AI Agent Capabilities Periodic Table (AIA CPT) from the Digital Twin Consortium, 
-                        showcasing 5 industrial implementations across multiple agent tiers.
-                    </p>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="capability-element pk-category">
+                        <div class="capability-code">PK.KB</div>
+                        <div class="capability-name">Knowledge Access</div>
+                        <div class="capability-desc">Database integration</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="capability-element pk-category">
+                        <div class="capability-code">PK.CX</div>
+                        <div class="capability-name">Context & Memory</div>
+                        <div class="capability-desc">Situational awareness</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="capability-element pk-category">
+                        <div class="capability-code">PK.MF</div>
+                        <div class="capability-name">Multi-Modal Fusion</div>
+                        <div class="capability-desc">Data integration</div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+
+        <!-- Cognition & Generation (CG) Section -->
+        <div class="mb-5">
+            <h3 class="mb-3" style="color: #10b981; font-weight: 700; display: flex; align-items: center; gap: 0.5rem;">
+                <div class="legend-color" style="width: 20px; height: 20px; background: linear-gradient(135deg, #10b981, #34d399); border-radius: 4px;"></div>
+                Cognition & Generation (CG) - Reasoning & Content
+            </h3>
+            <div class="row g-3 mb-4">
+                <div class="col-lg-3 col-md-6">
+                    <div class="capability-element cg-category">
+                        <div class="capability-code">CG.PL</div>
+                        <div class="capability-name">Planning & Decomposition</div>
+                        <div class="capability-desc">Task breakdown</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="capability-element cg-category">
+                        <div class="capability-code">CG.RS</div>
+                        <div class="capability-name">Reasoning</div>
+                        <div class="capability-desc">Logical inference</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="capability-element cg-category">
+                        <div class="capability-code">CG.DC</div>
+                        <div class="capability-name">Decision Making</div>
+                        <div class="capability-desc">Choice optimization</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="capability-element cg-category">
+                        <div class="capability-code">CG.PS</div>
+                        <div class="capability-name">Problem Solving</div>
+                        <div class="capability-desc">Solution generation</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="capability-element cg-category">
+                        <div class="capability-code">CG.PP</div>
+                        <div class="capability-name">Formal Planning</div>
+                        <div class="capability-desc">Structured planning</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="capability-element cg-category">
+                        <div class="capability-code">CG.PA</div>
+                        <div class="capability-name">Plan Adaptation</div>
+                        <div class="capability-desc">Dynamic replanning</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Learning & Adaptation (LA) Section -->
+        <div class="mb-5">
+            <h3 class="mb-3" style="color: #f59e0b; font-weight: 700; display: flex; align-items: center; gap: 0.5rem;">
+                <div class="legend-color" style="width: 20px; height: 20px; background: linear-gradient(135deg, #f59e0b, #fbbf24); border-radius: 4px;"></div>
+                Learning & Adaptation (LA) - Memory & Self-Improvement
+            </h3>
+            <div class="row g-3 mb-4">
+                <div class="col-lg-3 col-md-6">
+                    <div class="capability-element la-category">
+                        <div class="capability-code">LA.MM</div>
+                        <div class="capability-name">Memory Management</div>
+                        <div class="capability-desc">Information storage</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="capability-element la-category">
+                        <div class="capability-code">LA.RL</div>
+                        <div class="capability-name">Reinforcement Learning</div>
+                        <div class="capability-desc">Experience-based improvement</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="capability-element la-category">
+                        <div class="capability-code">LA.AD</div>
+                        <div class="capability-name">Self-Optimization</div>
+                        <div class="capability-desc">Adaptive behavior</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="capability-element la-category">
+                        <div class="capability-code">LA.SL</div>
+                        <div class="capability-name">Supervised Learning</div>
+                        <div class="capability-desc">Pattern recognition</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="capability-element la-category">
+                        <div class="capability-code">LA.VM</div>
+                        <div class="capability-name">Vector Memory</div>
+                        <div class="capability-desc">Embeddings storage</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="capability-element la-category">
+                        <div class="capability-code">LA.MS</div>
+                        <div class="capability-name">Memory Scoring</div>
+                        <div class="capability-desc">Memory relevance</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action & Execution (AE) Section -->
+        <div class="mb-5">
+            <h3 class="mb-3" style="color: #ef4444; font-weight: 700; display: flex; align-items: center; gap: 0.5rem;">
+                <div class="legend-color" style="width: 20px; height: 20px; background: linear-gradient(135deg, #ef4444, #f87171); border-radius: 4px;"></div>
+                Action & Execution (AE) - Implementation & Control
+            </h3>
+            <div class="row g-3 mb-4">
+                <div class="col-lg-3 col-md-6">
+                    <div class="capability-element ae-category">
+                        <div class="capability-code">AE.TX</div>
+                        <div class="capability-name">Task Execution</div>
+                        <div class="capability-desc">Process implementation</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="capability-element ae-category">
+                        <div class="capability-code">AE.TL</div>
+                        <div class="capability-name">Tool Usage & API</div>
+                        <div class="capability-desc">System integration</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="capability-element ae-category">
+                        <div class="capability-code">AE.CG</div>
+                        <div class="capability-name">Code Generation</div>
+                        <div class="capability-desc">Automated programming</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="capability-element ae-category">
+                        <div class="capability-code">AE.CX</div>
+                        <div class="capability-name">Content Creation</div>
+                        <div class="capability-desc">Output generation</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="capability-element ae-category">
+                        <div class="capability-code">AE.TM</div>
+                        <div class="capability-name">Tool Management</div>
+                        <div class="capability-desc">Tool orchestration</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="capability-element ae-category">
+                        <div class="capability-code">AE.MC</div>
+                        <div class="capability-name">MCP Integration</div>
+                        <div class="capability-desc">Protocol integration</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Interaction & Communication (IC) Section -->
+        <div class="mb-5">
+            <h3 class="mb-3" style="color: #06b6d4; font-weight: 700; display: flex; align-items: center; gap: 0.5rem;">
+                <div class="legend-color" style="width: 20px; height: 20px; background: linear-gradient(135deg, #06b6d4, #22d3ee); border-radius: 4px;"></div>
+                Interaction & Communication (IC) - Collaboration & Integration
+            </h3>
+            <div class="row g-3 mb-4">
+                <div class="col-lg-3 col-md-6">
+                    <div class="capability-element ic-category">
+                        <div class="capability-code">IC.NL</div>
+                        <div class="capability-name">Natural Language</div>
+                        <div class="capability-desc">Human communication</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="capability-element ic-category">
+                        <div class="capability-code">IC.CS</div>
+                        <div class="capability-name">Consensus Protocols</div>
+                        <div class="capability-desc">Agreement mechanisms</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="capability-element ic-category">
+                        <div class="capability-code">IC.DM</div>
+                        <div class="capability-name">Dialogue Management</div>
+                        <div class="capability-desc">Conversation flow</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="capability-element ic-category">
+                        <div class="capability-code">IC.CF</div>
+                        <div class="capability-name">Conflict Resolution</div>
+                        <div class="capability-desc">Dispute resolution</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="capability-element ic-category">
+                        <div class="capability-code">IC.HL</div>
+                        <div class="capability-name">Human-in-Loop</div>
+                        <div class="capability-desc">Collaborative intelligence</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="capability-element ic-category">
+                        <div class="capability-code">IC.SI</div>
+                        <div class="capability-name">Industrial Integration</div>
+                        <div class="capability-desc">Manufacturing systems</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="capability-element ic-category">
+                        <div class="capability-code">IC.ES</div>
+                        <div class="capability-name">Enterprise Integration</div>
+                        <div class="capability-desc">Business systems</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="capability-element ic-category">
+                        <div class="capability-code">IC.AC</div>
+                        <div class="capability-name">Agent Communication</div>
+                        <div class="capability-desc">Multi-agent coordination</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="capability-element ic-category">
+                        <div class="capability-code">IC.CL</div>
+                        <div class="capability-name">Collaboration</div>
+                        <div class="capability-desc">Team coordination</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="capability-element ic-category">
+                        <div class="capability-code">IC.MB</div>
+                        <div class="capability-name">Message Brokers</div>
+                        <div class="capability-desc">Communication infrastructure</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="capability-element ic-category">
+                        <div class="capability-code">IC.DS</div>
+                        <div class="capability-name">Distributed Coordination</div>
+                        <div class="capability-desc">System orchestration</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="capability-element ic-category">
+                        <div class="capability-code">IC.RB</div>
+                        <div class="capability-name">Role Behavior</div>
+                        <div class="capability-desc">Behavioral adaptation</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Governance & Safety (GS) Section -->
+        <div class="mb-5">
+            <h3 class="mb-3" style="color: #6b7280; font-weight: 700; display: flex; align-items: center; gap: 0.5rem;">
+                <div class="legend-color" style="width: 20px; height: 20px; background: linear-gradient(135deg, #6b7280, #9ca3af); border-radius: 4px;"></div>
+                Governance & Safety (GS) - Control & Trust
+            </h3>
+            <div class="row g-3 mb-4">
+                <div class="col-lg-3 col-md-6">
+                    <div class="capability-element gs-category">
+                        <div class="capability-code">GS.ET</div>
+                        <div class="capability-name">Ethics</div>
+                        <div class="capability-desc">Moral reasoning</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="capability-element gs-category">
+                        <div class="capability-code">GS.PR</div>
+                        <div class="capability-name">Privacy</div>
+                        <div class="capability-desc">Data protection</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="capability-element gs-category">
+                        <div class="capability-code">GS.DL</div>
+                        <div class="capability-name">Deployment Management</div>
+                        <div class="capability-desc">System deployment</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="capability-element gs-category">
+                        <div class="capability-code">GS.MO</div>
+                        <div class="capability-name">Monitoring</div>
+                        <div class="capability-desc">System oversight</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="capability-element gs-category">
+                        <div class="capability-code">GS.EV</div>
+                        <div class="capability-name">Evaluation</div>
+                        <div class="capability-desc">Performance assessment</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="capability-element gs-category">
+                        <div class="capability-code">GS.SF</div>
+                        <div class="capability-name">Safety</div>
+                        <div class="capability-desc">Risk mitigation</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="capability-element gs-category">
+                        <div class="capability-code">GS.RL</div>
+                        <div class="capability-name">Reliability</div>
+                        <div class="capability-desc">System dependability</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="capability-element gs-category">
+                        <div class="capability-code">GS.TC</div>
+                        <div class="capability-name">Trust Management</div>
+                        <div class="capability-desc">Trust protocols</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="capability-element gs-category">
+                        <div class="capability-code">GS.SC</div>
+                        <div class="capability-name">Scaling</div>
+                        <div class="capability-desc">System scalability</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="capability-element gs-category">
+                        <div class="capability-code">GS.SE</div>
+                        <div class="capability-name">Security</div>
+                        <div class="capability-desc">Threat protection</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="capability-element gs-category">
+                        <div class="capability-code">GS.EX</div>
+                        <div class="capability-name">Explainability</div>
+                        <div class="capability-desc">Decision transparency</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI Agent Types -->
+    <section class="mb-5">
+        <h2 class="section-title">AI Agent Types (AIA CPT)</h2>
+        
+        <div class="agent-type-card type-0">
+            <div class="type-header">
+                <div class="type-icon type-0-icon">
+                    <i class="bi bi-gear-fill"></i>
+                </div>
+                <div>
+                    <h3 class="type-title">Type 0: Static Automation</h3>
+                    <div class="type-description">Pre-programmed responses with no learning or adaptation</div>
+                </div>
+            </div>
+            <div class="type-examples">Traditional rule-based symbolic AI systems and basic automation</div>
+        </div>
+
+        <div class="agent-type-card type-1">
+            <div class="type-header">
+                <div class="type-icon type-1-icon">
+                    <i class="bi bi-chat-dots-fill"></i>
+                </div>
+                <div>
+                    <h3 class="type-title">Type 1: Conversational Agents</h3>
+                    <div class="type-description">Natural language interaction with basic context management</div>
+                </div>
+            </div>
+            <div class="type-examples">Customer service chatbots, FAQ systems, voice assistants</div>
+        </div>
+
+        <div class="agent-type-card type-2">
+            <div class="type-header">
+                <div class="type-icon type-2-icon">
+                    <i class="bi bi-diagram-3-fill"></i>
+                </div>
+                <div>
+                    <h3 class="type-title">Type 2: Procedural Workflow Agents</h3>
+                    <div class="type-description">Multi-step task execution with tool integration and role-based collaboration</div>
+                </div>
+            </div>
+            <div class="type-examples">Workflow automation, task orchestration, process management</div>
+        </div>
+
+        <div class="agent-type-card type-3">
+            <div class="type-header">
+                <div class="type-icon type-3-icon">
+                    <i class="bi bi-brain"></i>
+                </div>
+                <div>
+                    <h3 class="type-title">Type 3: Cognitive Autonomous Agents</h3>
+                    <div class="type-description">Self-directed planning, learning from experience, sophisticated reasoning</div>
+                </div>
+            </div>
+            <div class="type-examples">Research assistants, predictive systems, autonomous decision-making</div>
+        </div>
+
+        <div class="agent-type-card type-4">
+            <div class="type-header">
+                <div class="type-icon type-4-icon">
+                    <i class="bi bi-people-fill"></i>
+                </div>
+                <div>
+                    <h3 class="type-title">Type 4: Multi-Agent Generative Systems (MAGS)</h3>
+                    <div class="type-description">Collaborative intelligence with emergent behaviors and distributed coordination</div>
+                </div>
+            </div>
+            <div class="type-examples">Industrial automation, smart city systems, complex orchestration</div>
+        </div>
+    </section>
 
     <!-- Statistics -->
     <div class="stats-grid">
-        <div class="stat-item">
+        <div class="stat-card">
             <div class="stat-number">5</div>
-            <div class="text-muted">Industrial Demos</div>
+            <div class="stat-label">Industrial Demos</div>
         </div>
-        <div class="stat-item">
-            <div class="stat-number">4</div>
-            <div class="text-muted">Agent Tiers</div>
+        <div class="stat-card">
+            <div class="stat-number">10</div>
+            <div class="stat-label">AI Agents Deployed</div>
         </div>
-        <div class="stat-item">
-            <div class="stat-number">15+</div>
-            <div class="text-muted">Core Capabilities</div>
+        <div class="stat-card">
+            <div class="stat-number">22</div>
+            <div class="stat-label">Active Capabilities</div>
         </div>
-        <div class="stat-item">
-            <div class="stat-number">∞</div>
-            <div class="text-muted">Possibilities</div>
+        <div class="stat-card">
+            <div class="stat-number">6</div>
+            <div class="stat-label">Capability Categories</div>
         </div>
     </div>
 
     <!-- Demo Showcase -->
-    <div class="row">
-        <div class="col-12">
-            <div class="about-card">
-                <div class="card-body p-5">
-                    <h3 class="mb-4 text-center">
-                        <i class="bi bi-collection text-primary me-3"></i>
-                        Demo Portfolio
-                    </h3>
-                    
-                    <div class="row g-4">
-                        <!-- Carbon Compass -->
-                        <div class="col-md-6">
-                            <div class="demo-item carbon">
-                                <div class="d-flex align-items-start">
-                                    <div class="me-3">
-                                        <span style="position: relative; display: inline-block;">
-                                            <i class="bi bi-compass" style="color: #1B5E20; font-size: 1.8rem;"></i>
-                                            <i class="bi bi-leaf" style="color: #4CAF50; font-size: 1rem; position: absolute; margin-left: -0.6rem; margin-top: 0.3rem;"></i>
-                                        </span>
-                                    </div>
-                                    <div class="flex-grow-1">
-                                        <div class="d-flex justify-content-between align-items-center mb-2">
-                                            <h5 class="mb-0">Carbon Compass</h5>
-                                            <span class="tier-badge" style="background: var(--gradient-carbon); color: white;">T3</span>
-                                        </div>
-                                        <p class="text-muted small mb-2">Cognitive Autonomous Agent</p>
-                                        <p class="mb-0 small">Real-time emissions optimization with reinforcement learning</p>
-                                    </div>
-                                </div>
-                            </div>
+    <section class="mb-5">
+        <h2 class="section-title">Industrial Demonstrations</h2>
+        <div class="demo-showcase">
+            <!-- Carbon Compass -->
+            <div class="demo-card-modern carbon">
+                <div class="demo-header-modern">
+                    <div class="d-flex align-items-center">
+                        <div class="demo-icon-modern" style="background: var(--gradient-carbon);">
+                            <i class="bi bi-compass"></i>
                         </div>
-
-                        <!-- GridMind AI -->
-                        <div class="col-md-6">
-                            <div class="demo-item grid">
-                                <div class="d-flex align-items-start">
-                                    <div class="me-3">
-                                        <span style="position: relative; display: inline-block;">
-                                            <i class="bi bi-diagram-3" style="color: #0D47A1; font-size: 1.8rem;"></i>
-                                            <i class="bi bi-lightning-charge" style="color: #2196F3; font-size: 1rem; position: absolute; margin-left: -0.5rem; margin-top: -0.1rem;"></i>
-                                        </span>
-                                    </div>
-                                    <div class="flex-grow-1">
-                                        <div class="d-flex justify-content-between align-items-center mb-2">
-                                            <h5 class="mb-0">GridMind AI</h5>
-                                            <span class="tier-badge" style="background: var(--gradient-grid); color: white;">T4</span>
-                                        </div>
-                                        <p class="text-muted small mb-2">Multi-Agent System</p>
-                                        <p class="mb-0 small">5 agents coordinating 30 GW renewable energy plant</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Safety Guardian -->
-                        <div class="col-md-6">
-                            <div class="demo-item safety">
-                                <div class="d-flex align-items-start">
-                                    <div class="me-3">
-                                        <span style="position: relative; display: inline-block;">
-                                            <i class="bi bi-shield-check" style="color: #E65100; font-size: 1.8rem;"></i>
-                                            <i class="bi bi-eye" style="color: #FF9800; font-size: 0.8rem; position: absolute; margin-left: -0.8rem; margin-top: 0.2rem;"></i>
-                                        </span>
-                                    </div>
-                                    <div class="flex-grow-1">
-                                        <div class="d-flex justify-content-between align-items-center mb-2">
-                                            <h5 class="mb-0">Safety Guardian</h5>
-                                            <span class="tier-badge" style="background: var(--gradient-safety); color: white;">T2</span>
-                                        </div>
-                                        <p class="text-muted small mb-2">Reasoning Agent</p>
-                                        <p class="mb-0 small">Refinery safety monitoring and permit risk assessment</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Mobility Maestro -->
-                        <div class="col-md-6">
-                            <div class="demo-item mobility">
-                                <div class="d-flex align-items-start">
-                                    <div class="me-3">
-                                        <span style="position: relative; display: inline-block;">
-                                            <i class="bi bi-ev-station" style="color: #006064; font-size: 1.8rem;"></i>
-                                            <i class="bi bi-geo-alt" style="color: #00ACC1; font-size: 0.8rem; position: absolute; margin-left: -0.4rem; margin-top: -0.3rem;"></i>
-                                        </span>
-                                    </div>
-                                    <div class="flex-grow-1">
-                                        <div class="d-flex justify-content-between align-items-center mb-2">
-                                            <h5 class="mb-0">Mobility Maestro</h5>
-                                            <span class="tier-badge" style="background: var(--gradient-mobility); color: white;">T3</span>
-                                        </div>
-                                        <p class="text-muted small mb-2">Cognitive Autonomous</p>
-                                        <p class="mb-0 small">EV charging network optimization across India</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Engineer's Copilot - Full Width -->
-                        <div class="col-12">
-                            <div class="demo-item copilot">
-                                <div class="d-flex align-items-start">
-                                    <div class="me-3">
-                                        <span style="position: relative; display: inline-block;">
-                                            <i class="bi bi-cpu" style="color: #3949AB; font-size: 1.8rem;"></i>
-                                            <i class="bi bi-gear" style="color: #7C4DFF; font-size: 0.8rem; position: absolute; margin-left: -0.4rem; margin-top: -0.5rem;"></i>
-                                        </span>
-                                    </div>
-                                    <div class="flex-grow-1">
-                                        <div class="d-flex justify-content-between align-items-center mb-2">
-                                            <h5 class="mb-0">Engineer's Copilot</h5>
-                                            <span class="tier-badge" style="background: var(--gradient-copilot); color: white;">T2-Gen</span>
-                                        </div>
-                                        <p class="text-muted small mb-2">Generative Agent</p>
-                                        <p class="mb-0 small">AI Research Assistant for TCAP Mumbai Lubricant Development with advanced RAG system</p>
-                                    </div>
-                                </div>
-                            </div>
+                        <div>
+                            <h4 class="demo-title-modern">Carbon Compass</h4>
+                            <div class="demo-subtitle-modern">Cognitive Autonomous Agent (Type 3)</div>
                         </div>
                     </div>
+                    <span class="tier-badge-modern" style="background: var(--gradient-carbon);">T3</span>
+                </div>
+                <p class="demo-description-modern">
+                    Advanced emissions optimization system using reinforcement learning for real-time carbon footprint reduction across industrial operations.
+                </p>
+                <div class="demo-features">
+                    <span class="feature-tag">Reinforcement Learning</span>
+                    <span class="feature-tag">Real-time Optimization</span>
+                    <span class="feature-tag">Environmental Sensing</span>
+                    <span class="feature-tag">Predictive Analytics</span>
+                </div>
+            </div>
+
+            <!-- GridMind AI -->
+            <div class="demo-card-modern grid">
+                <div class="demo-header-modern">
+                    <div class="d-flex align-items-center">
+                        <div class="demo-icon-modern" style="background: var(--gradient-grid);">
+                            <i class="bi bi-diagram-3"></i>
+                        </div>
+                        <div>
+                            <h4 class="demo-title-modern">GridMind AI</h4>
+                            <div class="demo-subtitle-modern">Multi-Agent System (Type 4)</div>
+                        </div>
+                    </div>
+                    <span class="tier-badge-modern" style="background: var(--gradient-grid);">T4</span>
+                </div>
+                <p class="demo-description-modern">
+                    Distributed multi-agent system coordinating 5 specialized agents for managing 30 GW renewable energy infrastructure with emergent intelligence.
+                </p>
+                <div class="demo-features">
+                    <span class="feature-tag">Multi-Agent Coordination</span>
+                    <span class="feature-tag">Distributed Intelligence</span>
+                    <span class="feature-tag">Load Balancing</span>
+                    <span class="feature-tag">Grid Optimization</span>
+                </div>
+            </div>
+
+            <!-- Safety Guardian -->
+            <div class="demo-card-modern safety">
+                <div class="demo-header-modern">
+                    <div class="d-flex align-items-center">
+                        <div class="demo-icon-modern" style="background: var(--gradient-safety);">
+                            <i class="bi bi-shield-check"></i>
+                        </div>
+                        <div>
+                            <h4 class="demo-title-modern">Safety Guardian</h4>
+                            <div class="demo-subtitle-modern">Procedural Workflow Agent (Type 2)</div>
+                        </div>
+                    </div>
+                    <span class="tier-badge-modern" style="background: var(--gradient-safety);">T2</span>
+                </div>
+                <p class="demo-description-modern">
+                    Comprehensive safety monitoring system for refinery operations with automated permit management and risk assessment workflows.
+                </p>
+                <div class="demo-features">
+                    <span class="feature-tag">Risk Assessment</span>
+                    <span class="feature-tag">Permit Management</span>
+                    <span class="feature-tag">Safety Protocols</span>
+                    <span class="feature-tag">Compliance Monitoring</span>
+                </div>
+            </div>
+
+            <!-- Mobility Maestro -->
+            <div class="demo-card-modern mobility">
+                <div class="demo-header-modern">
+                    <div class="d-flex align-items-center">
+                        <div class="demo-icon-modern" style="background: var(--gradient-mobility);">
+                            <i class="bi bi-ev-station"></i>
+                        </div>
+                        <div>
+                            <h4 class="demo-title-modern">Mobility Maestro</h4>
+                            <div class="demo-subtitle-modern">Cognitive Autonomous Agent (Type 3)</div>
+                        </div>
+                    </div>
+                    <span class="tier-badge-modern" style="background: var(--gradient-mobility);">T3</span>
+                </div>
+                <p class="demo-description-modern">
+                    Intelligent EV charging network optimization system covering pan-India operations with dynamic load balancing and route planning.
+                </p>
+                <div class="demo-features">
+                    <span class="feature-tag">Network Optimization</span>
+                    <span class="feature-tag">Dynamic Planning</span>
+                    <span class="feature-tag">Load Management</span>
+                    <span class="feature-tag">Geographic Intelligence</span>
+                </div>
+            </div>
+
+            <!-- Engineer's Copilot -->
+            <div class="demo-card-modern copilot">
+                <div class="demo-header-modern">
+                    <div class="d-flex align-items-center">
+                        <div class="demo-icon-modern" style="background: var(--gradient-copilot);">
+                            <i class="bi bi-cpu"></i>
+                        </div>
+                        <div>
+                            <h4 class="demo-title-modern">Engineer's Copilot</h4>
+                            <div class="demo-subtitle-modern">Conversational Agent + (Type 1+)</div>
+                        </div>
+                    </div>
+                    <span class="tier-badge-modern" style="background: var(--gradient-copilot);">T1+</span>
+                </div>
+                <p class="demo-description-modern">
+                    Advanced AI research assistant for TCAP Mumbai lubricant development featuring sophisticated RAG system and technical documentation analysis.
+                </p>
+                <div class="demo-features">
+                    <span class="feature-tag">RAG System</span>
+                    <span class="feature-tag">Technical Analysis</span>
+                    <span class="feature-tag">Document Intelligence</span>
+                    <span class="feature-tag">Research Assistance</span>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
-    <!-- Technology Stack -->
-    <div class="row mt-5">
-        <div class="col-lg-6">
-            <div class="about-card h-100">
-                <div class="card-body p-4">
-                    <h4 class="mb-4">
-                        <i class="bi bi-stack text-primary me-2"></i>
-                        Technology Stack
+    <!-- Framework Implementation -->
+    <section class="mb-5">
+        <div class="row g-4">
+            <div class="col-lg-6">
+                <div class="stat-card h-100" style="padding: 2.5rem;">
+                    <h4 class="mb-4" style="color: #1f2937;">
+                        <i class="bi bi-stack text-primary me-3"></i>
+                        Technology Foundation
                     </h4>
                     
-                    <div class="tech-item">
-                        <i class="bi bi-server text-success me-3"></i>
+                    <div class="d-flex align-items-center mb-3 p-3 rounded" style="background: rgba(0, 102, 255, 0.05);">
+                        <i class="bi bi-server text-success me-3" style="font-size: 1.5rem;"></i>
                         <div>
-                            <strong>Backend</strong>
-                            <small class="d-block text-muted">Flask 3.0 + SQLAlchemy</small>
+                            <strong style="color: #1f2937;">Backend Architecture</strong>
+                            <small class="d-block text-muted">Flask 3.0 + SQLAlchemy + Socket.IO</small>
                         </div>
                     </div>
                     
-                    <div class="tech-item">
-                        <i class="bi bi-palette text-info me-3"></i>
+                    <div class="d-flex align-items-center mb-3 p-3 rounded" style="background: rgba(16, 185, 129, 0.05);">
+                        <i class="bi bi-robot text-primary me-3" style="font-size: 1.5rem;"></i>
                         <div>
-                            <strong>Frontend</strong>
-                            <small class="d-block text-muted">Bootstrap 5 + Chart.js</small>
+                            <strong style="color: #1f2937;">AI Engine</strong>
+                            <small class="d-block text-muted">OpenAI GPT-4 + Custom Agents</small>
                         </div>
                     </div>
                     
-                    <div class="tech-item">
-                        <i class="bi bi-broadcast text-warning me-3"></i>
+                    <div class="d-flex align-items-center mb-3 p-3 rounded" style="background: rgba(245, 158, 11, 0.05);">
+                        <i class="bi bi-palette text-warning me-3" style="font-size: 1.5rem;"></i>
                         <div>
-                            <strong>Real-time</strong>
-                            <small class="d-block text-muted">Socket.IO Updates</small>
+                            <strong style="color: #1f2937;">Frontend Experience</strong>
+                            <small class="d-block text-muted">Bootstrap 5 + Chart.js + Modern UI</small>
                         </div>
                     </div>
                     
-                    <div class="tech-item">
-                        <i class="bi bi-robot text-primary me-3"></i>
+                    <div class="d-flex align-items-center p-3 rounded" style="background: rgba(239, 68, 68, 0.05);">
+                        <i class="bi bi-shield-check text-danger me-3" style="font-size: 1.5rem;"></i>
                         <div>
-                            <strong>AI Engine</strong>
-                            <small class="d-block text-muted">OpenAI GPT-4</small>
+                            <strong style="color: #1f2937;">Enterprise Security</strong>
+                            <small class="d-block text-muted">Role-based access + Data protection</small>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        
-        <div class="col-lg-6">
-            <div class="about-card h-100">
-                <div class="card-body p-4">
-                    <h4 class="mb-4">
-                        <i class="bi bi-award text-primary me-2"></i>
-                        Framework Benefits
+            
+            <div class="col-lg-6">
+                <div class="stat-card h-100" style="padding: 2.5rem;">
+                    <h4 class="mb-4" style="color: #1f2937;">
+                        <i class="bi bi-award text-primary me-3"></i>
+                        Framework Advantages
                     </h4>
                     
-                    <div class="tech-item">
-                        <i class="bi bi-speedometer2 text-success me-3"></i>
+                    <div class="d-flex align-items-center mb-3 p-3 rounded" style="background: rgba(0, 102, 255, 0.05);">
+                        <i class="bi bi-grid-3x3 text-primary me-3" style="font-size: 1.5rem;"></i>
                         <div>
-                            <strong>Systematic Approach</strong>
-                            <small class="d-block text-muted">Structured agent development</small>
+                            <strong style="color: #1f2937;">Systematic Classification</strong>
+                            <small class="d-block text-muted">Based on AIA CPT from Digital Twin Consortium</small>
                         </div>
                     </div>
                     
-                    <div class="tech-item">
-                        <i class="bi bi-layers text-info me-3"></i>
+                    <div class="d-flex align-items-center mb-3 p-3 rounded" style="background: rgba(16, 185, 129, 0.05);">
+                        <i class="bi bi-layers text-success me-3" style="font-size: 1.5rem;"></i>
                         <div>
-                            <strong>Multi-Tier Design</strong>
-                            <small class="d-block text-muted">T2 through T4 capabilities</small>
+                            <strong style="color: #1f2937;">Multi-Tier Capabilities</strong>
+                            <small class="d-block text-muted">Type 0 through Type 4 implementations</small>
                         </div>
                     </div>
                     
-                    <div class="tech-item">
-                        <i class="bi bi-building text-warning me-3"></i>
+                    <div class="d-flex align-items-center mb-3 p-3 rounded" style="background: rgba(245, 158, 11, 0.05);">
+                        <i class="bi bi-building text-warning me-3" style="font-size: 1.5rem;"></i>
                         <div>
-                            <strong>Industrial Focus</strong>
-                            <small class="d-block text-muted">Real-world applications</small>
+                            <strong style="color: #1f2937;">Industrial Applications</strong>
+                            <small class="d-block text-muted">Real-world energy sector solutions</small>
                         </div>
                     </div>
                     
-                    <div class="tech-item">
-                        <i class="bi bi-arrow-up-right text-primary me-3"></i>
+                    <div class="d-flex align-items-center p-3 rounded" style="background: rgba(239, 68, 68, 0.05);">
+                        <i class="bi bi-arrow-up-right text-danger me-3" style="font-size: 1.5rem;"></i>
                         <div>
-                            <strong>Scalable Architecture</strong>
-                            <small class="d-block text-muted">Enterprise-ready solutions</small>
+                            <strong style="color: #1f2937;">Scalable Architecture</strong>
+                            <small class="d-block text-muted">Enterprise-ready modular design</small>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
     <!-- Call to Action -->
-    <div class="cta-section">
-        <div class="row justify-content-center">
-            <div class="col-lg-8 text-center">
-                <h3 class="mb-4">Ready to Explore?</h3>
-                <p class="lead mb-4">
-                    Experience the power of systematic AI agent development through our interactive demonstrations.
-                </p>
-                <div class="d-flex justify-content-center gap-3">
-                    <a href="{{ url_for('home.index') }}" class="btn btn-primary btn-lg px-5">
-                        <i class="bi bi-house me-2"></i> View Demos
-                    </a>
-                    <a href="#demos" class="btn btn-outline-primary btn-lg px-5">
-                        <i class="bi bi-collection me-2"></i> Learn More
-                    </a>
+    <div class="cta-modern">
+        <div style="position: relative; z-index: 1;">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 text-center">
+                    <div class="mb-4">
+                        <i class="bi bi-rocket-takeoff" style="font-size: 3rem; opacity: 0.9;"></i>
+                    </div>
+                    <h3 class="mb-4" style="font-size: 2rem; font-weight: 700;">Ready to Explore AI Agent Capabilities?</h3>
+                    <p class="mb-5" style="font-size: 1.2rem; opacity: 0.9; max-width: 600px; margin: 0 auto;">
+                        Experience the evolution of AI agents from simple automation to sophisticated multi-agent systems through our comprehensive industrial demonstrations.
+                    </p>
+                    <div class="d-flex justify-content-center gap-4 flex-wrap">
+                        <a href="{{ url_for('home.index') }}" class="btn btn-light btn-lg px-5 py-3" style="font-weight: 600; border-radius: 50px;">
+                            <i class="bi bi-grid-3x3-gap me-2"></i> Explore Demos
+                        </a>
+                        <a href="{{ url_for('demo1.dashboard') }}" class="btn btn-outline-light btn-lg px-5 py-3" style="font-weight: 600; border-radius: 50px; border-width: 2px;">
+                            <i class="bi bi-compass me-2"></i> Start with Carbon Compass
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>

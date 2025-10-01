@@ -35,6 +35,95 @@ A consolidated Flask application showcasing **5 industrial AI agent demonstratio
 - Bilingual support (English/Hindi)
 - **Capabilities**: PK.KB, CG.RS, AE.CX, IC.NL
 
+## 🧠 AI Agent Framework
+
+### AI Agent Capabilities Periodic Table (AIA CPT) v1.0
+
+This framework is built upon the **AI Agent Capabilities Periodic Table** from the **Digital Twin Consortium**, providing a systematic classification of AI agent capabilities across 6 core categories:
+
+#### 📊 **Capability Categories**
+
+| Category | Code | Description | Color Coding |
+|----------|------|-------------|--------------|
+| **Perception & Knowledge** | PK | Environmental sensing, knowledge access, context management | 🟦 Blue |
+| **Cognition & Reasoning** | CG | Planning, reasoning, decision making, problem solving | 🟩 Green |
+| **Learning & Adaptation** | LA | Memory management, reinforcement learning, self-optimization | 🟨 Orange |
+| **Action & Execution** | AE | Task execution, tool usage, code generation, content creation | 🟥 Red |
+| **Interaction & Collaboration** | IC | Natural language, dialogue management, multi-agent coordination | 🟦 Cyan |
+| **Governance & Safety** | GS | Ethics, safety, security, explainability | ⚫ Gray |
+
+#### 🤖 **AI Agent Types (AIA CPT)**
+
+| Type | Name | Description | Examples | Demos |
+|------|------|-------------|----------|-------|
+| **T0** | Static Automation | Pre-programmed responses, no learning | Rule-based systems, basic automation | - |
+| **T1** | Conversational Agents | Natural language interaction, basic context | Chatbots, FAQ systems, voice assistants | Engineer's Copilot |
+| **T2** | Procedural Workflow Agents | Multi-step execution, tool integration | Workflow automation, process management | Safety Guardian |
+| **T3** | Cognitive Autonomous Agents | Self-directed planning, sophisticated reasoning | Research assistants, predictive systems | Carbon Compass, Mobility Maestro |
+| **T4** | Multi-Agent Generative Systems | Collaborative intelligence, emergent behaviors | Industrial automation, smart city systems | GridMind AI |
+
+#### 🤖 **Deployed AI Agents (10 Total)**
+
+**Single-Agent Systems:**
+- `carbon-optimizer-001` - T3 Cognitive Agent (Carbon Compass)
+- `safety-guardian-001` - T2 Procedural Agent (Safety Guardian)  
+- `network-optimizer-001` - T3 Cognitive Agent (Mobility Maestro)
+- `engineers-copilot-001` - T2 Generative Agent (Engineer's Copilot)
+
+**Multi-Agent System (GridMind AI):**
+- `weather-agent-001` - T3 Weather Forecasting Agent
+- `demand-agent-001` - T3 Demand Prediction Agent
+- `storage-agent-001` - T3 Storage Optimization Agent
+- `trading-agent-001` - T3 Market Trading Agent
+- `maintenance-agent-001` - T2 Maintenance Coordinator Agent
+- `multi-agent-coordinator` - T4 System Coordinator
+
+#### 🔧 **Core Capabilities (22 Actively Implemented)**
+
+**Perception & Knowledge (PK)**
+- `PK.OB` Environmental Sensing - Real-time data acquisition
+- `PK.KB` Knowledge Access - Database integration  
+- `PK.CX` Context & Memory - Situational awareness
+- `PK.MF` Multi-Modal Fusion - Data integration
+
+**Cognition & Reasoning (CG)**
+- `CG.PL` Planning & Decomposition - Task breakdown
+- `CG.RS` Reasoning - Logical inference
+- `CG.DC` Decision Making - Choice optimization
+- `CG.PS` Problem Solving - Solution generation
+
+**Learning & Adaptation (LA)**
+- `LA.MM` Memory Management - Information storage
+- `LA.RL` Reinforcement Learning - Experience-based improvement
+- `LA.AD` Self-Optimization - Adaptive behavior
+- `LA.SL` Supervised Learning - Pattern recognition
+
+**Action & Execution (AE)**
+- `AE.TX` Task Execution - Process implementation
+- `AE.TL` Tool Usage & API - System integration
+- `AE.CG` Code Generation - Automated programming
+- `AE.CX` Content Creation - Output generation
+
+**Interaction & Collaboration (IC)**
+- `IC.NL` Natural Language - Human communication
+- `IC.DM` Dialogue Management - Conversation flow
+- `IC.HL` Human-in-Loop - Collaborative intelligence
+- `IC.AC` Agent Communication - Multi-agent coordination
+
+**Governance & Safety (GS)**
+- `GS.ET` Ethics - Moral reasoning
+- `GS.SF` Safety - Risk mitigation
+- `GS.SE` Security - Threat protection
+- `GS.EX` Explainability - Decision transparency
+
+### 📈 **Framework Statistics**
+
+- **5** Industrial Demonstrations
+- **10** AI Agents Deployed
+- **22** Active Capabilities (Implemented)
+- **6** Capability Categories
+- **45** Total Framework Capabilities (AIA CPT Complete)
+
 ## 🚀 Quick Start
 
 ### Prerequisites
