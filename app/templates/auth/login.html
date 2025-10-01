@@ -2,21 +2,338 @@
 
 {% block title %}Login - Agentic Canvas{% endblock %}
 
+{% block extra_css %}
+<style>
+/* Login Page Specific Styles */
+.login-background {
+    background: linear-gradient(135deg, 
+        #ffffff 0%, 
+        #f8fafc 30%, 
+        #e7f3ff 70%,
+        #dbeafe 100%
+    );
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+}
+
+.login-background::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 25% 40%, rgba(0, 102, 255, 0.12) 0%, transparent 60%),
+        radial-gradient(circle at 75% 60%, rgba(0, 200, 81, 0.12) 0%, transparent 60%),
+        radial-gradient(circle at 50% 80%, rgba(66, 133, 244, 0.08) 0%, transparent 40%);
+    pointer-events: none;
+}
+
+.login-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    border-radius: 16px;
+    box-shadow: var(--shadow-lg);
+    position: relative;
+    overflow: hidden;
+    transition: all var(--transition-normal);
+}
+
+.login-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: var(--gradient-primary);
+    border-radius: 16px 16px 0 0;
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.login-icon {
+    width: 80px;
+    height: 80px;
+    background: var(--gradient-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    box-shadow: 0 10px 25px rgba(0, 102, 255, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.login-icon::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+    animation: rotate 4s linear infinite;
+}
+
+.login-icon i {
+    font-size: 2rem;
+    color: white;
+    z-index: 1;
+    position: relative;
+}
+
+.login-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.login-subtitle {
+    color: var(--text-secondary);
+    font-size: 1rem;
+    margin-bottom: 0;
+}
+
+.form-floating {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.form-floating .form-control {
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1rem 1rem 1rem 3rem;
+    font-size: 1rem;
+    transition: all var(--transition-fast);
+    background: var(--bg-card);
+}
+
+.form-floating .form-control:focus {
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 0.2rem rgba(0, 102, 255, 0.15);
+    background: var(--bg-elevated);
+}
+
+.form-floating label {
+    padding-left: 3rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.input-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    z-index: 2;
+    transition: color var(--transition-fast);
+}
+
+.form-floating .form-control:focus + label + .input-icon {
+    color: var(--accent-primary);
+}
+
+.remember-me {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+}
+
+.form-check-input:checked {
+    background-color: var(--accent-primary);
+    border-color: var(--accent-primary);
+}
+
+.form-check-input:focus {
+    box-shadow: 0 0 0 0.2rem rgba(0, 102, 255, 0.25);
+}
+
+.login-btn {
+    background: var(--gradient-primary);
+    border: none;
+    border-radius: 12px;
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all var(--transition-normal);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(0, 102, 255, 0.3);
+}
+
+.login-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.6s ease;
+}
+
+.login-btn:hover::before {
+    left: 100%;
+}
+
+.login-btn:hover {
+    background: linear-gradient(135deg, #0052cc 0%, #3367d6 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 15px 35px rgba(0, 102, 255, 0.4);
+}
+
+.login-btn:active {
+    transform: translateY(0);
+}
+
+.login-btn.loading {
+    pointer-events: none;
+    opacity: 0.8;
+}
+
+.login-spinner {
+    display: none;
+    width: 1.2rem;
+    height: 1.2rem;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top: 2px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-right: 0.5rem;
+}
+
+.login-btn.loading .login-spinner {
+    display: inline-block;
+}
+
+.login-btn.loading .btn-text {
+    opacity: 0.7;
+}
+
+.demo-credentials {
+    background: linear-gradient(135deg, rgba(0, 102, 255, 0.05) 0%, rgba(66, 133, 244, 0.05) 100%);
+    border: 1px solid var(--border-light);
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin-top: 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.demo-credentials::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--gradient-primary);
+}
+
+.demo-title {
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.credential-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--bg-card);
+    padding: 0.5rem 1rem;
+    border-radius: 25px;
+    margin: 0.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    transition: all var(--transition-fast);
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+}
+
+.credential-item:hover {
+    background: var(--bg-tertiary);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--accent-primary);
+}
+
+.credential-code {
+    background: rgba(0, 102, 255, 0.1);
+    color: var(--accent-primary);
+    padding: 0.2rem 0.5rem;
+    border-radius: 6px;
+    font-family: 'Monaco', 'Consolas', monospace;
+    font-size: 0.9rem;
+}
+
+@keyframes rotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.fade-in {
+    animation: fadeIn 0.8s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-5">
-            <div class="card shadow">
-                <div class="card-body p-5">
-                    <div class="text-center mb-4">
-                        <h2 class="card-title">Welcome Back</h2>
-                        <p class="text-muted">Sign in to access Agentic Canvas</p>
+<div class="login-background d-flex align-items-center py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-5 col-md-7 col-sm-9">
+                <div class="login-card p-5 fade-in">
+                    <!-- Header -->
+                    <div class="login-header">
+                        <div class="login-icon">
+                            <i class="bi bi-robot"></i>
+                        </div>
+                        <h1 class="login-title">Welcome Back</h1>
+                        <p class="login-subtitle">Sign in to access Agentic Canvas</p>
                     </div>
 
+                    <!-- Flash Messages -->
                     {% with messages = get_flashed_messages(with_categories=true) %}
                         {% if messages %}
                             {% for category, message in messages %}
                                 <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
                                     {{ message }}
                                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                                 </div>
@@ -24,51 +341,122 @@
                         {% endif %}
                     {% endwith %}
 
-                    <form method="POST" action="{{ url_for('auth.login') }}">
-                        <div class="mb-3">
-                            <label for="username" class="form-label">Username</label>
+                    <!-- Login Form -->
+                    <form method="POST" action="{{ url_for('auth.login') }}" id="loginForm">
+                        <!-- Username Field -->
+                        <div class="form-floating">
                             <input type="text" 
                                    class="form-control" 
                                    id="username" 
                                    name="username" 
-                                   placeholder="Enter username"
+                                   placeholder="Username"
                                    required 
                                    autofocus>
+                            <label for="username">Username</label>
+                            <i class="bi bi-person input-icon"></i>
                         </div>
 
-                        <div class="mb-3">
-                            <label for="password" class="form-label">Password</label>
+                        <!-- Password Field -->
+                        <div class="form-floating">
                             <input type="password" 
                                    class="form-control" 
                                    id="password" 
                                    name="password" 
-                                   placeholder="Enter password"
+                                   placeholder="Password"
                                    required>
+                            <label for="password">Password</label>
+                            <i class="bi bi-lock input-icon"></i>
                         </div>
 
-                        <div class="mb-3 form-check">
-                            <input type="checkbox" class="form-check-input" id="remember">
+                        <!-- Remember Me -->
+                        <div class="remember-me">
+                            <input type="checkbox" class="form-check-input" id="remember" name="remember">
                             <label class="form-check-label" for="remember">
-                                Remember me
+                                Remember me for 30 days
                             </label>
                         </div>
 
-                        <button type="submit" class="btn btn-primary w-100">
-                            <i class="bi bi-box-arrow-in-right"></i> Sign In
+                        <!-- Submit Button -->
+                        <button type="submit" class="btn login-btn w-100" id="loginBtn">
+                            <div class="login-spinner"></div>
+                            <span class="btn-text">
+                                <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
+                            </span>
                         </button>
                     </form>
 
-                    <div class="mt-4 text-center">
-                        <hr>
-                        <p class="text-muted small">
-                            <strong>Demo Credentials:</strong><br>
-                            Username: <code>demo</code><br>
-                            Password: <code>demo</code>
-                        </p>
+                    <!-- Demo Credentials -->
+                    <div class="demo-credentials">
+                        <div class="demo-title">
+                            <i class="bi bi-key-fill"></i>
+                            Demo Credentials
+                        </div>
+                        <div class="d-flex flex-wrap justify-content-center gap-2">
+                            <div class="credential-item" onclick="fillCredential('username', 'demo')">
+                                <i class="bi bi-person-fill"></i>
+                                <span>Username: <span class="credential-code">demo</span></span>
+                            </div>
+                            <div class="credential-item" onclick="fillCredential('password', 'demo')">
+                                <i class="bi bi-lock-fill"></i>
+                                <span>Password: <span class="credential-code">demo</span></span>
+                            </div>
+                        </div>
+                        <div class="mt-2">
+                            <small class="text-mute d-flex align-items-center justify-content-center gap-1">
+                                <i class="bi bi-info-circle"></i>
+                                Click on credentials to auto-fill
+                            </small>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+// Auto-fill credentials function
+function fillCredential(field, value) {
+    const input = document.getElementById(field);
+    input.value = value;
+    input.focus();
+    
+    // Add a small animation to show the field was filled
+    input.style.transform = 'scale(1.02)';
+    setTimeout(() => {
+        input.style.transform = 'scale(1)';
+    }, 150);
+}
+
+// Form submission with loading state
+document.getElementById('loginForm').addEventListener('submit', function(e) {
+    const submitBtn = document.getElementById('loginBtn');
+    submitBtn.classList.add('loading');
+    
+    // Simulate loading (remove this in production if you want immediate submission)
+    setTimeout(() => {
+        // The form will submit naturally after this
+    }, 500);
+});
+
+// Add focus effects to inputs
+document.querySelectorAll('.form-control').forEach(input => {
+    input.addEventListener('focus', function() {
+        this.parentElement.style.transform = 'translateY(-2px)';
+    });
+    
+    input.addEventListener('blur', function() {
+        this.parentElement.style.transform = 'translateY(0)';
+    });
+});
+
+// Add keyboard shortcut for demo login (Ctrl/Cmd + D)
+document.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
+        e.preventDefault();
+        fillCredential('username', 'demo');
+        setTimeout(() => fillCredential('password', 'demo'), 100);
+    }
+});
+</script>
 {% endblock %}
