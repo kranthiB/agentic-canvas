@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}About - Agentic Canvas{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <h1 class="mb-4">About Agentic Canvas</h1>
+            
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h3>AI Agent Capabilities Framework</h3>
+                    <p class="lead">
+                        Agentic Canvas demonstrates 5 industrial AI agent implementations 
+                        across different tiers of the AI Agent Capabilities Periodic Table (AIA CPT).
+                    </p>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h4>Demo Overview</h4>
+                    <ul class="list-unstyled">
+                        <li class="mb-3">
+                            <strong>🌍 Demo 1: Carbon Compass</strong> - T3 Cognitive Agent
+                            <br><small class="text-muted">Real-time emissions optimization with reinforcement learning</small>
+                        </li>
+                        <li class="mb-3">
+                            <strong>⚡ Demo 2: GridMind AI</strong> - T4 Multi-Agent System
+                            <br><small class="text-muted">5 agents coordinating 30 GW renewable energy plant</small>
+                        </li>
+                        <li class="mb-3">
+                            <strong>🛡️ Demo 3: Safety Guardian</strong> - T2 Procedural Agent
+                            <br><small class="text-muted">Refinery safety monitoring and permit risk assessment</small>
+                        </li>
+                        <li class="mb-3">
+                            <strong>🔌 Demo 4: Mobility Maestro</strong> - T3 Cognitive Agent
+                            <br><small class="text-muted">EV charging network optimization across India</small>
+                        </li>
+                        <li class="mb-3">
+                            <strong>🔬 Demo 5: Engineer's Copilot</strong> - T2 Generative Agent
+                            <br><small class="text-muted">R&D acceleration with formulation recommendations</small>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <h4>Technology Stack</h4>
+                    <ul>
+                        <li>Flask 3.0 + SQLAlchemy</li>
+                        <li>Bootstrap 5 + Chart.js</li>
+                        <li>Socket.IO for real-time updates</li>
+                        <li>OpenAI GPT-4 for AI capabilities</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <a href="{{ url_for('home.index') }}" class="btn btn-primary">
+                    <i class="bi bi-house"></i> Back to Home
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

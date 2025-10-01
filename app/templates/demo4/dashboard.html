@@ -1,0 +1,312 @@
+{% extends "base.html" %}
+
+{% block title %}Mobility Maestro Dashboard{% endblock %}
+
+{% block extra_css %}
+<link href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet">
+<style>
+    .site-card {
+        transition: all 0.3s ease;
+        border-left: 4px solid;
+    }
+    
+    .site-card.tier1 { border-left-color: #3fb950; }
+    .site-card.tier2 { border-left-color: #58a6ff; }
+    .site-card.tier3 { border-left-color: #d29922; }
+    
+    .site-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 24px rgba(0, 212, 255, 0.2);
+    }
+    
+    .score-circle {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        font-weight: 700;
+        border: 4px solid;
+    }
+    
+    .score-high {
+        background: rgba(63, 185, 80, 0.2);
+        border-color: #3fb950;
+        color: #3fb950;
+    }
+    
+    .score-medium {
+        background: rgba(88, 166, 255, 0.2);
+        border-color: #58a6ff;
+        color: #58a6ff;
+    }
+    
+    .score-low {
+        background: rgba(210, 153, 34, 0.2);
+        border-color: #d29922;
+        color: #d29922;
+    }
+    
+    #indiaMap {
+        height: 500px;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-lg-8">
+            <h2 class="mb-2">
+                <span class="demo-icon">🔌</span> Mobility Maestro
+            </h2>
+            <p class="text-muted mb-0">
+                <span class="badge bg-info me-2">Tier 3</span>
+                EV Charging Network Optimization Across 28 Indian States
+            </p>
+        </div>
+        <div class="col-lg-4 text-lg-end">
+            <div class="agent-status active">
+                <span class="spinner-grow spinner-grow-sm text-success"></span>
+                <span class="fw-semibold">Network Optimizer Active</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Network Overview Metrics -->
+    <div class="row g-4 mb-4">
+        <div class="col-xl-3 col-md-6">
+            <div class="metric-card">
+                <div class="metric-label">Candidate Sites</div>
+                <div class="metric-value text-primary">{{ stats.total_candidates }}</div>
+                <div class="metric-subtitle">Across India</div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6">
+            <div class="metric-card">
+                <div class="metric-label">Evaluated Sites</div>
+                <div class="metric-value text-success">{{ stats.evaluated_sites }}</div>
+                <div class="metric-subtitle">AI Analysis Complete</div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6">
+            <div class="metric-card">
+                <div class="metric-label">Recommended Sites</div>
+                <div class="metric-value text-info">{{ stats.recommended_sites }}</div>
+                <div class="metric-subtitle">Score > 70</div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6">
+            <div class="metric-card">
+                <div class="metric-label">Projected ROI</div>
+                <div class="metric-value text-warning">{{ "%.1f"|format(stats.avg_roi) }}%</div>
+                <div class="metric-subtitle">3-Year Average</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- India Map & Controls -->
+    <div class="row g-4 mb-4">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-map text-info"></i>
+                        Network Coverage Map - India
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    <div id="indiaMap"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Optimization Controls -->
+        <div class="col-lg-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-robot text-primary"></i>
+                        Network Optimizer
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-3">
+                        <button class="btn btn-primary btn-lg" id="btnEvaluateSite">
+                            <i class="bi bi-geo-alt"></i>
+                            Evaluate New Site
+                        </button>
+                        
+                        <button class="btn btn-success btn-lg" id="btnOptimizeNetwork">
+                            <i class="bi bi-diagram-3"></i>
+                            Optimize Network
+                        </button>
+                        
+                        <button class="btn btn-info btn-lg" id="btnGenerateReport">
+                            <i class="bi bi-file-earmark-bar-graph"></i>
+                            Generate Report
+                        </button>
+                    </div>
+                    
+                    <hr class="my-4">
+                    
+                    <div class="mb-3">
+                        <h6 class="mb-2">Filter by City Tier</h6>
+                        <div class="btn-group w-100" role="group">
+                            <input type="radio" class="btn-check" name="tierFilter" id="tier1" checked>
+                            <label class="btn btn-outline-success" for="tier1">Tier 1</label>
+                            
+                            <input type="radio" class="btn-check" name="tierFilter" id="tier2">
+                            <label class="btn btn-outline-info" for="tier2">Tier 2</label>
+                            
+                            <input type="radio" class="btn-check" name="tierFilter" id="tier3">
+                            <label class="btn btn-outline-warning" for="tier3">Tier 3</label>
+                        </div>
+                    </div>
+                    
+                    <div id="optimizationResult"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Recommended Sites -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-star"></i>
+                        Top Recommended Sites
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        {% for site in top_sites %}
+                        <div class="col-md-6 col-lg-4">
+                            <div class="site-card tier{{ site.city_tier }} card">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start mb-3">
+                                        <div>
+                                            <h6 class="mb-1">{{ site.city }}, {{ site.state }}</h6>
+                                            <span class="badge bg-{{ 'success' if site.city_tier == 1 else 'info' if site.city_tier == 2 else 'warning' }}">
+                                                Tier {{ site.city_tier }}
+                                            </span>
+                                        </div>
+                                        <div class="score-circle score-{{ 'high' if site.overall_score >= 80 else 'medium' if site.overall_score >= 60 else 'low' }}">
+                                            {{ site.overall_score }}
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-2">
+                                        <div class="d-flex justify-content-between mb-1">
+                                            <small class="text-muted">Traffic Score</small>
+                                            <small class="fw-semibold">{{ site.traffic_score }}/100</small>
+                                        </div>
+                                        <div class="progress" style="height: 4px;">
+                                            <div class="progress-bar bg-primary" style="width: {{ site.traffic_score }}%"></div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-2">
+                                        <div class="d-flex justify-content-between mb-1">
+                                            <small class="text-muted">Demographics Score</small>
+                                            <small class="fw-semibold">{{ site.demographics_score }}/100</small>
+                                        </div>
+                                        <div class="progress" style="height: 4px;">
+                                            <div class="progress-bar bg-success" style="width: {{ site.demographics_score }}%"></div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <div class="d-flex justify-content-between mb-1">
+                                            <small class="text-muted">Infrastructure Score</small>
+                                            <small class="fw-semibold">{{ site.infrastructure_score }}/100</small>
+                                        </div>
+                                        <div class="progress" style="height: 4px;">
+                                            <div class="progress-bar bg-warning" style="width: {{ site.infrastructure_score }}%"></div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <small class="text-muted">Est. ROI:</small>
+                                            <span class="fw-bold text-success"> {{ "%.1f"|format(site.estimated_roi_percent) }}%</span>
+                                        </div>
+                                        <button class="btn btn-sm btn-primary" onclick="viewSiteDetails({{ site.id }})">
+                                            Details <i class="bi bi-arrow-right"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+// Initialize India map
+let indiaMap = null;
+
+function initMap() {
+    indiaMap = L.map('indiaMap').setView([20.5937, 78.9629], 5);
+    
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(indiaMap);
+    
+    // Add markers for recommended sites
+    {% for site in all_sites %}
+    const marker{{ site.id }} = L.marker([{{ site.latitude }}, {{ site.longitude }}])
+        .addTo(indiaMap)
+        .bindPopup(`
+            <strong>{{ site.city }}, {{ site.state }}</strong><br>
+            Score: {{ site.overall_score }}/100<br>
+            ROI: {{ "%.1f"|format(site.estimated_roi_percent) }}%
+        `);
+    {% endfor %}
+}
+
+function viewSiteDetails(siteId) {
+    window.location.href = `/demo4/site/${siteId}`;
+}
+
+// Optimize network button handler
+document.getElementById('btnOptimizeNetwork')?.addEventListener('click', async function() {
+    const btn = this;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Optimizing...';
+    
+    try {
+        const data = await Utils.apiCall('/demo4/api/optimize-network', { method: 'POST' });
+        
+        Utils.showToast('Network optimization completed', 'success');
+        setTimeout(() => location.reload(), 1500);
+    } catch (error) {
+        Utils.showToast('Optimization failed', 'danger');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="bi bi-diagram-3"></i> Optimize Network';
+    }
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    initMap();
+});
+</script>
+{% endblock %}

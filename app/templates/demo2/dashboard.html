@@ -1,0 +1,404 @@
+{% extends "base.html" %}
+
+{% block title %}GridMind AI Dashboard{% endblock %}
+
+{% block extra_css %}
+<style>
+    .agent-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+    }
+    
+    .agent-card {
+        background: linear-gradient(135deg, #161b22 0%, #21262d 100%);
+        border-left: 4px solid;
+        transition: all 0.3s ease;
+    }
+    
+    .agent-card:hover {
+        transform: translateX(4px);
+        box-shadow: 0 8px 24px rgba(0, 212, 255, 0.2);
+    }
+    
+    .agent-card.weather { border-left-color: #58a6ff; }
+    .agent-card.demand { border-left-color: #3fb950; }
+    .agent-card.storage { border-left-color: #d29922; }
+    .agent-card.trading { border-left-color: #f85149; }
+    .agent-card.maintenance { border-left-color: #cc5de8; }
+    
+    .consensus-indicator {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.875rem;
+    }
+    
+    .consensus-indicator.voting { background: rgba(88, 166, 255, 0.2); color: #58a6ff; }
+    .consensus-indicator.utility { background: rgba(63, 185, 80, 0.2); color: #3fb950; }
+    .consensus-indicator.nash { background: rgba(210, 153, 34, 0.2); color: #d29922; }
+    
+    .plant-map {
+        height: 400px;
+        background: var(--bg-tertiary);
+        border-radius: 12px;
+        overflow: hidden;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-lg-8">
+            <h2 class="mb-2">
+                <span class="demo-icon">⚡</span> GridMind AI
+            </h2>
+            <p class="text-muted mb-0">
+                <span class="badge bg-danger me-2">Tier 4</span>
+                Multi-Agent Coordination System for Khavda Renewable Energy Plant (30 GW)
+            </p>
+        </div>
+        <div class="col-lg-4 text-lg-end">
+            <div class="agent-status active">
+                <span class="spinner-grow spinner-grow-sm text-success"></span>
+                <span class="fw-semibold">5 Agents Active</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Plant Overview Metrics -->
+    <div class="row g-4 mb-4">
+        <div class="col-xl-2 col-md-4">
+            <div class="metric-card">
+                <div class="metric-label">Current Generation</div>
+                <div class="metric-value text-success">{{ "%.1f"|format(plant_state.current_generation_mw) }}</div>
+                <div class="metric-subtitle">MW</div>
+            </div>
+        </div>
+        
+        <div class="col-xl-2 col-md-4">
+            <div class="metric-card">
+                <div class="metric-label">Grid Demand</div>
+                <div class="metric-value text-info">{{ "%.1f"|format(plant_state.grid_demand_mw|default_zero) }}</div>
+                <div class="metric-subtitle">MW</div>
+            </div>
+        </div>
+        
+        <div class="col-xl-2 col-md-4">
+            <div class="metric-card">
+                <div class="metric-label">Battery Status</div>
+                <div class="metric-value text-warning">{{ "%.1f"|format(plant_state.battery_soc_percent) }}%</div>
+                <div class="metric-subtitle">State of Charge</div>
+            </div>
+        </div>
+        
+        <div class="col-xl-2 col-md-4">
+            <div class="metric-card">
+                <div class="metric-label">Market Price</div>
+                <div class="metric-value">₹{{ "%.2f"|format(plant_state.market_price_per_mwh|default_zero) }}</div>
+                <div class="metric-subtitle">per MWh</div>
+            </div>
+        </div>
+        
+        <div class="col-xl-2 col-md-4">
+            <div class="metric-card">
+                <div class="metric-label">Capacity Factor</div>
+                <div class="metric-value text-primary">{{ "%.1f"|format(plant_state.capacity_factor_percent) }}%</div>
+                <div class="metric-subtitle">Target: 42%</div>
+            </div>
+        </div>
+        
+        <div class="col-xl-2 col-md-4">
+            <div class="metric-card">
+                <div class="metric-label">Curtailment</div>
+                <div class="metric-value text-danger">{{ "%.2f"|format(plant_state.curtailment_percent) }}%</div>
+                <div class="metric-subtitle">Target: <3%</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Multi-Agent Coordination Panel -->
+    <div class="row g-4 mb-4">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="bi bi-diagram-3 text-danger"></i>
+                        Active Agents Coordination
+                    </h5>
+                    <div class="consensus-indicator {{ latest_consensus.method }}">
+                        <i class="bi bi-check-circle"></i>
+                        {{ latest_consensus.method|upper }}
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="agent-grid">
+                        <!-- Weather Agent -->
+                        <div class="agent-card weather card">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="fs-2 me-3">🌤️</div>
+                                    <div>
+                                        <h6 class="mb-0 fw-bold">Weather Forecast</h6>
+                                        <small class="text-muted">Solar & Wind Prediction</small>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="small text-muted">Confidence</span>
+                                    <span class="fw-semibold">{{ agents.weather.confidence }}%</span>
+                                </div>
+                                <div class="progress mb-2" style="height: 6px;">
+                                    <div class="progress-bar bg-info" style="width: {{ agents.weather.confidence }}%"></div>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="badge bg-success">Active</span>
+                                    <small class="text-muted">{{ agents.weather.last_update }}</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Demand Agent -->
+                        <div class="agent-card demand card">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="fs-2 me-3">📊</div>
+                                    <div>
+                                        <h6 class="mb-0 fw-bold">Demand Prediction</h6>
+                                        <small class="text-muted">Grid Load Forecasting</small>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="small text-muted">Accuracy</span>
+                                    <span class="fw-semibold">{{ agents.demand.accuracy }}%</span>
+                                </div>
+                                <div class="progress mb-2" style="height: 6px;">
+                                    <div class="progress-bar bg-success" style="width: {{ agents.demand.accuracy }}%"></div>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="badge bg-success">Active</span>
+                                    <small class="text-muted">{{ agents.demand.last_update }}</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Storage Agent -->
+                        <div class="agent-card storage card">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="fs-2 me-3">🔋</div>
+                                    <div>
+                                        <h6 class="mb-0 fw-bold">Storage Optimizer</h6>
+                                        <small class="text-muted">Battery Management</small>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="small text-muted">Efficiency</span>
+                                    <span class="fw-semibold">{{ agents.storage.efficiency }}%</span>
+                                </div>
+                                <div class="progress mb-2" style="height: 6px;">
+                                    <div class="progress-bar bg-warning" style="width: {{ agents.storage.efficiency }}%"></div>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="badge bg-success">Active</span>
+                                    <small class="text-muted">{{ agents.storage.last_update }}</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Trading Agent -->
+                        <div class="agent-card trading card">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="fs-2 me-3">💰</div>
+                                    <div>
+                                        <h6 class="mb-0 fw-bold">Market Trading</h6>
+                                        <small class="text-muted">Revenue Optimization</small>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="small text-muted">ROI</span>
+                                    <span class="fw-semibold text-success">+{{ agents.trading.roi }}%</span>
+                                </div>
+                                <div class="progress mb-2" style="height: 6px;">
+                                    <div class="progress-bar bg-danger" style="width: 85%"></div>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="badge bg-success">Active</span>
+                                    <small class="text-muted">{{ agents.trading.last_update }}</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Maintenance Agent -->
+                        <div class="agent-card maintenance card">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="fs-2 me-3">🔧</div>
+                                    <div>
+                                        <h6 class="mb-0 fw-bold">Maintenance</h6>
+                                        <small class="text-muted">Predictive Scheduling</small>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="small text-muted">Health Score</span>
+                                    <span class="fw-semibold">{{ agents.maintenance.health }}%</span>
+                                </div>
+                                <div class="progress mb-2" style="height: 6px;">
+                                    <div class="progress-bar" style="width: {{ agents.maintenance.health }}%; background: #cc5de8;"></div>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="badge bg-success">Active</span>
+                                    <small class="text-muted">{{ agents.maintenance.last_update }}</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Real-time Chart -->
+        <div class="col-lg-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-graph-up"></i>
+                        Generation vs Demand
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container" style="height: 300px;">
+                        <canvas id="generationChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Consensus Decisions -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-collection"></i>
+                        Recent Consensus Decisions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Timestamp</th>
+                                    <th>Decision Type</th>
+                                    <th>Consensus Method</th>
+                                    <th>Participating Agents</th>
+                                    <th>Outcome</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for decision in recent_decisions %}
+                                <tr>
+                                    <td>{{ decision.created_at.strftime('%H:%M:%S') }}</td>
+                                    <td>
+                                        <span class="badge bg-primary">{{ decision.decision_type }}</span>
+                                    </td>
+                                    <td>
+                                        <span class="consensus-indicator {{ decision.consensus_method }}">
+                                            {{ decision.consensus_method|upper }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex gap-1">
+                                            {% for agent in decision.participating_agents.split(',') %}
+                                                <span class="badge bg-secondary">{{ agent }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    </td>
+                                    <td>{{ decision.final_decision[:50] }}...</td>
+                                    <td>
+                                        <span class="badge bg-{{ 'success' if decision.status == 'executed' else 'warning' }}">
+                                            {{ decision.status|upper }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Initialize generation chart
+let generationChart = null;
+
+function initChart() {
+    const ctx = document.getElementById('generationChart');
+    if (!ctx) return;
+    
+    generationChart = ChartHelpers.createLineChart(ctx, {
+        labels: [],
+        datasets: [
+            {
+                label: 'Generation',
+                data: [],
+                borderColor: ChartHelpers.colors.success,
+                backgroundColor: 'rgba(63, 185, 80, 0.1)',
+                tension: 0.4,
+                fill: true
+            },
+            {
+                label: 'Demand',
+                data: [],
+                borderColor: ChartHelpers.colors.info,
+                backgroundColor: 'rgba(121, 192, 255, 0.1)',
+                tension: 0.4,
+                fill: true
+            }
+        ]
+    });
+    
+    AppState.charts['generation'] = generationChart;
+}
+
+// Fetch current state
+async function fetchPlantState() {
+    try {
+        const data = await Utils.apiCall('/demo2/api/current-state');
+        
+        if (generationChart && data.chart_data) {
+            ChartHelpers.updateChart(generationChart, data.chart_data);
+        }
+    } catch (error) {
+        console.error('Error fetching state:', error);
+    }
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+    initChart();
+    fetchPlantState();
+    startAutoRefresh(fetchPlantState, 5000);
+    
+    // Socket.IO updates
+    document.addEventListener('demoUpdate', (event) => {
+        if (event.detail.demo === 'demo2') {
+            fetchPlantState();
+        }
+    });
+});
+</script>
+{% endblock %}

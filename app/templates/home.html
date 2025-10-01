@@ -1,0 +1,234 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<!-- Hero Section with Gradient -->
+<div class="hero-section">
+    <div class="container">
+        <div class="text-center hero-content">
+            <h1 class="display-2 fw-bold text-white mb-4 animate-fade-in">
+                The Agentic Canvas
+            </h1>
+            <p class="lead text-white-50 mb-4 animate-slide-up">
+                Systematic AI Agent Framework for Industrial Innovation
+            </p>
+            <p class="text-white mb-5 animate-slide-up-delay">
+                Like the <strong>Business Model Canvas</strong> revolutionized strategy,<br>
+                <strong class="text-primary">The Agentic Canvas</strong> provides a systematic approach for designing industrial AI agents
+            </p>
+            <div class="d-flex justify-content-center gap-3 animate-slide-up-delay-2">
+                <a href="#demos" class="btn btn-primary btn-lg px-4">
+                    <i class="bi bi-rocket-takeoff"></i> Explore Demos
+                </a>
+                <a href="{{ url_for('home.about') }}" class="btn btn-outline-light btn-lg px-4">
+                    <i class="bi bi-book"></i> Learn More
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Demos Grid Section -->
+<div class="container my-5 py-5" id="demos">
+    <div class="text-center mb-5">
+        <h2 class="display-5 fw-bold mb-3">Five Industrial AI Demonstrations</h2>
+        <p class="lead text-muted">Each demo showcases different agent tiers and capabilities from the AIA CPT framework</p>
+    </div>
+    
+    <div class="row g-4">
+        <!-- Demo 1: Carbon Compass -->
+        <div class="col-lg-4 col-md-6">
+            <div class="demo-card card h-100 shadow-hover border-0">
+                <div class="card-body p-4">
+                    <div class="demo-header mb-4">
+                        <div class="demo-icon-large mb-3">🌍</div>
+                        <h3 class="card-title mb-2">Carbon Compass</h3>
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <span class="badge bg-success">Tier 3</span>
+                            <span class="badge bg-secondary">Cognitive Autonomous</span>
+                        </div>
+                    </div>
+                    
+                    <p class="card-text text-muted mb-4">
+                        Real-time carbon budget management with reinforcement learning optimization. 
+                        Autonomous decision-making for emissions reduction across industrial operations.
+                    </p>
+                    
+                    <div class="mb-4">
+                        <p class="small fw-semibold text-uppercase text-muted mb-2">Core Capabilities</p>
+                        <div class="d-flex flex-wrap gap-2">
+                            <span class="capability-badge cap-pk">PK</span>
+                            <span class="capability-badge cap-cg">CG</span>
+                            <span class="capability-badge cap-la">LA</span>
+                            <span class="capability-badge cap-ae">AE</span>
+                        </div>
+                    </div>
+                    
+                    <a href="{{ url_for('demo1.dashboard') }}" class="btn btn-success w-100 btn-lg">
+                        Launch Demo <i class="bi bi-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Demo 2: GridMind AI -->
+        <div class="col-lg-4 col-md-6">
+            <div class="demo-card card h-100 shadow-hover border-0">
+                <div class="card-body p-4">
+                    <div class="demo-header mb-4">
+                        <div class="demo-icon-large mb-3">⚡</div>
+                        <h3 class="card-title mb-2">GridMind AI</h3>
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <span class="badge bg-danger">Tier 4</span>
+                            <span class="badge bg-secondary">Multi-Agent System</span>
+                        </div>
+                    </div>
+                    
+                    <p class="card-text text-muted mb-4">
+                        Orchestrated multi-agent system for renewable energy grid management. 
+                        Five specialized agents collaborate for optimal 30 GW solar-wind plant operations.
+                    </p>
+                    
+                    <div class="mb-4">
+                        <p class="small fw-semibold text-uppercase text-muted mb-2">Core Capabilities</p>
+                        <div class="d-flex flex-wrap gap-2">
+                            <span class="capability-badge cap-pk">PK</span>
+                            <span class="capability-badge cap-cg">CG</span>
+                            <span class="capability-badge cap-la">LA</span>
+                            <span class="capability-badge cap-ic">IC</span>
+                            <span class="capability-badge cap-gs">GS</span>
+                        </div>
+                    </div>
+                    
+                    <a href="{{ url_for('demo2.dashboard') }}" class="btn btn-danger w-100 btn-lg">
+                        Launch Demo <i class="bi bi-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Demo 3: Safety Guardian -->
+        <div class="col-lg-4 col-md-6">
+            <div class="demo-card card h-100 shadow-hover border-0">
+                <div class="card-body p-4">
+                    <div class="demo-header mb-4">
+                        <div class="demo-icon-large mb-3">🛡️</div>
+                        <h3 class="card-title mb-2">Safety Guardian</h3>
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <span class="badge bg-warning text-dark">Tier 2</span>
+                            <span class="badge bg-secondary">Reasoning Agent</span>
+                        </div>
+                    </div>
+                    
+                    <p class="card-text text-muted mb-4">
+                        Intelligent work permit analysis using multi-modal reasoning. 
+                        Automated risk assessment with supervisor escalation for high-risk scenarios.
+                    </p>
+                    
+                    <div class="mb-4">
+                        <p class="small fw-semibold text-uppercase text-muted mb-2">Core Capabilities</p>
+                        <div class="d-flex flex-wrap gap-2">
+                            <span class="capability-badge cap-pk">PK</span>
+                            <span class="capability-badge cap-cg">CG</span>
+                            <span class="capability-badge cap-la">LA</span>
+                        </div>
+                    </div>
+                    
+                    <a href="{{ url_for('demo3.dashboard') }}" class="btn btn-warning w-100 btn-lg">
+                        Launch Demo <i class="bi bi-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Demo 4: Mobility Maestro -->
+        <div class="col-lg-4 col-md-6">
+            <div class="demo-card card h-100 shadow-hover border-0">
+                <div class="card-body p-4">
+                    <div class="demo-header mb-4">
+                        <div class="demo-icon-large mb-3">🔌</div>
+                        <h3 class="card-title mb-2">Mobility Maestro</h3>
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <span class="badge bg-info">Tier 3</span>
+                            <span class="badge bg-secondary">Cognitive Autonomous</span>
+                        </div>
+                    </div>
+                    
+                    <p class="card-text text-muted mb-4">
+                        Intelligent EV charging network optimization across 28 Indian states. 
+                        Location intelligence with multi-factor analysis for strategic placement.
+                    </p>
+                    
+                    <div class="mb-4">
+                        <p class="small fw-semibold text-uppercase text-muted mb-2">Core Capabilities</p>
+                        <div class="d-flex flex-wrap gap-2">
+                            <span class="capability-badge cap-pk">PK</span>
+                            <span class="capability-badge cap-cg">CG</span>
+                            <span class="capability-badge cap-la">LA</span>
+                            <span class="capability-badge cap-ae">AE</span>
+                        </div>
+                    </div>
+                    
+                    <a href="{{ url_for('demo4.dashboard') }}" class="btn btn-info w-100 btn-lg">
+                        Launch Demo <i class="bi bi-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Demo 5: Engineer's Copilot -->
+        <div class="col-lg-4 col-md-6">
+            <div class="demo-card card h-100 shadow-hover border-0">
+                <div class="card-body p-4">
+                    <div class="demo-header mb-4">
+                        <div class="demo-icon-large mb-3">🔬</div>
+                        <h3 class="card-title mb-2">Engineer's Copilot</h3>
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <span class="badge bg-primary">Tier 2-Gen</span>
+                            <span class="badge bg-secondary">Generative Agent</span>
+                        </div>
+                    </div>
+                    
+                    <p class="card-text text-muted mb-4">
+                        Advanced RAG system for lubricant formulation research. 
+                        Multi-lingual assistant with deep knowledge integration and document generation.
+                    </p>
+                    
+                    <div class="mb-4">
+                        <p class="small fw-semibold text-uppercase text-muted mb-2">Core Capabilities</p>
+                        <div class="d-flex flex-wrap gap-2">
+                            <span class="capability-badge cap-pk">PK</span>
+                            <span class="capability-badge cap-cg">CG</span>
+                            <span class="capability-badge cap-la">LA</span>
+                        </div>
+                    </div>
+                    
+                    <a href="{{ url_for('demo5.dashboard') }}" class="btn btn-primary w-100 btn-lg">
+                        Launch Demo <i class="bi bi-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Framework Info Card -->
+        <div class="col-lg-4 col-md-6">
+            <div class="card h-100 bg-dark text-white border-primary">
+                <div class="card-body p-4 d-flex flex-column">
+                    <div class="mb-auto">
+                        <div class="fs-1 mb-3">📊</div>
+                        <h3 class="card-title mb-3">AIA CPT Framework</h3>
+                        <p class="card-text text-white-50 mb-4">
+                            All demos built using the AI Agent Capabilities Periodic Table framework from the Digital Twin Consortium.
+                        </p>
+                    </div>
+                    
+                    <a href="{{ url_for('home.about') }}" class="btn btn-outline-light w-100">
+                        Learn About the Framework <i class="bi bi-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

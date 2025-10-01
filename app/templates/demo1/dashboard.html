@@ -1,0 +1,304 @@
+{% extends "base.html" %}
+
+{% block title %}Carbon Compass Dashboard{% endblock %}
+
+{% block extra_css %}
+<style>
+    .emissions-chart {
+        background: linear-gradient(135deg, #161b22 0%, #21262d 100%);
+        border-radius: 12px;
+        padding: 1.5rem;
+    }
+    
+    .action-timeline {
+        max-height: 400px;
+        overflow-y: auto;
+    }
+    
+    .timeline-item {
+        position: relative;
+        padding-left: 2rem;
+        padding-bottom: 1.5rem;
+    }
+    
+    .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: var(--accent-primary);
+        border: 3px solid var(--bg-secondary);
+    }
+    
+    .timeline-item::after {
+        content: '';
+        position: absolute;
+        left: 5px;
+        top: 12px;
+        width: 2px;
+        height: calc(100% - 12px);
+        background: var(--border-color);
+    }
+    
+    .timeline-item:last-child::after {
+        display: none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-lg-8">
+            <h2 class="mb-2">
+                <span class="demo-icon">🌍</span> Carbon Compass
+            </h2>
+            <p class="text-muted mb-0">
+                <span class="badge bg-success me-2">Tier 3</span>
+                Cognitive Autonomous Agent for Real-time Carbon Budget Management
+            </p>
+        </div>
+        <div class="col-lg-4 text-lg-end">
+            <div class="agent-status active">
+                <span class="spinner-grow spinner-grow-sm text-success"></span>
+                <span class="fw-semibold">Agent Active</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Metric Cards Row -->
+    <div class="row g-4 mb-4">
+        <div class="col-xl-3 col-md-6">
+            <div class="metric-card">
+                <div class="metric-label">Annual Budget</div>
+                <div class="metric-value">{{ budget.total_budget_mt }}</div>
+                <div class="metric-subtitle">Mt CO₂e</div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6">
+            <div class="metric-card">
+                <div class="metric-label">Consumed</div>
+                <div class="metric-value text-info">{{ "%.2f"|format(budget.consumed_mt) }}</div>
+                <div class="metric-subtitle">Mt CO₂e ({{ "%.1f"|format(budget.consumed_percentage) }}%)</div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6">
+            <div class="metric-card">
+                <div class="metric-label">Remaining</div>
+                <div class="metric-value text-warning">{{ "%.2f"|format(budget.remaining_mt) }}</div>
+                <div class="metric-subtitle">Mt CO₂e ({{ "%.1f"|format(100 - budget.consumed_percentage) }}%)</div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6">
+            <div class="metric-card">
+                <div class="metric-label">Status</div>
+                <div class="metric-value">
+                    {% if budget.status.value == 'critical' %}
+                        <span class="badge bg-danger fs-6">CRITICAL</span>
+                    {% elif budget.status.value == 'warning' %}
+                        <span class="badge bg-warning text-dark fs-6">WARNING</span>
+                    {% else %}
+                        <span class="badge bg-success fs-6">HEALTHY</span>
+                    {% endif %}
+                </div>
+                <div class="metric-subtitle">Budget Status</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts and Controls Row -->
+    <div class="row g-4 mb-4">
+        <!-- Real-time Emissions Chart -->
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="bi bi-graph-up text-primary"></i>
+                        Real-Time Emissions Tracking
+                    </h5>
+                    <button class="btn btn-sm btn-outline-secondary" onclick="stopAutoRefresh()">
+                        <i class="bi bi-pause"></i> Pause
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="emissionsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- AI Control Panel -->
+        <div class="col-lg-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-robot text-success"></i>
+                        AI Agent Controls
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-3">
+                        <button class="btn btn-primary btn-lg" 
+                                data-agent-action="recommend" 
+                                data-endpoint="/demo1/api/get-recommendation"
+                                data-original-text="Get AI Recommendation">
+                            <i class="bi bi-lightbulb"></i>
+                            Get AI Recommendation
+                        </button>
+                        
+                        <button class="btn btn-success btn-lg"
+                                data-agent-action="optimize"
+                                data-endpoint="/demo1/api/optimize"
+                                data-original-text="Run Optimization">
+                            <i class="bi bi-gear"></i>
+                            Run Optimization
+                        </button>
+                        
+                        <button class="btn btn-warning btn-lg"
+                                data-agent-action="simulate"
+                                data-endpoint="/demo1/api/simulate-scenario"
+                                data-original-text="Simulate Scenario">
+                            <i class="bi bi-calculator"></i>
+                            Simulate Scenario
+                        </button>
+                    </div>
+                    
+                    <hr class="my-4">
+                    
+                    <div id="agentResponse" class="p-3 rounded bg-dark border">
+                        <p class="small text-muted mb-0 text-center">
+                            Click a button to interact with the AI agent
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions History -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-clock-history"></i>
+                        Recent Agent Actions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="action-timeline">
+                        {% for action in recent_actions %}
+                        <div class="timeline-item">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div>
+                                    <h6 class="mb-1">{{ action.action_type|title }}</h6>
+                                    <p class="small text-muted mb-0">
+                                        {{ action.reasoning[:150] }}...
+                                    </p>
+                                </div>
+                                <span class="badge bg-{{ 'success' if action.status == 'completed' else 'warning' }}">
+                                    {{ action.status|upper }}
+                                </span>
+                            </div>
+                            <div class="small text-muted">
+                                <i class="bi bi-clock"></i>
+                                {{ action.created_at|format_datetime }}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Initialize chart
+let emissionsChart = null;
+
+function initChart() {
+    const ctx = document.getElementById('emissionsChart');
+    if (!ctx) return;
+    
+    emissionsChart = ChartHelpers.createLineChart(ctx, {
+        labels: [],
+        datasets: [{
+            label: 'Current Emissions',
+            data: [],
+            borderColor: ChartHelpers.colors.danger,
+            backgroundColor: 'rgba(248, 81, 73, 0.1)',
+            tension: 0.4,
+            fill: true
+        }, {
+            label: 'Budget Limit',
+            data: [],
+            borderColor: ChartHelpers.colors.warning,
+            backgroundColor: 'transparent',
+            borderDash: [5, 5],
+            tension: 0
+        }]
+    }, {
+        plugins: {
+            title: {
+                display: true,
+                text: 'Emissions vs Budget Over Time',
+                color: '#e6edf3'
+            }
+        }
+    });
+    
+    AppState.charts['emissions'] = emissionsChart;
+}
+
+// Fetch current data
+async function fetchCurrentState() {
+    try {
+        const data = await Utils.apiCall('/demo1/api/current-state');
+        
+        // Update chart
+        if (emissionsChart && data.chart_data) {
+            ChartHelpers.updateChart(emissionsChart, data.chart_data);
+        }
+        
+        // Update metrics if needed
+        if (data.metrics) {
+            updateMetrics(data.metrics);
+        }
+    } catch (error) {
+        console.error('Error fetching state:', error);
+    }
+}
+
+function updateMetrics(metrics) {
+    // Update metric cards with animation
+    document.querySelectorAll('.metric-value').forEach(el => {
+        el.style.transition = 'all 0.3s ease';
+    });
+}
+
+// Handle agent action responses
+document.addEventListener('DOMContentLoaded', () => {
+    initChart();
+    fetchCurrentState();
+    startAutoRefresh(fetchCurrentState, 3000);
+    
+    // Listen for demo updates via Socket.IO
+    document.addEventListener('demoUpdate', (event) => {
+        if (event.detail.demo === 'demo1') {
+            fetchCurrentState();
+        }
+    });
+});
+</script>
+{% endblock %}
