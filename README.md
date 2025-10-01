@@ -142,18 +142,9 @@ Edit `app/config.py` to customize:
 - Demo-specific parameters
 - Simulation intervals
 
-## 🤝 Contributing
-
-This is a demonstration project for the TotalEnergies Innovation Event.
-
-## 📄 License
-
-Internal Use - TotalEnergies
-
 ## 🙏 Credits
 
-**Framework**: AI Agent Capabilities Periodic Table (AIA CPT) by Digital Twin Consortium  
-**Company**: TotalEnergies Digital Innovation  
+**Framework**: AI Agent Capabilities Periodic Table (AIA CPT) by Digital Twin Consortium 
 **Version**: 1.0.0
 
 ---
