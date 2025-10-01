@@ -47,19 +47,19 @@ def create_default_users():
     users = [
         {
             'username': 'demo',
-            'email': 'demo@totalenergies.com',
+            'email': 'demo@demo.com',
             'password': 'demo',
             'role': 'admin'
         },
         {
             'username': 'engineer',
-            'email': 'engineer@totalenergies.com',
+            'email': 'engineer@demo.com',
             'password': 'engineer123',
             'role': 'engineer'
         },
         {
             'username': 'operator',
-            'email': 'operator@totalenergies.com',
+            'email': 'operator@demo.com',
             'password': 'operator123',
             'role': 'operator'
         }

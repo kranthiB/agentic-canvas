@@ -27,9 +27,9 @@ def seed_users():
     logger.info("Seeding users...")
     
     users_data = [
-        {'username': 'demo', 'email': 'demo@totalenergies.com', 'password': 'demo', 'role': 'admin'},
-        {'username': 'engineer', 'email': 'engineer@totalenergies.com', 'password': 'engineer123', 'role': 'engineer'},
-        {'username': 'operator', 'email': 'operator@totalenergies.com', 'password': 'operator123', 'role': 'operator'},
+        {'username': 'demo', 'email': 'demo@demo.com', 'password': 'demo', 'role': 'admin'},
+        {'username': 'engineer', 'email': 'engineer@demo.com', 'password': 'engineer123', 'role': 'engineer'},
+        {'username': 'operator', 'email': 'operator@demo.com', 'password': 'operator123', 'role': 'operator'},
     ]
     
     for user_data in users_data:

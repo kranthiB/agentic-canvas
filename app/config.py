@@ -45,7 +45,6 @@ class Config:
     # Application Settings
     APP_NAME = 'Agentic Canvas'
     APP_VERSION = '1.0.0'
-    APP_AUTHOR = 'TotalEnergies Digital Innovation'
     
     # Demo Configuration
     DEMO_MODE = True

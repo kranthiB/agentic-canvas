@@ -5,9 +5,11 @@
 {% block extra_css %}
 <style>
     .emissions-chart {
-        background: linear-gradient(135deg, #161b22 0%, #21262d 100%);
+        background: var(--bg-card);
         border-radius: 12px;
         padding: 1.5rem;
+        border: 1px solid var(--border-color);
+        box-shadow: var(--shadow-sm);
     }
     
     .action-timeline {
@@ -30,7 +32,7 @@
         height: 12px;
         border-radius: 50%;
         background: var(--accent-primary);
-        border: 3px solid var(--bg-secondary);
+        border: 3px solid var(--bg-elevated);
     }
     
     .timeline-item::after {
@@ -173,7 +175,7 @@
                     
                     <hr class="my-4">
                     
-                    <div id="agentResponse" class="p-3 rounded bg-dark border">
+                    <div id="agentResponse" class="p-3 rounded bg-light border">
                         <p class="small text-muted mb-0 text-center">
                             Click a button to interact with the AI agent
                         </p>
@@ -253,7 +255,7 @@ function initChart() {
             title: {
                 display: true,
                 text: 'Emissions vs Budget Over Time',
-                color: '#e6edf3'
+                color: '#0f172a'
             }
         }
     });

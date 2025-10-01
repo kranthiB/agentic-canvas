@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="dark">
+<html lang="en" data-bs-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Agentic Canvas{% endblock %} | TotalEnergies</title>
+    <title>{% block title %}Agentic Canvas{% endblock %}</title>
     
     <!-- Favicon -->
     <link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}" type="image/x-icon">
@@ -24,7 +24,7 @@
 </head>
 <body>
     <!-- Top Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom sticky-top">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom sticky-top shadow-sm">
         <div class="container-fluid">
             <!-- Brand -->
             <a class="navbar-brand d-flex align-items-center fw-bold" href="{{ url_for('home.index') }}">
@@ -45,7 +45,7 @@
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                             <i class="bi bi-grid-3x3-gap"></i> Demos
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-dark">
+                        <ul class="dropdown-menu">
                             <li>
                                 <a class="dropdown-item" href="{{ url_for('demo1.dashboard') }}">
                                     <span class="demo-icon">🌍</span> Carbon Compass
@@ -61,7 +61,7 @@
                             <li>
                                 <a class="dropdown-item" href="{{ url_for('demo3.dashboard') }}">
                                     <span class="demo-icon">🛡️</span> Safety Guardian
-                                    <span class="badge bg-warning ms-2">T2</span>
+                                    <span class="badge bg-warning text-dark ms-2">T2</span>
                                 </a>
                             </li>
                             <li>
@@ -95,7 +95,7 @@
                                 <i class="bi bi-person-circle fs-5 me-2"></i>
                                 <span>{{ current_user.username }}</span>
                             </a>
-                            <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end">
+                            <ul class="dropdown-menu dropdown-menu-end">
                                 <li><span class="dropdown-item-text small text-muted">Role: {{ current_user.role }}</span></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">
@@ -136,13 +136,12 @@
     </main>
 
     <!-- Footer -->
-    <footer class="footer bg-dark text-light py-4 mt-5 border-top">
+    <footer class="footer bg-white text-dark py-4 mt-5 border-top shadow-sm">
         <div class="container">
             <div class="row">
                 <div class="col-md-6">
                     <h6 class="fw-bold mb-3">Agentic Canvas v{{ app_version }}</h6>
                     <p class="small text-muted mb-0">
-                        TotalEnergies Digital Innovation<br>
                         Powered by AI Agent Capabilities Periodic Table (AIA CPT)
                     </p>
                 </div>

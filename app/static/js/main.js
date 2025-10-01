@@ -187,7 +187,7 @@ const Utils = {
 
 const ChartHelpers = {
     /**
-     * Default chart options with dark theme
+     * Default chart options with vibrant theme
      */
     defaultOptions: {
         responsive: true,
@@ -199,22 +199,29 @@ const ChartHelpers = {
         plugins: {
             legend: {
                 labels: {
-                    color: '#e6edf3',
+                    color: '#1a202c',
                     font: {
                         size: 12,
                         weight: '600'
                     },
-                    padding: 15
+                    padding: 18,
+                    usePointStyle: true,
+                    pointStyle: 'circle'
                 }
             },
             tooltip: {
-                backgroundColor: 'rgba(22, 27, 34, 0.95)',
-                titleColor: '#e6edf3',
-                bodyColor: '#8b949e',
-                borderColor: 'rgba(255, 255, 255, 0.1)',
+                backgroundColor: 'rgba(255, 255, 255, 0.98)',
+                titleColor: '#1a202c',
+                bodyColor: '#4a5568',
+                borderColor: '#e2e8f0',
                 borderWidth: 1,
-                padding: 12,
+                padding: 16,
                 displayColors: true,
+                cornerRadius: 8,
+                shadowOffsetX: 0,
+                shadowOffsetY: 4,
+                shadowBlur: 12,
+                shadowColor: 'rgba(0, 0, 0, 0.15)',
                 callbacks: {
                     label: function(context) {
                         let label = context.dataset.label || '';
@@ -232,21 +239,21 @@ const ChartHelpers = {
         scales: {
             y: {
                 ticks: { 
-                    color: '#8b949e',
-                    font: { size: 11 }
+                    color: '#4a5568',
+                    font: { size: 11, weight: '500' }
                 },
                 grid: { 
-                    color: 'rgba(255, 255, 255, 0.05)',
+                    color: '#edf2f7',
                     drawBorder: false
                 }
             },
             x: {
                 ticks: { 
-                    color: '#8b949e',
-                    font: { size: 11 }
+                    color: '#4a5568',
+                    font: { size: 11, weight: '500' }
                 },
                 grid: { 
-                    color: 'rgba(255, 255, 255, 0.05)',
+                    color: '#edf2f7',
                     drawBorder: false
                 }
             }
@@ -257,14 +264,14 @@ const ChartHelpers = {
      * Color schemes for charts
      */
     colors: {
-        primary: '#00d4ff',
-        secondary: '#58a6ff',
-        success: '#3fb950',
-        warning: '#d29922',
-        danger: '#f85149',
-        info: '#79c0ff',
-        purple: '#cc5de8',
-        orange: '#ff922b'
+        primary: '#0066ff',
+        secondary: '#4285f4',
+        success: '#00c851',
+        warning: '#ff9500',
+        danger: '#ff3547',
+        info: '#00bcd4',
+        purple: '#9c27b0',
+        orange: '#ff6f00'
     },
     
     /**
@@ -311,8 +318,9 @@ const ChartHelpers = {
                 legend: {
                     position: 'bottom',
                     labels: {
-                        color: '#e6edf3',
-                        padding: 20
+                        color: '#1a202c',
+                        padding: 20,
+                        usePointStyle: true
                     }
                 }
             }
