@@ -49,6 +49,33 @@
         border-radius: 12px;
         overflow: hidden;
     }
+    
+    /* Fix table header visibility */
+    .table-dark th {
+        color: white !important;
+        background-color: #343a40 !important;
+        border-color: #454d55 !important;
+    }
+    
+    .consensus-decisions-table {
+        background: var(--bg-card);
+    }
+    
+    .consensus-decisions-table thead th {
+        background: linear-gradient(135deg, #343a40 0%, #495057 100%);
+        color: white;
+        font-weight: 600;
+        border-bottom: 2px solid #dee2e6;
+        padding: 1rem 0.75rem;
+    }
+    
+    .consensus-decisions-table tbody tr {
+        border-bottom: 1px solid var(--border-light);
+    }
+    
+    .consensus-decisions-table tbody tr:hover {
+        background-color: var(--bg-tertiary);
+    }
 </style>
 {% endblock %}
 
@@ -297,7 +324,7 @@
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-dark table-hover">
+                        <table class="table consensus-decisions-table">
                             <thead>
                                 <tr>
                                     <th>Timestamp</th>

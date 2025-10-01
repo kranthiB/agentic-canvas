@@ -66,6 +66,49 @@
     .permit-card:hover {
         transform: translateX(4px);
     }
+    
+    /* Compact metric cards */
+    .metric-card {
+        padding: 0.75rem 0.5rem !important;
+        min-height: 90px;
+    }
+    
+    .metric-value {
+        font-size: 1.8rem !important;
+        margin: 0.2rem 0 !important;
+    }
+    
+    .metric-label {
+        font-size: 0.7rem !important;
+        line-height: 1.2;
+        font-weight: 600;
+    }
+    
+    .metric-subtitle {
+        font-size: 0.6rem !important;
+        line-height: 1.1;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .metric-value {
+            font-size: 1.5rem !important;
+        }
+        
+        .risk-indicator {
+            width: 60px !important;
+            height: 60px !important;
+            font-size: 0.8rem !important;
+        }
+    }
+    
+    @media (max-width: 992px) {
+        .risk-indicator {
+            width: 60px !important;
+            height: 60px !important;
+            font-size: 0.8rem !important;
+        }
+    }
 </style>
 {% endblock %}
 
@@ -94,21 +137,43 @@
     </div>
 
     <!-- Risk Overview -->
-    <div class="row g-4 mb-4">
-        <div class="col-lg-3">
-            <div class="card text-center">
-                <div class="card-body">
-                    <h6 class="text-muted mb-3">Current Risk Level</h6>
-                    <div class="risk-indicator {{ current_risk }} mx-auto">
-                        {{ current_risk|upper }}
+    <div class="row g-2 mb-4">
+        <div class="col-xl-2 col-lg-3 col-md-3 col-sm-4">
+            <div class="card h-100">
+                <div class="card-body p-2 d-flex flex-column align-items-center">
+                    <div class="text-muted mb-2 text-center" style="font-size: 0.75rem; font-weight: 600;">Risk Level</div>
+                    <div class="d-flex align-items-center justify-content-center w-100">
+                        <div class="risk-indicator {{ current_risk }}" style="width: 50px; height: 50px; font-size: 0.7rem; flex-shrink: 0;">
+                            {{ current_risk|upper }}
+                        </div>
+                        <div class="ms-2">
+                            <div class="text-muted mb-1" style="font-size: 0.65rem; line-height: 1.2;">
+                                {% if current_risk == 'low' %}
+                                    <div>✅ Normal</div>
+                                    <div style="font-size: 0.6rem;">All systems OK</div>
+                                {% elif current_risk == 'medium' %}
+                                    <div>⚠️ Elevated</div>
+                                    <div style="font-size: 0.6rem;">Monitor closely</div>
+                                {% elif current_risk == 'high' %}
+                                    <div>🚨 High Risk</div>
+                                    <div style="font-size: 0.6rem;">Action needed</div>
+                                {% elif current_risk == 'critical' %}
+                                    <div>🔴 CRITICAL</div>
+                                    <div style="font-size: 0.6rem;">Immediate action</div>
+                                {% endif %}
+                            </div>
+                            <button class="btn btn-outline-info btn-sm py-0 px-1" style="font-size: 0.6rem;" data-bs-toggle="modal" data-bs-target="#riskCalculationModal">
+                                <i class="bi bi-info-circle"></i> Info
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-lg-9">
-            <div class="row g-3">
-                <div class="col-md-3">
+        <div class="col-xl-10 col-lg-9 col-md-9 col-sm-8">
+            <div class="row g-2">
+                <div class="col-6 col-xl-3 col-lg-6">
                     <div class="metric-card">
                         <div class="metric-label">Active Permits</div>
                         <div class="metric-value text-primary">{{ stats.active_permits }}</div>
@@ -116,7 +181,7 @@
                     </div>
                 </div>
                 
-                <div class="col-md-3">
+                <div class="col-6 col-xl-3 col-lg-6">
                     <div class="metric-card">
                         <div class="metric-label">Pending Review</div>
                         <div class="metric-value text-warning">{{ stats.pending_permits }}</div>
@@ -124,7 +189,7 @@
                     </div>
                 </div>
                 
-                <div class="col-md-3">
+                <div class="col-6 col-xl-3 col-lg-6">
                     <div class="metric-card">
                         <div class="metric-label">Conflicts Detected</div>
                         <div class="metric-value text-danger">{{ stats.conflicts_today }}</div>
@@ -132,7 +197,7 @@
                     </div>
                 </div>
                 
-                <div class="col-md-3">
+                <div class="col-6 col-xl-3 col-lg-6">
                     <div class="metric-card">
                         <div class="metric-label">Compliance Rate</div>
                         <div class="metric-value text-success">{{ "%.1f"|format(stats.compliance_rate) }}%</div>
@@ -168,13 +233,15 @@
                                     <span class="fs-4 fw-bold text-{{ 'danger' if reading.status == 'alarm' else 'success' }}">
                                         {{ "%.2f"|format(reading.value) }}
                                     </span>
-                                    <span class="small text-muted">{{ reading.unit }}</span>
+                                    <span class="small text-muted">
+                                        {% if gas == 'O2' or gas == 'LEL' %}%{% else %}ppm{% endif %}
+                                    </span>
                                 </div>
                                 <div class="progress mt-2" style="height: 4px;">
                                     <div class="progress-bar bg-{{ 'danger' if reading.status == 'alarm' else 'success' }}" 
                                          style="width: {{ (reading.value / reading.threshold * 100)|clamp(0, 100) }}%"></div>
                                 </div>
-                                <small class="text-muted">Threshold: {{ reading.threshold }} {{ reading.unit }}</small>
+                                <small class="text-muted">Threshold: {{ reading.threshold }} {% if gas == 'O2' or gas == 'LEL' %}%{% else %}ppm{% endif %}</small>
                             </div>
                         </div>
                         {% endfor %}
@@ -280,6 +347,110 @@
         </div>
     </div>
 </div>
+
+<!-- Risk Calculation Explanation Modal -->
+<div class="modal fade" id="riskCalculationModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; font-size: 1.25rem; font-weight: 600;">
+                    <i class="bi bi-shield-check text-warning"></i>
+                    Risk Level Calculation
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-dark" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;">
+                <p class="text-dark mb-3" style="font-size: 1rem; line-height: 1.5;">The <strong>Current Risk Level</strong> is calculated in real-time by the Safety Guardian AI agent using multiple safety factors:</p>
+                
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="card border-danger">
+                            <div class="card-header" style="background-color: #fff5f5; border-bottom: 2px solid #dc2626;">
+                                <strong style="color: #dc2626; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; font-size: 0.95rem;">🔴 CRITICAL Risk</strong>
+                            </div>
+                            <div class="card-body" style="background-color: #fff5f5;">
+                                <ul class="mb-0 text-danger fw-semibold" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; font-size: 0.875rem; line-height: 1.4;">
+                                    <li>Gas alarms triggered (O₂, LEL, H₂S, CO)</li>
+                                    <li>Critical permit conflicts detected</li>
+                                    <li>Incompatible activities (hot work + confined space)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card border-warning">
+                            <div class="card-header" style="background-color: #fffbeb; border-bottom: 2px solid #d97706;">
+                                <strong style="color: #d97706; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; font-size: 0.95rem;">🟡 HIGH Risk</strong>
+                            </div>
+                            <div class="card-body" style="background-color: #fffbeb;">
+                                <ul class="mb-0 fw-semibold" style="color: #d97706; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; font-size: 0.875rem; line-height: 1.4;">
+                                    <li>Gas readings approaching thresholds</li>
+                                    <li>High-severity permit conflicts</li>
+                                    <li>Excessive permit activity (>8 active)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card border-info">
+                            <div class="card-header" style="background-color: #f0f9ff; border-bottom: 2px solid #0ea5e9;">
+                                <strong style="color: #0ea5e9; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; font-size: 0.95rem;">🔵 MEDIUM Risk</strong>
+                            </div>
+                            <div class="card-body" style="background-color: #f0f9ff;">
+                                <ul class="mb-0 fw-semibold" style="color: #0ea5e9; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; font-size: 0.875rem; line-height: 1.4;">
+                                    <li>Moderate permit conflicts</li>
+                                    <li>High permit volume (5-8 active)</li>
+                                    <li>Multiple minor safety issues</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card border-success">
+                            <div class="card-header" style="background-color: #f0fdf4; border-bottom: 2px solid #16a34a;">
+                                <strong style="color: #16a34a; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; font-size: 0.95rem;">🟢 LOW Risk</strong>
+                            </div>
+                            <div class="card-body" style="background-color: #f0fdf4;">
+                                <ul class="mb-0 fw-semibold" style="color: #16a34a; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; font-size: 0.875rem; line-height: 1.4;">
+                                    <li>All gas readings within safe limits</li>
+                                    <li>No permit conflicts detected</li>
+                                    <li>Normal operational activity</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <h6 class="text-dark" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; font-size: 1.1rem; font-weight: 600;">Safety Monitoring Parameters:</h6>
+                    <div class="row text-dark" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; font-size: 0.875rem; line-height: 1.4;">
+                        <div class="col-md-6">
+                            <ul>
+                                <li><strong>Gas Sensors:</strong> O₂, LEL, H₂S, CO levels</li>
+                                <li><strong>Permit Analysis:</strong> Spatial proximity conflicts</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <ul>
+                                <li><strong>Temporal Conflicts:</strong> Overlapping work schedules</li>
+                                <li><strong>Activity Types:</strong> Incompatible work combinations</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="location.href='/demo3/risk-heatmap'">
+                    <i class="bi bi-diagram-3"></i> View 3D Risk Heatmap
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block extra_js %}
@@ -328,6 +499,12 @@ async function fetchGasReadings() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Initialize tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+    
     startAutoRefresh(fetchGasReadings, 2000); // Every 2 seconds for safety
 });
 </script>

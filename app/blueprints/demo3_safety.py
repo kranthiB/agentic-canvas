@@ -102,6 +102,42 @@ def dashboard():
     ).count()
     compliance_rate = (approved_permits / total_permits * 100) if total_permits > 0 else 100.0
     
+    # Calculate current risk level based on gas readings and conflicts
+    current_risk = 'low'  # Default
+    
+    # Check for gas hazards
+    if gas_readings:
+        for gas, reading in gas_readings.items():
+            if reading.get('status') == 'alarm':
+                current_risk = 'critical'
+                break
+            elif reading.get('status') == 'warning':
+                if current_risk != 'critical':
+                    current_risk = 'high'
+    
+    # Check for conflicts
+    if conflicts:
+        unresolved_critical = any(
+            conflict.severity == RiskLevel.CRITICAL for conflict in conflicts
+        )
+        unresolved_high = any(
+            conflict.severity == RiskLevel.HIGH for conflict in conflicts
+        )
+        
+        if unresolved_critical:
+            current_risk = 'critical'
+        elif unresolved_high and current_risk not in ['critical']:
+            current_risk = 'high'
+        elif conflicts and current_risk == 'low':
+            current_risk = 'medium'
+    
+    # Consider number of active permits
+    if active_count > 5 and current_risk == 'low':
+        current_risk = 'medium'
+    elif active_count > 8:
+        if current_risk not in ['critical']:
+            current_risk = 'high'
+    
     stats = {
         'active_permits': active_count,
         'pending_permits': pending_permits,
@@ -117,7 +153,8 @@ def dashboard():
         conflicts=conflicts,
         heatmap=heatmap,
         agent_status=safety_agent.get_status(),
-        stats=stats
+        stats=stats,
+        current_risk=current_risk
     )
 
 @demo3_bp.route('/api/gas-readings')
