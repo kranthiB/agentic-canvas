@@ -48,32 +48,47 @@
                         <ul class="dropdown-menu">
                             <li>
                                 <a class="dropdown-item" href="{{ url_for('demo1.dashboard') }}">
-                                    <span class="demo-icon">🌍</span> Carbon Compass
-                                    <span class="badge bg-success ms-2">T3</span>
+                                    <span class="demo-icon nav-carbon-icon">
+                                        <i class="bi bi-compass" style="color: #1B5E20;"></i>
+                                        <i class="bi bi-leaf" style="color: #4CAF50; font-size: 0.6rem; position: absolute; margin-left: -0.4rem; margin-top: 0.2rem;"></i>
+                                    </span> Carbon Compass
+                                    <span class="badge ms-2" style="background: var(--gradient-carbon); color: white;">T3</span>
                                 </a>
                             </li>
                             <li>
                                 <a class="dropdown-item" href="{{ url_for('demo2.dashboard') }}">
-                                    <span class="demo-icon">⚡</span> GridMind AI
-                                    <span class="badge bg-danger ms-2">T4</span>
+                                    <span class="demo-icon nav-grid-icon">
+                                        <i class="bi bi-diagram-3" style="color: #0D47A1;"></i>
+                                        <i class="bi bi-lightning-charge" style="color: #2196F3; font-size: 0.6rem; position: absolute; margin-left: -0.3rem; margin-top: -0.1rem;"></i>
+                                    </span> GridMind AI
+                                    <span class="badge ms-2" style="background: var(--gradient-grid); color: white;">T4</span>
                                 </a>
                             </li>
                             <li>
                                 <a class="dropdown-item" href="{{ url_for('demo3.dashboard') }}">
-                                    <span class="demo-icon">🛡️</span> Safety Guardian
-                                    <span class="badge bg-warning text-dark ms-2">T2</span>
+                                    <span class="demo-icon nav-safety-icon">
+                                        <i class="bi bi-shield-check" style="color: #E65100;"></i>
+                                        <i class="bi bi-eye" style="color: #FF9800; font-size: 0.5rem; position: absolute; margin-left: -0.5rem; margin-top: 0.1rem;"></i>
+                                    </span> Safety Guardian
+                                    <span class="badge ms-2" style="background: var(--gradient-safety); color: white;">T2</span>
                                 </a>
                             </li>
                             <li>
                                 <a class="dropdown-item" href="{{ url_for('demo4.dashboard') }}">
-                                    <span class="demo-icon">🔌</span> Mobility Maestro
-                                    <span class="badge bg-info ms-2">T3</span>
+                                    <span class="demo-icon nav-mobility-icon">
+                                        <i class="bi bi-ev-station" style="color: #006064;"></i>
+                                        <i class="bi bi-geo-alt" style="color: #00ACC1; font-size: 0.5rem; position: absolute; margin-left: -0.2rem; margin-top: -0.2rem;"></i>
+                                    </span> Mobility Maestro
+                                    <span class="badge ms-2" style="background: var(--gradient-mobility); color: white;">T3</span>
                                 </a>
                             </li>
                             <li>
                                 <a class="dropdown-item" href="{{ url_for('demo5.dashboard') }}">
-                                    <span class="demo-icon">🔬</span> Engineer's Copilot
-                                    <span class="badge bg-primary ms-2">T2-Gen</span>
+                                    <span class="demo-icon nav-copilot-icon">
+                                        <i class="bi bi-cpu" style="color: #3949AB;"></i>
+                                        <i class="bi bi-gear" style="color: #7C4DFF; font-size: 0.5rem; position: absolute; margin-left: -0.2rem; margin-top: -0.3rem;"></i>
+                                    </span> Engineer's Copilot
+                                    <span class="badge ms-2" style="background: var(--gradient-copilot); color: white;">T2-Gen</span>
                                 </a>
                             </li>
                         </ul>

@@ -42,10 +42,15 @@
             <div class="demo-card card h-100 shadow-hover border-0">
                 <div class="card-body p-4">
                     <div class="demo-header mb-4">
-                        <div class="demo-icon-large mb-3">🌍</div>
+                        <div class="demo-icon-large mb-3">
+                            <div class="carbon-compass-icon">
+                                <i class="bi bi-compass" style="font-size: 2.5rem; color: #1B5E20; position: relative;"></i>
+                                <i class="bi bi-leaf" style="font-size: 1.2rem; color: #4CAF50; position: absolute; margin-left: -1rem; margin-top: 0.5rem;"></i>
+                            </div>
+                        </div>
                         <h3 class="card-title mb-2">Carbon Compass</h3>
                         <div class="d-flex align-items-center gap-2 mb-2">
-                            <span class="badge bg-success">Tier 3</span>
+                            <span class="badge" style="background: var(--gradient-carbon); color: white;">Tier 3</span>
                             <span class="badge bg-secondary">Cognitive Autonomous</span>
                         </div>
                     </div>
@@ -65,7 +70,7 @@
                         </div>
                     </div>
                     
-                    <a href="{{ url_for('demo1.dashboard') }}" class="btn btn-success w-100 btn-lg">
+                    <a href="{{ url_for('demo1.dashboard') }}" class="btn btn-carbon w-100 btn-lg">
                         Launch Demo <i class="bi bi-arrow-right ms-2"></i>
                     </a>
                 </div>
@@ -77,10 +82,15 @@
             <div class="demo-card card h-100 shadow-hover border-0">
                 <div class="card-body p-4">
                     <div class="demo-header mb-4">
-                        <div class="demo-icon-large mb-3">⚡</div>
+                        <div class="demo-icon-large mb-3">
+                            <div class="grid-mind-icon">
+                                <i class="bi bi-diagram-3" style="font-size: 2.5rem; color: #0D47A1; position: relative;"></i>
+                                <i class="bi bi-lightning-charge" style="font-size: 1.2rem; color: #2196F3; position: absolute; margin-left: -0.8rem; margin-top: -0.3rem;"></i>
+                            </div>
+                        </div>
                         <h3 class="card-title mb-2">GridMind AI</h3>
                         <div class="d-flex align-items-center gap-2 mb-2">
-                            <span class="badge bg-danger">Tier 4</span>
+                            <span class="badge" style="background: var(--gradient-grid); color: white;">Tier 4</span>
                             <span class="badge bg-secondary">Multi-Agent System</span>
                         </div>
                     </div>
@@ -101,7 +111,7 @@
                         </div>
                     </div>
                     
-                    <a href="{{ url_for('demo2.dashboard') }}" class="btn btn-danger w-100 btn-lg">
+                    <a href="{{ url_for('demo2.dashboard') }}" class="btn btn-grid w-100 btn-lg">
                         Launch Demo <i class="bi bi-arrow-right ms-2"></i>
                     </a>
                 </div>
@@ -113,10 +123,15 @@
             <div class="demo-card card h-100 shadow-hover border-0">
                 <div class="card-body p-4">
                     <div class="demo-header mb-4">
-                        <div class="demo-icon-large mb-3">🛡️</div>
+                        <div class="demo-icon-large mb-3">
+                            <div class="safety-guardian-icon">
+                                <i class="bi bi-shield-check" style="font-size: 2.5rem; color: #E65100; position: relative;"></i>
+                                <i class="bi bi-eye" style="font-size: 1rem; color: #FF9800; position: absolute; margin-left: -1.2rem; margin-top: 0.3rem;"></i>
+                            </div>
+                        </div>
                         <h3 class="card-title mb-2">Safety Guardian</h3>
                         <div class="d-flex align-items-center gap-2 mb-2">
-                            <span class="badge bg-warning text-dark">Tier 2</span>
+                            <span class="badge" style="background: var(--gradient-safety); color: white;">Tier 2</span>
                             <span class="badge bg-secondary">Reasoning Agent</span>
                         </div>
                     </div>
@@ -135,7 +150,7 @@
                         </div>
                     </div>
                     
-                    <a href="{{ url_for('demo3.dashboard') }}" class="btn btn-warning w-100 btn-lg">
+                    <a href="{{ url_for('demo3.dashboard') }}" class="btn btn-safety w-100 btn-lg">
                         Launch Demo <i class="bi bi-arrow-right ms-2"></i>
                     </a>
                 </div>
@@ -147,10 +162,15 @@
             <div class="demo-card card h-100 shadow-hover border-0">
                 <div class="card-body p-4">
                     <div class="demo-header mb-4">
-                        <div class="demo-icon-large mb-3">🔌</div>
+                        <div class="demo-icon-large mb-3">
+                            <div class="mobility-maestro-icon">
+                                <i class="bi bi-ev-station" style="font-size: 2.5rem; color: #006064; position: relative;"></i>
+                                <i class="bi bi-geo-alt" style="font-size: 1rem; color: #00ACC1; position: absolute; margin-left: -0.5rem; margin-top: -0.5rem;"></i>
+                            </div>
+                        </div>
                         <h3 class="card-title mb-2">Mobility Maestro</h3>
                         <div class="d-flex align-items-center gap-2 mb-2">
-                            <span class="badge bg-info">Tier 3</span>
+                            <span class="badge" style="background: var(--gradient-mobility); color: white;">Tier 3</span>
                             <span class="badge bg-secondary">Cognitive Autonomous</span>
                         </div>
                     </div>
@@ -170,7 +190,7 @@
                         </div>
                     </div>
                     
-                    <a href="{{ url_for('demo4.dashboard') }}" class="btn btn-info w-100 btn-lg">
+                    <a href="{{ url_for('demo4.dashboard') }}" class="btn btn-mobility w-100 btn-lg">
                         Launch Demo <i class="bi bi-arrow-right ms-2"></i>
                     </a>
                 </div>
@@ -182,10 +202,15 @@
             <div class="demo-card card h-100 shadow-hover border-0">
                 <div class="card-body p-4">
                     <div class="demo-header mb-4">
-                        <div class="demo-icon-large mb-3">🔬</div>
+                        <div class="demo-icon-large mb-3">
+                            <div class="copilot-icon">
+                                <i class="bi bi-cpu" style="font-size: 2.5rem; color: #3949AB; position: relative;"></i>
+                                <i class="bi bi-gear" style="font-size: 1rem; color: #7C4DFF; position: absolute; margin-left: -0.5rem; margin-top: -0.8rem;"></i>
+                            </div>
+                        </div>
                         <h3 class="card-title mb-2">Engineer's Copilot</h3>
                         <div class="d-flex align-items-center gap-2 mb-2">
-                            <span class="badge bg-primary">Tier 2-Gen</span>
+                            <span class="badge" style="background: var(--gradient-copilot); color: white;">Tier 2-Gen</span>
                             <span class="badge bg-secondary">Generative Agent</span>
                         </div>
                     </div>
@@ -204,7 +229,7 @@
                         </div>
                     </div>
                     
-                    <a href="{{ url_for('demo5.dashboard') }}" class="btn btn-primary w-100 btn-lg">
+                    <a href="{{ url_for('demo5.dashboard') }}" class="btn btn-copilot w-100 btn-lg">
                         Launch Demo <i class="bi bi-arrow-right ms-2"></i>
                     </a>
                 </div>
