@@ -836,6 +836,12 @@
     transform: translateY(0);
 }
 
+/* Wider tooltip for technical details */
+.tooltip-custom.wide {
+    min-width: 350px;
+    max-width: 480px;
+}
+
 .tooltip-custom h5 {
     color: #4299e1;
     margin: 0 0 8px 0;
@@ -1000,98 +1006,601 @@
                 </div>
             </div>
             
-            <div class="system-node" id="node-Unified-Gateway" style="left: 50px; top: 240px;">
+            <div class="system-node" id="node-Unified-Gateway" style="left: 50px; top: 240px;" data-tooltip="unified-gateway">
                 <div class="node-icon"><i class="bi bi-router"></i></div>
                 <div class="node-label">Unified Gateway</div>
                 <div class="node-status">API + WebSocket</div>
             </div>
             
+            <!-- Unified Gateway Tooltip -->
+            <div class="tooltip-custom" id="unifiedGatewayTooltip">
+                <h5><i class="bi bi-router me-2"></i>Unified Gateway</h5>
+                <div style="font-size: 11px; line-height: 1.5; color: #cbd5e1;">
+                    <p style="margin-bottom: 8px;">
+                        <strong>Purpose:</strong> Central entry point that routes all user requests and manages communication protocols.
+                    </p>
+                    <p style="margin-bottom: 8px;">
+                        <strong>Capabilities:</strong>
+                        • REST API endpoints for synchronous requests<br>
+                        • WebSocket connections for real-time updates<br>
+                        • Authentication and authorization<br>
+                        • Request validation and routing
+                    </p>
+                    <p style="margin-bottom: 0;">
+                        <strong>Abbreviations:</strong> API (Application Programming Interface)
+                    </p>
+                </div>
+            </div>
+            
             <!-- Column 2: Orchestration (x: 290) -->
-            <div class="system-node" id="node-Orchestrator" style="left: 290px; top: 160px;">
+            <div class="system-node" id="node-Orchestrator" style="left: 290px; top: 160px;" data-tooltip="orchestrator">
                 <div class="node-icon"><i class="bi bi-diagram-3"></i></div>
                 <div class="node-label">Orchestrator</div>
                 <div class="node-status">Coordinating</div>
             </div>
             
+            <!-- Orchestrator Tooltip -->
+            <div class="tooltip-custom" id="orchestratorTooltip">
+                <h5><i class="bi bi-diagram-3 me-2"></i>Orchestrator (Coordinator)</h5>
+                <div style="font-size: 11px; line-height: 1.5; color: #cbd5e1;">
+                    <p style="margin-bottom: 8px;">
+                        <strong>Purpose:</strong> Central coordination engine that manages complex multi-agent workflows and decision routing.
+                    </p>
+                    <p style="margin-bottom: 8px;">
+                        <strong>Capabilities:</strong>
+                        • Intelligent agent selection and routing<br>
+                        • Workflow orchestration and sequencing<br>
+                        • Context management across agent interactions<br>
+                        • Result aggregation and synthesis<br>
+                        • Load balancing and resource optimization
+                    </p>
+                    <p style="margin-bottom: 0;">
+                        <strong>Function:</strong> Acts as the "brain" that determines which AI agents to activate based on query context and coordinates their collaborative responses.
+                    </p>
+                </div>
+            </div>
+            
             <!-- Column 3: AI Agents (x: 530) -->
-            <div class="system-node" id="node-FormulationAgent" style="left: 530px; top: 100px;">
+            <div class="system-node" id="node-FormulationAgent" style="left: 530px; top: 100px;" data-tooltip="formulation-agent">
                 <div class="node-icon"><i class="bi bi-beaker"></i></div>
                 <div class="node-label">Formulation Agent</div>
                 <div class="node-status">Ready</div>
             </div>
             
-            <div class="system-node" id="node-TestProtocolAgent" style="left: 530px; top: 220px;">
+            <!-- Formulation Agent Tooltip -->
+            <div class="tooltip-custom" id="formulationAgentTooltip">
+                <h5><i class="bi bi-beaker me-2"></i>Formulation Agent</h5>
+                <div style="font-size: 11px; line-height: 1.5; color: #cbd5e1;">
+                    <p style="margin-bottom: 8px;">
+                        <strong>Purpose:</strong> Specialized AI agent for chemical product formulation, optimization, and ingredient analysis.
+                    </p>
+                    <p style="margin-bottom: 8px;">
+                        <strong>Capabilities:</strong>
+                        • Chemical composition analysis and optimization<br>
+                        • Ingredient compatibility assessment<br>
+                        • Cost-performance trade-off analysis<br>
+                        • Alternative formulation suggestions<br>
+                        • Material property predictions<br>
+                        • Recipe scaling and conversion
+                    </p>
+                    <p style="margin-bottom: 8px;">
+                        <strong>Data Sources:</strong> PLM systems, historical formulations, chemical databases, cost data from SAP ERP.
+                    </p>
+                    <p style="margin-bottom: 0;">
+                        <strong>Key Users:</strong> Formulation Engineers, R&D Engineers, Product Development Teams.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="system-node" id="node-TestProtocolAgent" style="left: 530px; top: 220px;" data-tooltip="protocol-agent">
                 <div class="node-icon"><i class="bi bi-clipboard-check"></i></div>
                 <div class="node-label">Protocol Agent</div>
                 <div class="node-status">Ready</div>
             </div>
             
-            <div class="system-node" id="node-RegulatoryAgent" style="left: 530px; top: 340px;">
+            <!-- Protocol Agent Tooltip -->
+            <div class="tooltip-custom" id="protocolAgentTooltip">
+                <h5><i class="bi bi-clipboard-check me-2"></i>Protocol Agent (Test Protocol Agent)</h5>
+                <div style="font-size: 11px; line-height: 1.5; color: #cbd5e1;">
+                    <p style="margin-bottom: 8px;">
+                        <strong>Purpose:</strong> Specialized AI agent for quality control testing, protocol design, and analytical method development.
+                    </p>
+                    <p style="margin-bottom: 8px;">
+                        <strong>Capabilities:</strong>
+                        • Test protocol generation and optimization<br>
+                        • Quality control method selection<br>
+                        • Analytical procedure development<br>
+                        • Test result interpretation and analysis<br>
+                        • QC failure investigation and root cause analysis<br>
+                        • Method validation and verification guidance
+                    </p>
+                    <p style="margin-bottom: 8px;">
+                        <strong>Data Sources:</strong> LIMS (Laboratory Information Management System), historical test data, analytical method databases, quality standards.
+                    </p>
+                    <p style="margin-bottom: 0;">
+                        <strong>Key Users:</strong> Quality Control Managers, Quality Analysts, Process Engineers, Technical Service teams.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="system-node" id="node-RegulatoryAgent" style="left: 530px; top: 340px;" data-tooltip="regulatory-agent">
                 <div class="node-icon"><i class="bi bi-shield-check"></i></div>
                 <div class="node-label">Regulatory Agent</div>
                 <div class="node-status">Ready</div>
             </div>
             
-            <div class="system-node" id="node-SupplyChainAgent" style="left: 530px; top: 460px;">
+            <!-- Regulatory Agent Tooltip -->
+            <div class="tooltip-custom" id="regulatoryAgentTooltip">
+                <h5><i class="bi bi-shield-check me-2"></i>Regulatory Agent</h5>
+                <div style="font-size: 11px; line-height: 1.5; color: #cbd5e1;">
+                    <p style="margin-bottom: 8px;">
+                        <strong>Purpose:</strong> Specialized AI agent for regulatory compliance, safety standards verification, and legal requirement assessment.
+                    </p>
+                    <p style="margin-bottom: 8px;">
+                        <strong>Capabilities:</strong>
+                        • Regulatory compliance verification and validation<br>
+                        • Safety data sheet (SDS) analysis and generation<br>
+                        • International standards mapping (ISO, ASTM, API)<br>
+                        • Hazard classification and risk assessment<br>
+                        • Labeling and documentation requirements<br>
+                        • Regulatory change monitoring and impact analysis
+                    </p>
+                    <p style="margin-bottom: 8px;">
+                        <strong>Data Sources:</strong> Regulatory databases, safety standards (OSHA, EPA, REACH), international compliance frameworks, hazard databases.
+                    </p>
+                    <p style="margin-bottom: 0;">
+                        <strong>Key Users:</strong> Regulatory Affairs specialists, Compliance Officers, Safety Engineers, Product Development teams, Legal departments.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="system-node" id="node-SupplyChainAgent" style="left: 530px; top: 460px;" data-tooltip="supply-chain-agent">
                 <div class="node-icon"><i class="bi bi-truck"></i></div>
                 <div class="node-label">Supply Chain Agent</div>
                 <div class="node-status">Ready</div>
             </div>
             
+            <!-- Supply Chain Agent Tooltip -->
+            <div class="tooltip-custom" id="supplyChainAgentTooltip">
+                <h5><i class="bi bi-truck me-2"></i>Supply Chain Agent</h5>
+                <div style="font-size: 11px; line-height: 1.5; color: #cbd5e1;">
+                    <p style="margin-bottom: 8px;">
+                        <strong>Purpose:</strong> Specialized AI agent for supply chain optimization, procurement strategy, and supplier relationship management.
+                    </p>
+                    <p style="margin-bottom: 8px;">
+                        <strong>Capabilities:</strong>
+                        • Supplier qualification and performance analysis<br>
+                        • Material availability and lead time forecasting<br>
+                        • Cost optimization and procurement strategy<br>
+                        • Supply risk assessment and mitigation<br>
+                        • Alternative sourcing recommendations<br>
+                        • Inventory optimization and demand planning
+                    </p>
+                    <p style="margin-bottom: 8px;">
+                        <strong>Data Sources:</strong> SAP ERP (inventory, purchasing), Supplier Portal, market intelligence, logistics data, historical procurement records.
+                    </p>
+                    <p style="margin-bottom: 0;">
+                        <strong>Key Users:</strong> Supply Chain Managers, Procurement Specialists, Production Planners, Regional Managers, Plant Managers.
+                    </p>
+                </div>
+            </div>
+            
             <!-- Column 4: AI Infrastructure (x: 770) -->
-            <div class="system-node" id="node-RAG_Engine" style="left: 770px; top: 100px;">
+            <div class="system-node" id="node-RAG_Engine" style="left: 770px; top: 100px;" data-tooltip="rag-engine">
                 <div class="node-icon"><i class="bi bi-search"></i></div>
                 <div class="node-label">RAG Engine</div>
                 <div class="node-status">Processing</div>
             </div>
             
-            <div class="system-node" id="node-Vector_DB" style="left: 770px; top: 250px;">
+            <!-- RAG Engine Tooltip -->
+            <div class="tooltip-custom" id="ragEngineTooltip">
+                <h5><i class="bi bi-search me-2"></i>RAG Engine</h5>
+                <div style="font-size: 11px; line-height: 1.5; color: #cbd5e1;">
+                    <p style="margin-bottom: 8px;">
+                        <strong>Purpose:</strong> Retrieval-Augmented Generation system that combines document retrieval with AI generation for contextually accurate responses.
+                    </p>
+                    <p style="margin-bottom: 8px;">
+                        <strong>Capabilities:</strong>
+                        • Semantic document search and retrieval<br>
+                        • Context-aware information extraction<br>
+                        • Knowledge base querying and synthesis<br>
+                        • Multi-source information aggregation<br>
+                        • Real-time content indexing and updating
+                    </p>
+                    <p style="margin-bottom: 8px;">
+                        <strong>Data Sources:</strong> Technical documents, formulation databases, regulatory guidelines, historical reports, best practices.
+                    </p>
+                    <p style="margin-bottom: 0;">
+                        <strong>Abbreviation:</strong> RAG (Retrieval-Augmented Generation) - AI technique combining information retrieval with text generation.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="system-node" id="node-Vector_DB" style="left: 770px; top: 250px;" data-tooltip="vector-db">
                 <div class="node-icon"><i class="bi bi-database-gear"></i></div>
                 <div class="node-label">Vector DB</div>
                 <div class="node-status">Indexed</div>
             </div>
             
-            <div class="system-node" id="node-LLM_Models" style="left: 770px; top: 400px;">
+            <!-- Vector DB Tooltip -->
+            <div class="tooltip-custom" id="vectorDbTooltip">
+                <h5><i class="bi bi-database-gear me-2"></i>Vector Database</h5>
+                <div style="font-size: 11px; line-height: 1.5; color: #cbd5e1;">
+                    <p style="margin-bottom: 8px;">
+                        <strong>Purpose:</strong> High-performance database optimized for storing and querying vector embeddings for semantic similarity search.
+                    </p>
+                    <p style="margin-bottom: 8px;">
+                        <strong>Capabilities:</strong>
+                        • Vector embedding storage and indexing<br>
+                        • Similarity search and nearest neighbor queries<br>
+                        • Multi-dimensional data clustering<br>
+                        • Real-time vector updates and insertions<br>
+                        • Scalable semantic search operations
+                    </p>
+                    <p style="margin-bottom: 8px;">
+                        <strong>Content Types:</strong> Document embeddings, formula representations, chemical structure vectors, knowledge graph embeddings.
+                    </p>
+                    <p style="margin-bottom: 0;">
+                        <strong>Technology:</strong> Stores mathematical representations (vectors) of text and data for AI-powered semantic search and matching.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="system-node" id="node-LLM_Models" style="left: 770px; top: 400px;" data-tooltip="llm-models">
                 <div class="node-icon"><i class="bi bi-cpu-fill"></i></div>
                 <div class="node-label">LLMs / SLMs</div>
                 <div class="node-status">Active</div>
             </div>
             
-            <div class="system-node" id="node-MCP_Gateway" style="left: 770px; top: 550px;">
+            <!-- LLMs/SLMs Tooltip -->
+            <div id="tooltip-llm-models" class="tooltip-custom wide">
+                <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                    <i class="bi bi-cpu-fill" style="font-size: 14px; margin-right: 6px; color: #0056b3;"></i>
+                    <strong style="font-size: 13px;">LLMs / SLMs (Language Models)</strong>
+                </div>
+                <div style="border-bottom: 1px solid rgba(0,86,179,0.2); margin-bottom: 8px; padding-bottom: 6px;">
+                    <p style="margin-bottom: 0; font-size: 11px;">
+                        <strong>Purpose:</strong> Provide advanced natural language processing capabilities for understanding, generating, and reasoning about chemical formulations and related documentation.
+                    </p>
+                </div>
+                <div style="margin-bottom: 8px;">
+                    <p style="margin-bottom: 6px; font-size: 11px;"><strong>Model Types:</strong></p>
+                    <p style="margin-bottom: 4px; padding-left: 8px; font-size: 10px;">
+                        • Large Language Models (LLMs): GPT-4, Claude, Gemini for complex reasoning<br>
+                        • Small Language Models (SLMs): Specialized lightweight models for specific tasks<br>
+                        • Domain-specific models: Fine-tuned for chemical/material science applications<br>
+                        • Multi-modal models: Text, image, and document understanding
+                    </p>
+                </div>
+                <div style="margin-bottom: 8px;">
+                    <p style="margin-bottom: 6px; font-size: 11px;"><strong>Capabilities:</strong></p>
+                    <p style="margin-bottom: 4px; padding-left: 8px; font-size: 10px;">
+                        • Natural language query processing and interpretation<br>
+                        • Chemical formula analysis and optimization suggestions<br>
+                        • Technical document generation and summarization<br>
+                        • Multi-language support for global operations<br>
+                        • Context-aware reasoning about formulation parameters
+                    </p>
+                </div>
+                <div style="margin-bottom: 8px;">
+                    <p style="margin-bottom: 6px; font-size: 11px;"><strong>Integration Points:</strong></p>
+                    <p style="margin-bottom: 4px; padding-left: 8px; font-size: 10px;">
+                        • API endpoints for agent communication<br>
+                        • Vector embedding generation for semantic search<br>
+                        • Real-time inference for interactive applications<br>
+                        • Batch processing for large-scale analysis
+                    </p>
+                </div>
+                <p style="margin-bottom: 0; font-size: 11px;">
+                    <strong>Technology Stack:</strong> Cloud-hosted inference engines, GPU acceleration, model versioning, A/B testing capabilities.
+                </p>
+            </div>
+            
+            <div class="system-node" id="node-MCP_Gateway" style="left: 770px; top: 550px;" data-tooltip="mcp-gateway">
                 <div class="node-icon"><i class="bi bi-diagram-3-fill"></i></div>
                 <div class="node-label">MCP Gateway</div>
                 <div class="node-status">Active</div>
             </div>
             
+            <!-- MCP Gateway Tooltip -->
+            <div id="tooltip-mcp-gateway" class="tooltip-custom wide">
+                <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                    <i class="bi bi-diagram-3-fill" style="font-size: 14px; margin-right: 6px; color: #0056b3;"></i>
+                    <strong style="font-size: 13px;">MCP Gateway (Model Context Protocol)</strong>
+                </div>
+                <div style="border-bottom: 1px solid rgba(0,86,179,0.2); margin-bottom: 8px; padding-bottom: 6px;">
+                    <p style="margin-bottom: 0; font-size: 11px;">
+                        <strong>Purpose:</strong> Standardized communication layer enabling seamless integration and context sharing between AI models, tools, and enterprise systems.
+                    </p>
+                </div>
+                <div style="margin-bottom: 8px;">
+                    <p style="margin-bottom: 6px; font-size: 11px;"><strong>Protocol Features:</strong></p>
+                    <p style="margin-bottom: 4px; padding-left: 8px; font-size: 10px;">
+                        • Context preservation across model interactions<br>
+                        • Standardized tool integration interfaces<br>
+                        • Multi-model orchestration and routing<br>
+                        • Session management and state persistence<br>
+                        • Real-time bidirectional communication
+                    </p>
+                </div>
+                <div style="margin-bottom: 8px;">
+                    <p style="margin-bottom: 6px; font-size: 11px;"><strong>Integration Capabilities:</strong></p>
+                    <p style="margin-bottom: 4px; padding-left: 8px; font-size: 10px;">
+                        • Enterprise system connectors (SAP, LIMS, PLM)<br>
+                        • AI model abstraction layer<br>
+                        • Tool calling and function execution<br>
+                        • Data format transformation and validation<br>
+                        • Security and authentication management
+                    </p>
+                </div>
+                <div style="margin-bottom: 8px;">
+                    <p style="margin-bottom: 6px; font-size: 11px;"><strong>Benefits:</strong></p>
+                    <p style="margin-bottom: 4px; padding-left: 8px; font-size: 10px;">
+                        • Vendor-agnostic AI model integration<br>
+                        • Reduced integration complexity<br>
+                        • Enhanced context sharing between systems<br>
+                        • Improved scalability and maintainability
+                    </p>
+                </div>
+                <p style="margin-bottom: 0; font-size: 11px;">
+                    <strong>Technology:</strong> Open-source protocol specification with secure WebSocket connections, JSON-RPC messaging, and extensible plugin architecture.
+                </p>
+            </div>
+            
             <!-- Column 6: Enterprise Systems (x: 1000) -->
-            <div class="system-node" id="node-SAP_ERP" style="left: 1000px; top: 80px;">
+            <div class="system-node" id="node-SAP_ERP" style="left: 1000px; top: 80px;" data-tooltip="sap-erp">
                 <div class="node-icon"><i class="bi bi-building"></i></div>
                 <div class="node-label">SAP ERP</div>
                 <div class="node-status">Connected</div>
             </div>
             
-            <div class="system-node" id="node-LIMS" style="left: 1000px; top: 200px;">
+            <!-- SAP ERP Tooltip -->
+            <div id="tooltip-sap-erp" class="tooltip-custom wide">
+                <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                    <i class="bi bi-building" style="font-size: 14px; margin-right: 6px; color: #0056b3;"></i>
+                    <strong style="font-size: 13px;">SAP ERP (Enterprise Resource Planning)</strong>
+                </div>
+                <div style="border-bottom: 1px solid rgba(0,86,179,0.2); margin-bottom: 8px; padding-bottom: 6px;">
+                    <p style="margin-bottom: 0; font-size: 11px;">
+                        <strong>Purpose:</strong> Core enterprise system managing financial operations, supply chain, procurement, inventory, and business processes across TotalEnergies operations.
+                    </p>
+                </div>
+                <div style="margin-bottom: 8px;">
+                    <p style="margin-bottom: 6px; font-size: 11px;"><strong>Key Modules:</strong></p>
+                    <p style="margin-bottom: 4px; padding-left: 8px; font-size: 10px;">
+                        • Financial Accounting (FI) and Controlling (CO)<br>
+                        • Materials Management (MM) and Procurement<br>
+                        • Production Planning (PP) and Quality Management (QM)<br>
+                        • Sales & Distribution (SD) and Customer Relationship Management<br>
+                        • Human Resources (HR) and Plant Maintenance (PM)
+                    </p>
+                </div>
+                <div style="margin-bottom: 8px;">
+                    <p style="margin-bottom: 6px; font-size: 11px;"><strong>Data Integration:</strong></p>
+                    <p style="margin-bottom: 4px; padding-left: 8px; font-size: 10px;">
+                        • Real-time inventory and material master data<br>
+                        • Cost center and budget information<br>
+                        • Supplier and vendor master records<br>
+                        • Purchase orders and procurement history<br>
+                        • Financial data for cost analysis and reporting
+                    </p>
+                </div>
+                <div style="margin-bottom: 8px;">
+                    <p style="margin-bottom: 6px; font-size: 11px;"><strong>AI System Benefits:</strong></p>
+                    <p style="margin-bottom: 4px; padding-left: 8px; font-size: 10px;">
+                        • Cost optimization recommendations for formulations<br>
+                        • Supply chain risk assessment and alternatives<br>
+                        • Automated procurement suggestions<br>
+                        • Real-time budget and cost tracking
+                    </p>
+                </div>
+                <p style="margin-bottom: 0; font-size: 11px;">
+                    <strong>Integration:</strong> REST APIs, SAP Business Connector, real-time data synchronization with secure authentication and role-based access control.
+                </p>
+            </div>
+            
+            <div class="system-node" id="node-LIMS" style="left: 1000px; top: 200px;" data-tooltip="lims">
                 <div class="node-icon"><i class="bi bi-microscope"></i></div>
                 <div class="node-label">LIMS</div>
                 <div class="node-status">Connected</div>
             </div>
             
-            <div class="system-node" id="node-PLM" style="left: 1000px; top: 320px;">
+            <!-- LIMS Tooltip -->
+            <div id="tooltip-lims" class="tooltip-custom wide">
+                <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                    <i class="bi bi-microscope" style="font-size: 14px; margin-right: 6px; color: #0056b3;"></i>
+                    <strong style="font-size: 13px;">LIMS (Laboratory Information Management System)</strong>
+                </div>
+                <div style="border-bottom: 1px solid rgba(0,86,179,0.2); margin-bottom: 8px; padding-bottom: 6px;">
+                    <p style="margin-bottom: 0; font-size: 11px;">
+                        <strong>Purpose:</strong> Comprehensive laboratory data management system tracking sample analysis, test results, quality control procedures, and analytical workflows across TotalEnergies facilities.
+                    </p>
+                </div>
+                <div style="margin-bottom: 8px;">
+                    <p style="margin-bottom: 6px; font-size: 11px;"><strong>Core Functions:</strong></p>
+                    <p style="margin-bottom: 4px; padding-left: 8px; font-size: 10px;">
+                        • Sample tracking and chain of custody management<br>
+                        • Analytical test method management and execution<br>
+                        • Quality control and quality assurance workflows<br>
+                        • Instrument integration and data acquisition<br>
+                        • Report generation and regulatory compliance documentation
+                    </p>
+                </div>
+                <div style="margin-bottom: 8px;">
+                    <p style="margin-bottom: 6px; font-size: 11px;"><strong>Data Types:</strong></p>
+                    <p style="margin-bottom: 4px; padding-left: 8px; font-size: 10px;">
+                        • Chemical composition and purity analysis results<br>
+                        • Physical property measurements (viscosity, density, etc.)<br>
+                        • Stability and shelf-life testing data<br>
+                        • Environmental and safety test results<br>
+                        • Historical batch and lot analysis records
+                    </p>
+                </div>
+                <div style="margin-bottom: 8px;">
+                    <p style="margin-bottom: 6px; font-size: 11px;"><strong>AI Integration Benefits:</strong></p>
+                    <p style="margin-bottom: 4px; padding-left: 8px; font-size: 10px;">
+                        • Predictive quality assessment for new formulations<br>
+                        • Automated test method recommendations<br>
+                        • Trend analysis and anomaly detection<br>
+                        • Accelerated formulation optimization based on test results
+                    </p>
+                </div>
+                <p style="margin-bottom: 0; font-size: 11px;">
+                    <strong>Integration:</strong> Laboratory instrument interfaces, automated data transfer, real-time quality monitoring, and secure data exchange with formulation systems.
+                </p>
+            </div>
+            
+            <div class="system-node" id="node-PLM" style="left: 1000px; top: 320px;" data-tooltip="plm">
                 <div class="node-icon"><i class="bi bi-tools"></i></div>
                 <div class="node-label">PLM</div>
                 <div class="node-status">Connected</div>
             </div>
             
-            <div class="system-node" id="node-Regulatory_DB" style="left: 1000px; top: 440px;">
+            <!-- PLM Tooltip -->
+            <div id="tooltip-plm" class="tooltip-custom wide">
+                <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                    <i class="bi bi-tools" style="font-size: 14px; margin-right: 6px; color: #0056b3;"></i>
+                    <strong style="font-size: 13px;">PLM (Product Lifecycle Management)</strong>
+                </div>
+                <div style="border-bottom: 1px solid rgba(0,86,179,0.2); margin-bottom: 8px; padding-bottom: 6px;">
+                    <p style="margin-bottom: 0; font-size: 11px;">
+                        <strong>Purpose:</strong> Comprehensive product development platform managing formulation data, recipes, specifications, and product lifecycle from concept to market across TotalEnergies product portfolio.
+                    </p>
+                </div>
+                <div style="margin-bottom: 8px;">
+                    <p style="margin-bottom: 6px; font-size: 11px;"><strong>Core Capabilities:</strong></p>
+                    <p style="margin-bottom: 4px; padding-left: 8px; font-size: 10px;">
+                        • Product specification and formulation management<br>
+                        • Recipe versioning and change control<br>
+                        • Bill of Materials (BOM) and ingredient tracking<br>
+                        • Product development workflow automation<br>
+                        • Regulatory compliance documentation and approval tracking
+                    </p>
+                </div>
+                <div style="margin-bottom: 8px;">
+                    <p style="margin-bottom: 6px; font-size: 11px;"><strong>Data Repository:</strong></p>
+                    <p style="margin-bottom: 4px; padding-left: 8px; font-size: 10px;">
+                        • Historical formulation database with performance data<br>
+                        • Material specifications and supplier information<br>
+                        • Product test results and validation records<br>
+                        • Market requirements and customer feedback<br>
+                        • Intellectual property and patent documentation
+                    </p>
+                </div>
+                <div style="margin-bottom: 8px;">
+                    <p style="margin-bottom: 6px; font-size: 11px;"><strong>AI Enhancement:</strong></p>
+                    <p style="margin-bottom: 4px; padding-left: 8px; font-size: 10px;">
+                        • Intelligent formulation recommendations based on historical data<br>
+                        • Automated compliance checking and regulatory guidance<br>
+                        • Predictive modeling for product performance<br>
+                        • Cost optimization and material substitution suggestions
+                    </p>
+                </div>
+                <p style="margin-bottom: 0; font-size: 11px;">
+                    <strong>Integration:</strong> API-based connectivity with ERP, LIMS, and regulatory systems, real-time synchronization of product data and specifications.
+                </p>
+            </div>
+            
+            <div class="system-node" id="node-Regulatory_DB" style="left: 1000px; top: 440px;" data-tooltip="regulatory-db">
                 <div class="node-icon"><i class="bi bi-file-earmark-text"></i></div>
                 <div class="node-label">Regulatory DB</div>
                 <div class="node-status">Connected</div>
             </div>
             
-            <div class="system-node" id="node-Supplier_Portal" style="left: 1000px; top: 560px;">
+            <!-- Regulatory DB Tooltip -->
+            <div id="tooltip-regulatory-db" class="tooltip-custom wide">
+                <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                    <i class="bi bi-file-earmark-text" style="font-size: 14px; margin-right: 6px; color: #0056b3;"></i>
+                    <strong style="font-size: 13px;">Regulatory DB (Regulatory Database)</strong>
+                </div>
+                <div style="border-bottom: 1px solid rgba(0,86,179,0.2); margin-bottom: 8px; padding-bottom: 6px;">
+                    <p style="margin-bottom: 0; font-size: 11px;">
+                        <strong>Purpose:</strong> Comprehensive regulatory compliance database containing chemical regulations, safety requirements, environmental standards, and approval documentation across global markets.
+                    </p>
+                </div>
+                <div style="margin-bottom: 8px;">
+                    <p style="margin-bottom: 6px; font-size: 11px;"><strong>Regulatory Content:</strong></p>
+                    <p style="margin-bottom: 4px; padding-left: 8px; font-size: 10px;">
+                        • Chemical substance regulations (REACH, TSCA, K-REACH, etc.)<br>
+                        • Safety data sheets (SDS) and hazard classifications<br>
+                        • Environmental compliance requirements by region<br>
+                        • Industry-specific standards (ASTM, ISO, API)<br>
+                        • Import/export restrictions and trade regulations
+                    </p>
+                </div>
+                <div style="margin-bottom: 8px;">
+                    <p style="margin-bottom: 6px; font-size: 11px;"><strong>Geographic Coverage:</strong></p>
+                    <p style="margin-bottom: 4px; padding-left: 8px; font-size: 10px;">
+                        • European Union (REACH, CLP, Biocides Regulation)<br>
+                        • United States (EPA, OSHA, DOT regulations)<br>
+                        • Asia-Pacific (China GB, Japan CSCL, South Korea K-REACH)<br>
+                        • Emerging markets and regional specific requirements<br>
+                        • Real-time updates on regulatory changes
+                    </p>
+                </div>
+                <div style="margin-bottom: 8px;">
+                    <p style="margin-bottom: 6px; font-size: 11px;"><strong>AI-Powered Features:</strong></p>
+                    <p style="margin-bottom: 4px; padding-left: 8px; font-size: 10px;">
+                        • Automated compliance checking for new formulations<br>
+                        • Regulatory impact assessment and recommendations<br>
+                        • Alternative substance suggestions for restricted materials<br>
+                        • Predictive regulatory trend analysis
+                    </p>
+                </div>
+                <p style="margin-bottom: 0; font-size: 11px;">
+                    <strong>Integration:</strong> Real-time regulatory updates, automated compliance screening, integration with PLM and formulation systems for proactive compliance management.
+                </p>
+            </div>
+            
+            <div class="system-node" id="node-Supplier_Portal" style="left: 1000px; top: 560px;" data-tooltip="supplier-portal">
                 <div class="node-icon"><i class="bi bi-factory"></i></div>
                 <div class="node-label">Supplier Portal</div>
                 <div class="node-status">Connected</div>
+            </div>
+            
+            <!-- Supplier Portal Tooltip -->
+            <div id="tooltip-supplier-portal" class="tooltip-custom wide">
+                <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                    <i class="bi bi-factory" style="font-size: 14px; margin-right: 6px; color: #0056b3;"></i>
+                    <strong style="font-size: 13px;">Supplier Portal (Vendor Management System)</strong>
+                </div>
+                <div style="border-bottom: 1px solid rgba(0,86,179,0.2); margin-bottom: 8px; padding-bottom: 6px;">
+                    <p style="margin-bottom: 0; font-size: 11px;">
+                        <strong>Purpose:</strong> Centralized supplier relationship management platform facilitating communication, procurement processes, quality assurance, and performance monitoring with TotalEnergies' global supplier network.
+                    </p>
+                </div>
+                <div style="margin-bottom: 8px;">
+                    <p style="margin-bottom: 6px; font-size: 11px;"><strong>Core Functions:</strong></p>
+                    <p style="margin-bottom: 4px; padding-left: 8px; font-size: 10px;">
+                        • Supplier onboarding and qualification processes<br>
+                        • Request for Quotation (RFQ) and tender management<br>
+                        • Purchase order processing and approval workflows<br>
+                        • Quality documentation and certification tracking<br>
+                        • Performance scorecards and supplier evaluation
+                    </p>
+                </div>
+                <div style="margin-bottom: 8px;">
+                    <p style="margin-bottom: 6px; font-size: 11px;"><strong>Supplier Data:</strong></p>
+                    <p style="margin-bottom: 4px; padding-left: 8px; font-size: 10px;">
+                        • Material specifications and technical data sheets<br>
+                        • Pricing models and cost structures<br>
+                        • Supply capacity and lead time information<br>
+                        • Quality certifications and compliance records<br>
+                        • Alternative suppliers and substitution options
+                    </p>
+                </div>
+                <div style="margin-bottom: 8px;">
+                    <p style="margin-bottom: 6px; font-size: 11px;"><strong>AI Integration Benefits:</strong></p>
+                    <p style="margin-bottom: 4px; padding-left: 8px; font-size: 10px;">
+                        • Intelligent supplier recommendations for new materials<br>
+                        • Risk assessment and supply chain optimization<br>
+                        • Automated sourcing and cost comparison<br>
+                        • Predictive supplier performance analytics
+                    </p>
+                </div>
+                <p style="margin-bottom: 0; font-size: 11px;">
+                    <strong>Integration:</strong> Seamless connectivity with SAP ERP, automated data exchange, real-time supplier communications, and integrated procurement workflows.
+                </p>
             </div>
             
             <!-- Connection Lines (same as before) -->

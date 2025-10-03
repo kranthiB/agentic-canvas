@@ -44,21 +44,99 @@ class EnhancedEventFlowVisualizer {
 
     // Initialize persona tooltip functionality
     initPersonaTooltip() {
-        const engineerUI = document.getElementById('node-UI');
-        const tooltip = document.getElementById('personaTooltip');
+        // Engineer UI tooltip
+        this.initTooltip('node-UI', 'personaTooltip');
         
-        if (engineerUI && tooltip) {
-            engineerUI.addEventListener('mouseenter', (e) => {
-                const rect = engineerUI.getBoundingClientRect();
+        // Unified Gateway tooltip
+        this.initTooltip('node-Unified-Gateway', 'unifiedGatewayTooltip');
+        
+        // Orchestrator tooltip
+        this.initTooltip('node-Orchestrator', 'orchestratorTooltip');
+        
+        // Formulation Agent tooltip
+        this.initTooltip('node-FormulationAgent', 'formulationAgentTooltip');
+        
+        // Protocol Agent tooltip
+        this.initTooltip('node-TestProtocolAgent', 'protocolAgentTooltip');
+        
+        // Regulatory Agent tooltip
+        this.initTooltip('node-RegulatoryAgent', 'regulatoryAgentTooltip');
+        
+        // Supply Chain Agent tooltip
+        this.initTooltip('node-SupplyChainAgent', 'supplyChainAgentTooltip');
+        
+        // RAG Engine tooltip (positioned to the left)
+        this.initTooltip('node-RAG_Engine', 'ragEngineTooltip', 'left');
+        
+        // Vector DB tooltip (positioned to the left)
+        this.initTooltip('node-Vector_DB', 'vectorDbTooltip', 'left');
+        
+        // LLMs/SLMs tooltip (positioned to the left)
+        this.initTooltip('node-LLM_Models', 'tooltip-llm-models', 'left');
+        
+        // MCP Gateway tooltip (positioned to the left)
+        this.initTooltip('node-MCP_Gateway', 'tooltip-mcp-gateway', 'left');
+        
+        // SAP ERP tooltip (positioned to the left)
+        this.initTooltip('node-SAP_ERP', 'tooltip-sap-erp', 'left');
+        
+        // LIMS tooltip (positioned to the left)
+        this.initTooltip('node-LIMS', 'tooltip-lims', 'left');
+        
+        // PLM tooltip (positioned to the left)
+        this.initTooltip('node-PLM', 'tooltip-plm', 'left');
+        
+        // Regulatory DB tooltip (positioned to the left)
+        this.initTooltip('node-Regulatory_DB', 'tooltip-regulatory-db', 'left');
+        
+        // Supplier Portal tooltip (positioned to the left)
+        this.initTooltip('node-Supplier_Portal', 'tooltip-supplier-portal', 'left');
+    }
+
+    // Generic tooltip initialization method
+    initTooltip(nodeId, tooltipId, position = 'right') {
+        const node = document.getElementById(nodeId);
+        const tooltip = document.getElementById(tooltipId);
+        
+        if (node && tooltip) {
+            node.addEventListener('mouseenter', (e) => {
+                const rect = node.getBoundingClientRect();
                 const canvasRect = this.canvas.getBoundingClientRect();
                 
-                // Position tooltip directly to the right of the Engineer UI box
-                tooltip.style.left = `${rect.right - canvasRect.left + 15}px`;
-                tooltip.style.top = `${rect.top - canvasRect.top}px`;
+                if (position === 'left') {
+                    // Position tooltip to the left of the node, moved higher up
+                    tooltip.style.left = `${rect.left - canvasRect.left - 365}px`; // 350px tooltip width + 15px gap
+                    
+                    // Special positioning for different tooltips
+                    if (tooltipId === 'tooltip-mcp-gateway') {
+                        tooltip.style.top = `${rect.top - canvasRect.top - 300}px`; // Move 300px higher for MCP Gateway
+                    } else if (tooltipId === 'ragEngineTooltip') {
+                        tooltip.style.top = `${rect.top - canvasRect.top + 50}px`; // Move 50px lower for RAG Engine
+                    } else if (tooltipId === 'tooltip-sap-erp') {
+                        tooltip.style.top = `${rect.top - canvasRect.top + 80}px`; // Move 80px lower for SAP ERP
+                    } else if (tooltipId === 'tooltip-regulatory-db') {
+                        tooltip.style.top = `${rect.top - canvasRect.top - 250}px`; // Move 250px higher for Regulatory DB
+                    } else if (tooltipId === 'tooltip-supplier-portal') {
+                        tooltip.style.top = `${rect.top - canvasRect.top - 300}px`; // Move 300px higher for Supplier Portal
+                    } else {
+                        tooltip.style.top = `${rect.top - canvasRect.top - 150}px`; // Move 150px higher for others
+                    }
+                } else {
+                    // Position tooltip to the right of the node (default)
+                    tooltip.style.left = `${rect.right - canvasRect.left + 15}px`;
+                    
+                    // Special positioning for Supply Chain Agent - move it higher
+                    if (tooltipId === 'supplyChainAgentTooltip') {
+                        tooltip.style.top = `${rect.top - canvasRect.top - 120}px`; // Move 120px higher for Supply Chain Agent
+                    } else {
+                        tooltip.style.top = `${rect.top - canvasRect.top}px`;
+                    }
+                }
+                
                 tooltip.classList.add('visible');
             });
             
-            engineerUI.addEventListener('mouseleave', () => {
+            node.addEventListener('mouseleave', () => {
                 tooltip.classList.remove('visible');
             });
         }
