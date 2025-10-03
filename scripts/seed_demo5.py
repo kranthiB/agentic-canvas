@@ -47,8 +47,11 @@ def seed_all():
         # Technical Docs
         print("Seeding technical documents...")
         docs = [
-            TETechnicalDoc(doc_type="formulation_spec", title="Quartz 9000 5W-30 Formulation Spec Rev 3.2", product_related="Quartz 9000 5W-30", content="PAO 4 cSt (30%), Group III 4 cSt (50%), VI Improver PMA (9%). Target viscosity 11.5 cSt @ 100°C.", doc_metadata={'version': '3.2', 'author': 'Dr. Rajesh Kumar'}, tags="formulation,synthetic"),
-            TETechnicalDoc(doc_type="test_protocol", title="PESO LPG Quality Control Protocol", product_related="Automotive LPG", content="Mandatory tests: Vapor pressure (ASTM D6897), Propane content (IS 4576), Moisture (BIS 14861). Test every batch.", doc_metadata={'standard': 'PESO 2016'}, tags="lpg,quality_control"),
+            TETechnicalDoc(doc_type="formulation_spec", title="Quartz 9000 5W-30 Formulation Spec Rev 3.2", product_related="Quartz 9000 5W-30", content="PAO 4 cSt (30%), Group III 4 cSt (50%), VI Improver PMA (9%). Target viscosity 11.5 cSt @ 100°C. Recommended VI Improver dosage: 8.5-9.2% w/w PMA.", doc_metadata={'version': '3.2', 'author': 'Dr. Rajesh Kumar'}, tags="formulation,synthetic"),
+            TETechnicalDoc(doc_type="test_protocol", title="PESO LPG Quality Control Protocol", product_related="Automotive LPG", content="Mandatory tests: Vapor pressure (ASTM D6897), Propane content (IS 4576), Moisture (BIS 14861). Test every batch. Automotive LPG requirements: Vapor pressure 6-8 bar @ 20°C, Propane content min 95%, Moisture max 50 ppm.", doc_metadata={'standard': 'PESO 2016'}, tags="lpg,quality_control"),
+            TETechnicalDoc(doc_type="formulation_spec", title="Quartz 7000 10W-40 Technical Specification", product_related="Quartz 7000 10W-40", content="Semi-synthetic engine oil. Viscosity at 100°C: 14.2 cSt. Base: Group II (60%) + Group III (25%) + VI Improver (8%).", doc_metadata={'version': '2.1', 'author': 'Dr. Amit Sharma'}, tags="formulation,semi_synthetic"),
+            TETechnicalDoc(doc_type="product_spec", title="LPG Moisture Content Specification", product_related="TotalEnergies Domestic LPG", content="Moisture content specification for LPG products: Maximum 50 ppm for domestic LPG, Maximum 30 ppm for automotive LPG. Test method: BIS 14861 Karl Fischer titration.", doc_metadata={'standard': 'BIS 14861'}, tags="lpg,moisture,specification"),
+            TETechnicalDoc(doc_type="formulation_guide", title="Heavy-Duty Engine Oil Development Guide", product_related="Quartz 9000 HD", content="Heavy-duty variant requirements: Higher ZDDP content (1.8%), Enhanced dispersant package (12%), Extended drain intervals capability. Target: API CK-4, ACEA E9.", doc_metadata={'application': 'heavy_duty'}, tags="heavy_duty,commercial"),
         ]
         for d in docs:
             db.session.add(d)
@@ -58,8 +61,10 @@ def seed_all():
         # Formulation Trials
         print("Seeding formulation trials...")
         trials = [
-            TEFormulationTrial(trial_code="QTZ-9000-T2025-001", product_family="Quartz 9000", formulation={'base_oils': [{'type': 'PAO 4 cSt', 'pct': 30}], 'additives': [{'type': 'ZDDP', 'pct': 1.2}]}, test_results={'viscosity_100c': 11.4, 'pass': True}, status="approved", engineer_name="Priya Sharma"),
+            TEFormulationTrial(trial_code="QTZ-9000-T2025-001", product_family="Quartz 9000", formulation={'base_oils': [{'type': 'PAO 4 cSt', 'pct': 30}, {'type': 'Group III 4 cSt', 'pct': 50}], 'additives': [{'type': 'ZDDP', 'pct': 1.2}, {'type': 'PMA VI Improver', 'pct': 9.0}]}, test_results={'viscosity_100c': 11.4, 'pass': True}, status="approved", engineer_name="Priya Sharma"),
             TEFormulationTrial(trial_code="HIPERF-T2025-005", product_family="Hi-Perf Moto", formulation={'base_oils': [{'type': 'Group II', 'pct': 70}]}, test_results={'jaso_ma2': 0.47}, status="testing", engineer_name="Amit Patel"),
+            TEFormulationTrial(trial_code="QTZ-7000-T2025-003", product_family="Quartz 7000", formulation={'base_oils': [{'type': 'Group III', 'pct': 60}]}, test_results={}, status="testing", engineer_name="Ravi Kumar"),
+            TEFormulationTrial(trial_code="LPG-T2025-008", product_family="LPG Domestic", formulation={'lpg_components': [{'type': 'Propane', 'pct': 96.5}]}, test_results={}, status="testing", engineer_name="Meera Singh"),
         ]
         for t in trials:
             db.session.add(t)
@@ -72,6 +77,10 @@ def seed_all():
             TESAPInventory(material_code="BASEOLL-GRP3-4CST", material_name="Group III Base Oil 4 cSt", material_category="base_oil", stock_quantity=45000, unit="L", price=95.50, supplier="Nayara Energy"),
             TESAPInventory(material_code="ADDPKG-ZDDP-SP", material_name="ZDDP Anti-wear Package", material_category="additive", stock_quantity=1200, unit="KG", price=450.00, supplier="Lubrizol India"),
             TESAPInventory(material_code="VIIMPR-PMA-9PCT", material_name="PMA VI Improver", material_category="additive", stock_quantity=3500, unit="KG", price=310.00, supplier="Evonik India"),
+            # Low stock items for testing
+            TESAPInventory(material_code="ADDPKG-DISP-8", material_name="Dispersant Package 8%", material_category="additive", stock_quantity=25, unit="KG", price=890.00, supplier="Lubrizol India"),
+            TESAPInventory(material_code="BASEOLL-PAO-4", material_name="PAO 4 cSt Synthetic Base", material_category="base_oil", stock_quantity=150, unit="L", price=320.00, supplier="ExxonMobil"),
+            TESAPInventory(material_code="ADDPKG-AW-BOOST", material_name="Anti-Wear Booster", material_category="additive", stock_quantity=8, unit="KG", price=1250.00, supplier="Afton Chemical"),
         ]
         for m in materials:
             db.session.add(m)
@@ -95,6 +104,10 @@ def seed_all():
             TESupplier(supplier_name="Nayara Energy (Vadinar)", material_type="Group III Base Oil", location="Gujarat", lead_time_days=10, quality_rating=4.5, certifications=['ISO 9001', 'API Group III']),
             TESupplier(supplier_name="Lubrizol India", material_type="Additive Packages", location="Mumbai", lead_time_days=15, quality_rating=4.8, certifications=['ISO 9001', 'REACH']),
             TESupplier(supplier_name="Indian Oil Corporation", material_type="Group III Base Oil", location="Gujarat", lead_time_days=12, quality_rating=4.6, certifications=['ISO 9001', 'BIS']),
+            TESupplier(supplier_name="Reliance Industries (Jamnagar)", material_type="Group III Base Oil", location="Gujarat", lead_time_days=8, quality_rating=4.7, certifications=['ISO 9001', 'API Group III', 'REACH']),
+            TESupplier(supplier_name="Gujarat State Petronet Ltd", material_type="LPG", location="Gujarat", lead_time_days=5, quality_rating=4.4, certifications=['ISO 9001', 'PESO', 'BIS']),
+            TESupplier(supplier_name="Evonik India", material_type="VI Improvers", location="Mumbai", lead_time_days=18, quality_rating=4.9, certifications=['ISO 9001', 'REACH', 'FDA']),
+            TESupplier(supplier_name="Afton Chemical", material_type="Anti-wear Additives", location="Pune", lead_time_days=14, quality_rating=4.6, certifications=['ISO 9001', 'API']),
         ]
         for s in suppliers:
             db.session.add(s)

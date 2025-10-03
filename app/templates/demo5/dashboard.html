@@ -282,16 +282,19 @@ async function sendMessage() {
 function detectScenario(message) {
     const msg = message.toLowerCase();
     
-    if (msg.includes('viscosity') || msg.includes('vi improver') || msg.includes('quartz')) {
-        return 'scenario1';
-    } else if (msg.includes('supplier') || msg.includes('base oil') || msg.includes('group iii')) {
-        return 'scenario2';
-    } else if (msg.includes('zddp') || msg.includes('bs vi') || msg.includes('emission')) {
-        return 'scenario3';
-    } else if (msg.includes('lpg') || msg.includes('contamination') || msg.includes('cylinder')) {
+    // Only match very specific scenario patterns to avoid interfering with query handlers
+    // Let query handlers handle the specific questions first
+    if (msg.includes('simulate') && msg.includes('contamination') && msg.includes('lpg')) {
         return 'scenario4';
+    } else if (msg.includes('simulate') && msg.includes('bs vi') && msg.includes('emission')) {
+        return 'scenario3';
+    } else if (msg.includes('simulate') && msg.includes('supplier') && msg.includes('500 mt')) {
+        return 'scenario2';
+    } else if (msg.includes('simulate') && msg.includes('vi improver') && msg.includes('dosage optimization')) {
+        return 'scenario1';
     }
     
+    // Return null for all other queries to let query handlers process them
     return null;
 }
 
