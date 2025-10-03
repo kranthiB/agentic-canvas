@@ -96,6 +96,206 @@
     50% { box-shadow: 0 0 40px rgba(66, 153, 225, 0.8); }
 }
 
+/* Enhanced scenario highlighting */
+.system-node.scenario-active {
+    background: rgba(16, 185, 129, 0.35) !important;
+    border-color: #10b981 !important;
+    box-shadow: 0 0 40px rgba(16, 185, 129, 0.8) !important;
+    transform: scale(1.08) !important;
+    transition: all 0.4s ease;
+    animation: scenarioGlow 2s ease-in-out infinite;
+}
+
+.system-node.scenario-involved {
+    background: rgba(245, 158, 11, 0.25) !important;
+    border-color: #f59e0b !important;
+    box-shadow: 0 0 25px rgba(245, 158, 11, 0.6) !important;
+    transform: scale(1.04) !important;
+    transition: all 0.4s ease;
+    animation: involvedPulse 3s ease-in-out infinite;
+}
+
+@keyframes scenarioGlow {
+    0%, 100% { 
+        box-shadow: 0 0 40px rgba(16, 185, 129, 0.8);
+        border-color: #10b981;
+    }
+    50% { 
+        box-shadow: 0 0 60px rgba(16, 185, 129, 1);
+        border-color: #34d399;
+    }
+}
+
+@keyframes involvedPulse {
+    0%, 100% { 
+        box-shadow: 0 0 25px rgba(245, 158, 11, 0.6);
+        opacity: 1;
+    }
+    50% { 
+        box-shadow: 0 0 35px rgba(245, 158, 11, 0.8);
+        opacity: 0.9;
+    }
+}
+
+.system-node.receiving {
+    background: rgba(139, 92, 246, 0.25);
+    border-color: #8b5cf6;
+    box-shadow: 0 0 25px rgba(139, 92, 246, 0.6);
+}
+
+/* Node pulse animation */
+@keyframes nodePulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); box-shadow: 0 0 40px rgba(16, 185, 129, 0.8); }
+    100% { transform: scale(1); }
+}
+
+/* Progress bar animation for event log entries */
+@keyframes progressLoad {
+    0% { width: 0%; }
+    100% { width: 100%; }
+}
+
+/* Context-aware system highlighting */
+.system-node.context-active {
+    background: rgba(59, 130, 246, 0.15);
+    border-color: #3b82f6;
+    box-shadow: 0 0 12px rgba(59, 130, 246, 0.4);
+    transform: scale(1.01);
+    transition: all 0.4s ease;
+}
+
+/* Enhanced metrics display */
+.metrics-display .metric-value {
+    transition: all 0.3s ease;
+}
+
+.metrics-display .metric-value.updating {
+    color: #10b981;
+    transform: scale(1.1);
+    text-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
+}
+
+/* Scenario Status Bar */
+.scenario-status-bar {
+    position: fixed;
+    top: 70px;
+    right: 20px;
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.95));
+    border: 2px solid #1a73e8;
+    border-radius: 12px;
+    padding: 16px 20px;
+    min-width: 320px;
+    color: #1a73e8;
+    display: none;
+    align-items: center;
+    gap: 15px;
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+    box-shadow: 0 4px 20px rgba(26, 115, 232, 0.15), 0 2px 8px rgba(0,0,0,0.1);
+    animation: slideInFromRight 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.scenario-status-bar.visible {
+    display: flex;
+}
+
+.scenario-status-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.scenario-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a73e8;
+    line-height: 1.2;
+}
+
+.scenario-agents {
+    font-size: 12px;
+    color: #64748b;
+    font-weight: 500;
+}
+
+.info-btn {
+    background: #1a73e8;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 14px;
+}
+
+.info-btn:hover {
+    background: #1557b0;
+    transform: scale(1.05);
+    box-shadow: 0 2px 8px rgba(21, 87, 176, 0.3);
+}
+
+@keyframes slideInFromRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.scenario-status-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.scenario-status-label {
+    color: #94a3b8;
+    font-size: 0.85rem;
+}
+
+.scenario-status-name {
+    color: #f1f5f9;
+    font-weight: 600;
+}
+
+.scenario-status-badge {
+    font-size: 0.75rem;
+    padding: 2px 8px;
+    border-radius: 12px;
+    background: #8b5cf6;
+    color: white;
+}
+
+.scenario-status-query {
+    color: #cbd5e1;
+    font-size: 0.85rem;
+    font-style: italic;
+    max-width: 400px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.scenario-status-metrics {
+    display: flex;
+    gap: 16px;
+}
+
+.metric-small {
+    color: #94a3b8;
+    font-size: 0.8rem;
+}
+
 .system-node .node-icon {
     font-size: 36px;
     margin-bottom: 8px;
@@ -146,14 +346,36 @@
 }
 
 .connection-line.active {
-    background: linear-gradient(90deg, rgba(66, 153, 225, 0.8), rgba(66, 153, 225, 0.4));
-    box-shadow: 0 0 10px rgba(66, 153, 225, 0.5);
-    animation: flow 2s ease-in-out infinite;
+    background: linear-gradient(90deg, rgba(16, 185, 129, 0.9), rgba(16, 185, 129, 0.6)) !important;
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.7) !important;
+    animation: dataFlow 1.5s ease-in-out infinite;
+    height: 6px !important;
+    border-radius: 3px;
+}
+
+.connection-line.vertical.active {
+    background: linear-gradient(180deg, rgba(16, 185, 129, 0.9), rgba(16, 185, 129, 0.6)) !important;
+    width: 6px !important;
 }
 
 @keyframes flow {
     0%, 100% { opacity: 0.6; }
     50% { opacity: 1; }
+}
+
+@keyframes dataFlow {
+    0% { 
+        opacity: 0.7;
+        filter: brightness(1);
+    }
+    50% { 
+        opacity: 1;
+        filter: brightness(1.5);
+    }
+    100% { 
+        opacity: 0.7;
+        filter: brightness(1);
+    }
 }
 
 /* Flow Arrows */
@@ -185,24 +407,50 @@
 
 /* Scenario Info Panel */
 .scenario-info-panel {
-    position: absolute;
-    top: 30px;
-    right: 30px;
-    background: rgba(0, 0, 0, 0.9);
+    position: fixed;
+    top: 80px;
+    left: 20px;
+    background: rgba(0, 0, 0, 0.95);
     border: 2px solid rgba(139, 92, 246, 0.5);
     border-radius: 12px;
     padding: 16px;
     min-width: 320px;
-    max-width: 380px;
+    max-width: 400px;
+    max-height: 500px;
+    overflow-y: auto;
     backdrop-filter: blur(15px);
-    z-index: 10;
+    z-index: 1000;
     box-shadow: 0 8px 24px rgba(139, 92, 246, 0.3);
     display: none;
+    transform: translateX(-100%);
+    transition: transform 0.4s ease-out;
 }
 
 .scenario-info-panel.active {
     display: block;
-    animation: slideInRight 0.4s ease-out;
+    transform: translateX(0);
+}
+
+.scenario-query-section {
+    margin: 12px 0;
+    padding: 12px;
+    background: rgba(59, 130, 246, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    border-radius: 8px;
+}
+
+.scenario-query-label {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    margin-bottom: 6px;
+    font-weight: 500;
+}
+
+.scenario-query {
+    font-size: 0.85rem;
+    color: #e2e8f0;
+    line-height: 1.4;
+    font-style: italic;
 }
 
 @keyframes slideInRight {
@@ -610,9 +858,19 @@
             
             <!-- Scenario Info Panel -->
             <div class="scenario-info-panel" id="scenarioInfoPanel">
-                <h4>Current Scenario</h4>
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h4 class="mb-0">Current Scenario</h4>
+                    <button class="btn btn-sm btn-outline-light" id="btnCloseScenario" style="font-size: 0.8rem; padding: 2px 6px;">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
                 <div class="scenario-title" id="scenarioTitle">No scenario running</div>
-                <div class="scenario-query" id="scenarioQuery"></div>
+                <div class="scenario-query-section">
+                    <div class="scenario-query-label">
+                        <i class="bi bi-chat-quote me-2"></i>Query:
+                    </div>
+                    <div class="scenario-query" id="scenarioQuery">Waiting for scenario...</div>
+                </div>
                 <div class="scenario-meta">
                     <div class="scenario-meta-item">
                         <div class="label">Category</div>
@@ -729,7 +987,7 @@
             
             <div class="system-node" id="node-LLM_Models" style="left: 770px; top: 400px;">
                 <div class="node-icon"><i class="bi bi-cpu-fill"></i></div>
-                <div class="node-label">LLMs</div>
+                <div class="node-label">LLMs / SLMs</div>
                 <div class="node-status">Active</div>
             </div>
             
@@ -781,6 +1039,9 @@
             <div class="connection-line horizontal" style="left: 695px; top: 334px; width: 35px;"></div>
             <div class="connection-line vertical" style="left: 725px; top: 300px; height: 35px;"></div>
             <div class="connection-line horizontal" style="left: 725px; top: 300px; width: 30px;"></div>
+            <div class="connection-line horizontal" style="left: 695px; top: 372px; width: 44px;"></div>
+            <div class="connection-line vertical" style="left: 738px; top: 372px; height: 77px;"></div>
+            <div class="connection-line horizontal" style="left: 738px; top: 448px; width: 35px;"></div>
             <div class="connection-line horizontal" style="left: 695px; top: 400px; width: 32px;"></div>
             <div class="connection-line vertical" style="left: 725px; top: 400px; height: 200px;"></div>
             <div class="connection-line horizontal" style="left: 725px; top: 600px; width: 45px;"></div>
@@ -791,7 +1052,7 @@
             
             <!-- Grouping Boxes -->
             <div style="position: absolute; left: 515px; top: 85px; width: 180px; height: 500px; border: 2px dashed rgba(66, 153, 225, 0.4); border-radius: 12px; background: rgba(66, 153, 225, 0.02); pointer-events: none; z-index: 0;"></div>
-            <div style="position: absolute; left: 755px; top: 85px; width: 180px; height: 500px; border: 2px dashed rgba(72, 187, 120, 0.4); border-radius: 12px; background: rgba(72, 187, 120, 0.02); pointer-events: none; z-index: 0;"></div>
+            <div style="position: absolute; left: 755px; top: 85px; width: 180px; height: 300px; border: 2px dashed rgba(72, 187, 120, 0.4); border-radius: 12px; background: rgba(72, 187, 120, 0.02); pointer-events: none; z-index: 0;"></div>
             <div style="position: absolute; left: 985px; top: 65px; width: 180px; height: 620px; border: 2px dashed rgba(255, 193, 7, 0.4); border-radius: 12px; background: rgba(255, 193, 7, 0.02); pointer-events: none; z-index: 0;"></div>
             
             <!-- Legend -->
@@ -808,6 +1069,39 @@
             </div>
         </div>
         
+        <!-- Scenario Status Bar -->
+        <div class="scenario-status-bar" id="scenarioStatusBar">
+            <div class="d-flex align-items-center gap-3">
+                <div class="scenario-status-info">
+                    <span class="scenario-status-label">Running:</span>
+                    <span class="scenario-status-name" id="scenarioStatusName">No scenario</span>
+                    <span class="scenario-status-badge" id="scenarioStatusBadge"></span>
+                </div>
+                <div class="scenario-status-query">
+                    <i class="bi bi-chat-quote me-1"></i>
+                    <span id="scenarioStatusQuery">Waiting...</span>
+                </div>
+                <div class="scenario-status-metrics">
+                    <span class="metric-small">
+                        <i class="bi bi-cpu me-1"></i>
+                        <span id="scenarioStatusAgents">0</span> agents
+                    </span>
+                    <span class="metric-small">
+                        <i class="bi bi-clock me-1"></i>
+                        <span id="scenarioStatusTime">0ms</span>
+                    </span>
+                </div>
+                <div style="margin-left: auto; display: flex; gap: 8px;">
+                    <button class="btn btn-sm btn-outline-info" id="btnShowDetails" title="Show detailed scenario info">
+                        <i class="bi bi-info-circle"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-light" id="btnHideStatus" title="Hide status bar">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <!-- Control Panel -->
         <div class="control-panel">
             <button class="control-btn control-btn-primary" id="btnSimulate">

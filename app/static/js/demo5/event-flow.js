@@ -27,7 +27,94 @@ class EnhancedEventFlowVisualizer {
             closeBtn.addEventListener('click', () => this.toggleLog());
         }
         
+        // Close button for scenario panel
+        const closeScenarioBtn = document.getElementById('btnCloseScenario');
+        if (closeScenarioBtn) {
+            closeScenarioBtn.addEventListener('click', () => this.hideScenarioPanel());
+        }
+        
+        // Initialize real-time updates
+        this.startRealtimeUpdates();
+        
         // Initialized successfully
+    }
+
+    // Start real-time statistics updates
+    startRealtimeUpdates() {
+        // Update every 2 seconds during simulation
+        this.realtimeInterval = setInterval(() => {
+            if (this.isSimulating) {
+                this.updateRealtimeStatistics();
+                this.updateQueryContext();
+            }
+        }, 2000);
+    }
+
+    // Update real-time statistics from server
+    async updateRealtimeStatistics() {
+        try {
+            const response = await fetch('/demo5/api/events/realtime-stats');
+            const data = await response.json();
+            
+            if (data.success) {
+                const stats = data.stats;
+                document.getElementById('metricEvents').textContent = stats.total_events;
+                document.getElementById('metricLatency').textContent = `${stats.avg_latency_ms}ms`;
+                document.getElementById('metricSystems').textContent = stats.unique_systems;
+                
+                // Update systems display with visual indication
+                this.updateSystemsStatus(stats.systems_involved);
+            }
+        } catch (error) {
+            console.warn('Failed to update realtime stats:', error);
+        }
+    }
+
+    // Update query context information
+    async updateQueryContext() {
+        try {
+            const response = await fetch('/demo5/api/events/query-context');
+            const data = await response.json();
+            
+            if (data.success && data.query_contexts.length > 0) {
+                // Update scenario panel with latest query context
+                const latestQuery = data.query_contexts[0];
+                this.updateScenarioContext(latestQuery);
+            }
+        } catch (error) {
+            console.warn('Failed to update query context:', error);
+        }
+    }
+
+    // Update systems status display
+    updateSystemsStatus(involvedSystems) {
+        // Reset all nodes
+        document.querySelectorAll('.system-node').forEach(node => {
+            node.classList.remove('context-active');
+        });
+        
+        // Highlight currently involved systems
+        involvedSystems.forEach(systemName => {
+            const nodeElement = this.getNodeElement(systemName);
+            if (nodeElement) {
+                nodeElement.classList.add('context-active');
+            }
+        });
+    }
+
+    // Update scenario context with query information
+    updateScenarioContext(queryContext) {
+        if (!queryContext) return;
+        
+        // Update scenario panel if active
+        const panel = document.getElementById('scenarioInfoPanel');
+        if (panel.classList.contains('active')) {
+            const queryElement = document.getElementById('scenarioQuery');
+            if (queryElement && queryContext.query_text) {
+                queryElement.textContent = queryContext.query_text;
+                queryElement.title = `Category: ${queryContext.query_category}`;
+            }
+        }
     }
     
     async simulateRandomScenario() {
@@ -36,12 +123,16 @@ class EnhancedEventFlowVisualizer {
             return;
         }
         
+        // Always clear previous scenario and animations
+        await this.clear();
+        
         const btnSimulate = document.getElementById('btnSimulate');
         this.isSimulating = true;
         btnSimulate.disabled = true;
         
-        try {
-            this.showToast('Picking a realistic scenario...', 'info');
+        try {            
+            // Start immediate visual feedback
+            this.startImmediateAnimation();
             
             // Call the new scenario engine
             const response = await fetch('/demo5/api/scenarios/random', {
@@ -49,7 +140,16 @@ class EnhancedEventFlowVisualizer {
                 headers: { 'Content-Type': 'application/json' }
             });
             
+            console.log('Response status:', response.status);
+            console.log('Response headers:', response.headers);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+            
             const result = await response.json();
+            console.log('Scenario API result:', result);
+            console.log('Scenario flow data:', result?.scenario?.flow);
             
             if (result.success) {
                 this.currentScenario = result.scenario;
@@ -57,20 +157,40 @@ class EnhancedEventFlowVisualizer {
                 // Show scenario info
                 this.displayScenarioInfo(result.scenario);
                 
-                this.showToast(`Scenario: ${result.scenario.name}`, 'success');
-                
-                // Animate the flow
-                await this.animateScenario(result.workflow_id);
+                // Check if we have scenario data with flow
+                if (result.scenario && result.scenario.flow) {
+                    console.log('Using scenario flow data:', result.scenario.flow);
+                    await this.animateScenarioFromData(result.scenario);
+                } else if (result.workflow_id) {
+                    console.log('Trying to fetch events for workflow:', result.workflow_id);
+                    await this.animateScenario(result.workflow_id);
+                } else {
+                    console.log('No flow data or workflow_id, showing demo');
+                    await this.showDemoAnimationWithScenario();
+                }
                 
                 // Display result
-                this.displayScenarioResult(result.result);
+                if (result.result) {
+                    this.displayScenarioResult(result.result);
+                }
                 
             } else {
-                this.showToast('Simulation failed: ' + result.error, 'error');
+                console.error('Scenario API failed:', result.error);
+                
+                if (result.error && result.error.includes('seed_demo5.py')) {
+                    this.showToast('Database not seeded. Running demo scenario...', 'warning');
+                } else {
+                    this.showToast('API failed, running demo: ' + (result.error || 'Unknown error'), 'warning');
+                }
+                
+                // Still show some animation as fallback
+                await this.showDemoAnimationWithScenario();
             }
         } catch (error) {
             console.error('Simulation error:', error);
-            this.showToast('Simulation error: ' + error.message, 'error');
+            this.showToast('Network error, running demo: ' + error.message, 'warning');
+            // Show demo animation as fallback
+            await this.showDemoAnimationWithScenario();
         } finally {
             this.isSimulating = false;
             btnSimulate.disabled = false;
@@ -125,13 +245,20 @@ class EnhancedEventFlowVisualizer {
                 
                 this.showToast(`Scenario complete! ${data.events.length} events processed`, 'success');
                 
+                // Clean up all node states after scenario completion
+                setTimeout(() => {
+                    this.cleanupAllNodeStates();
+                }, 2000);
+                
                 // Auto-open event log if not already open
                 if (!this.eventLogSidebar.classList.contains('open')) {
                     this.toggleLog();
                 }
                 
             } else {
-                this.showToast('No events found for scenario', 'info');
+                console.warn('No events found for workflow, falling back to demo');
+                this.showToast('No events found, showing demo animation', 'info');
+                await this.showDemoAnimation();
             }
         } catch (error) {
             console.error('Error animating scenario:', error);
@@ -146,10 +273,14 @@ class EnhancedEventFlowVisualizer {
         
         console.log(`Animating: ${event.source_system} → ${event.target_system}`);
         
-        // Activate source node
+        // Highlight components involved in current scenario
+        this.highlightScenarioComponents(event);
+        
+        // Activate source node with enhanced styling
         if (sourceNode) {
-            sourceNode.classList.add('active', 'processing');
+            sourceNode.classList.add('active', 'processing', 'scenario-active');
             this.activateConnections();
+            this.addNodePulseEffect(sourceNode);
         }
         
         // Animate particle from source to target
@@ -157,33 +288,46 @@ class EnhancedEventFlowVisualizer {
             await this.animateParticle(sourceNode, targetNode);
         }
         
-        // Activate target node
+        // Activate target node with enhanced styling
         if (targetNode) {
-            targetNode.classList.add('active');
+            targetNode.classList.add('active', 'scenario-active', 'receiving');
+            this.addNodePulseEffect(targetNode);
         }
         
         // Add event to log
         this.addEventToLog(event);
         
+        // Update real-time statistics
+        this.updateRealtimeStats(event);
+        
         // Deactivate after animation
         setTimeout(() => {
             if (sourceNode) {
-                sourceNode.classList.remove('active', 'processing');
+                sourceNode.classList.remove('active', 'processing', 'receiving');
             }
             if (targetNode) {
-                targetNode.classList.remove('active');
+                targetNode.classList.remove('active', 'receiving');
             }
             this.deactivateConnections();
-        }, 800);
+        }, 1200);
     }
     
     getNodeElement(systemName) {
         // Normalize system name for element ID
-        const nodeId = `node-${systemName.replace(/[\s_]/g, '-')}`;
-        const element = document.getElementById(nodeId);
+        let nodeId = `node-${systemName.replace(/[\s_]/g, '-')}`;
+        let element = document.getElementById(nodeId);
+        
+        // If not found with underscores replaced with dashes, try with underscores preserved
+        if (!element) {
+            nodeId = `node-${systemName}`;
+            element = document.getElementById(nodeId);
+        }
         
         if (!element) {
             console.warn(`Node element not found: ${nodeId} for system: ${systemName}`);
+            console.log('Available node IDs:', Array.from(document.querySelectorAll('.system-node')).map(n => n.id));
+        } else {
+            console.log(`✅ Found node element: ${nodeId} for system: ${systemName}`);
         }
         
         return element;
@@ -607,15 +751,31 @@ class EnhancedEventFlowVisualizer {
             `;
             this.eventLogContent.appendChild(placeholder);
             
-            // Hide scenario panel
+            // Hide scenario panel and status bar
             document.getElementById('scenarioInfoPanel').classList.remove('active');
+            this.hideScenarioStatusBar();
+            
+            // Clear all visual states
+            document.querySelectorAll('.system-node').forEach(node => {
+                node.classList.remove('active', 'processing', 'scenario-active', 'scenario-involved', 'receiving', 'context-active');
+            });
+            
+            // Clear connection states
+            document.querySelectorAll('.connection-line').forEach(line => {
+                line.classList.remove('active');
+            });
             
             // Reset metrics
             this.eventCount = 0;
+            this.systemsInvolved = new Set();
             document.getElementById('metricEvents').textContent = '0';
             document.getElementById('metricLatency').textContent = '0ms';
+            document.getElementById('metricSystems').textContent = '16';
             
-            this.showToast('Event history cleared', 'info');
+            // Reset state
+            this.currentScenario = null;
+            this.isSimulating = false;
+            
         } catch (error) {
             console.error('Clear error:', error);
             this.showToast('Error clearing events', 'error');
@@ -624,6 +784,11 @@ class EnhancedEventFlowVisualizer {
     
     toggleLog() {
         this.eventLogSidebar.classList.toggle('open');
+    }
+
+    hideScenarioPanel() {
+        const panel = document.getElementById('scenarioInfoPanel');
+        panel.classList.remove('active');
     }
     
     showToast(message, type = 'info') {
@@ -647,6 +812,544 @@ class EnhancedEventFlowVisualizer {
     
     sleep(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    // Start immediate visual feedback
+    startImmediateAnimation() {
+        // Highlight all system nodes to show activity
+        document.querySelectorAll('.system-node').forEach(node => {
+            node.classList.add('scenario-involved');
+        });
+        
+        // Activate connection lines
+        document.querySelectorAll('.connection-line').forEach(line => {
+            line.classList.add('active');
+        });
+        
+        // Update metrics immediately
+        this.eventCount = 0;
+        document.getElementById('metricEvents').textContent = '0';
+        document.getElementById('metricLatency').textContent = '0ms';
+        
+        console.log('Started immediate animation feedback');
+    }
+
+    // Animate scenario from scenario data (fallback)
+    async animateScenarioFromData(scenario) {
+        console.log('animateScenarioFromData called with:', scenario);
+        
+        if (!scenario || !scenario.flow || !Array.isArray(scenario.flow)) {
+            console.warn('No valid flow data available:', {
+                hasScenario: !!scenario,
+                hasFlow: !!(scenario?.flow),
+                flowIsArray: Array.isArray(scenario?.flow),
+                flowLength: scenario?.flow?.length
+            });
+            console.log('Falling back to demo animation');
+            return this.showDemoAnimation();
+        }
+
+        console.log(`Animating ${scenario.flow.length} flow steps`);
+        this.clearEventLog();
+        
+        for (let i = 0; i < scenario.flow.length; i++) {
+            const step = scenario.flow[i];
+            console.log(`Step ${i + 1}:`, step);
+            
+            // Create mock event from flow step
+            const mockEvent = {
+                source_system: step.from,
+                target_system: step.to,
+                event_type: step.event || 'SYSTEM_EVENT',
+                processing_time_ms: step.delay || 500,
+                timestamp: new Date().toISOString(),
+                payload: {
+                    description: step.description || `${step.from} → ${step.to}`,
+                    step: i + 1,
+                    total_steps: scenario.flow.length,
+                    delay_ms: step.delay || 500
+                }
+            };
+            
+            await this.animateEvent(mockEvent);
+            await this.sleep(step.delay || 600);
+        }
+        
+        console.log('Scenario animation completed');
+    }
+
+    // Demo animation as ultimate fallback
+    async showDemoAnimation() {
+        this.clearEventLog();
+        
+        const demoFlow = [
+            { from: 'UI', to: 'Orchestrator', description: 'User submits formulation request' },
+            { from: 'Orchestrator', to: 'FormulationAgent', description: 'Agent analysis started' },
+            { from: 'FormulationAgent', to: 'SAP_ERP', description: 'Querying material costs' },
+            { from: 'SAP_ERP', to: 'FormulationAgent', description: 'Material data retrieved' },
+            { from: 'FormulationAgent', to: 'RAG_Engine', description: 'Knowledge retrieval initiated' },
+            { from: 'RAG_Engine', to: 'Vector_DB', description: 'Vector search started' },
+            { from: 'Vector_DB', to: 'RAG_Engine', description: 'Similar formulations found' },
+            { from: 'FormulationAgent', to: 'LIMS', description: 'Historical test data query' },
+            { from: 'LIMS', to: 'FormulationAgent', description: 'Test results retrieved' },
+            { from: 'RegulatoryAgent', to: 'Regulatory_DB', description: 'Compliance check' },
+            { from: 'Regulatory_DB', to: 'RegulatoryAgent', description: 'Standards validated' },
+            { from: 'SupplyChainAgent', to: 'Supplier_Portal', description: 'Supplier availability check' },
+            { from: 'Supplier_Portal', to: 'SupplyChainAgent', description: 'Suppliers confirmed' },
+            { from: 'FormulationAgent', to: 'Orchestrator', description: 'Analysis complete' },
+            { from: 'Orchestrator', to: 'UI', description: 'Recommendations ready' }
+        ];
+
+        for (let i = 0; i < demoFlow.length; i++) {
+            const step = demoFlow[i];
+            
+            const mockEvent = {
+                source_system: step.from,
+                target_system: step.to,
+                event_type: 'DEMO_EVENT',
+                processing_time_ms: 300 + (i * 50),
+                timestamp: new Date().toISOString(),
+                payload: {
+                    description: step.description,
+                    step: i + 1,
+                    total_steps: demoFlow.length,
+                    delay_ms: 500
+                }
+            };
+            
+            await this.animateEvent(mockEvent);
+            await this.sleep(500);
+        }
+        
+        this.showToast('Demo animation completed', 'success');
+    }
+
+    // Demo animation with complete scenario experience
+    async showDemoAnimationWithScenario() {
+        // Create a mock scenario
+        const mockScenario = {
+            name: 'Quality Investigation - QTZT-2025-0234',
+            query: 'LIMS flagged batch QTZT-2025-0234 as fail. What\'s the issue?',
+            category: 'Two Agent',
+            agents: ['FormulationAgent', 'TestProtocolAgent', 'RegulatoryAgent'],
+            flow: [
+                { from: 'UI', to: 'Orchestrator', description: 'Quality investigation request submitted', delay: 500 },
+                { from: 'Orchestrator', to: 'FormulationAgent', description: 'Analyzing batch formulation data', delay: 800 },
+                { from: 'FormulationAgent', to: 'SAP_ERP', description: 'Retrieving batch production records', delay: 600 },
+                { from: 'SAP_ERP', to: 'FormulationAgent', description: 'Production data: Temperature spike detected', delay: 400 },
+                { from: 'FormulationAgent', to: 'LIMS', description: 'Querying detailed test results', delay: 700 },
+                { from: 'LIMS', to: 'FormulationAgent', description: 'Viscosity out of spec: 11.8 cSt (target: 11.2)', delay: 500 },
+                { from: 'TestProtocolAgent', to: 'PLM', description: 'Checking formulation specifications', delay: 600 },
+                { from: 'PLM', to: 'TestProtocolAgent', description: 'Formulation specs retrieved', delay: 400 },
+                { from: 'RegulatoryAgent', to: 'Regulatory_DB', description: 'Validating quality requirements', delay: 500 },
+                { from: 'Regulatory_DB', to: 'RegulatoryAgent', description: 'API SP standards confirmed', delay: 300 },
+                { from: 'FormulationAgent', to: 'Orchestrator', description: 'Root cause analysis complete', delay: 600 },
+                { from: 'Orchestrator', to: 'UI', description: 'Investigation results ready', delay: 400 }
+            ],
+            total_latency_ms: 6400,
+            result: {
+                root_cause: 'Temperature spike during mixing',
+                recommendation: 'Rework batch with temperature control',
+                quality_impact: 'Viscosity out of specification',
+                corrective_action: 'Review heating control system'
+            }
+        };
+
+        this.currentScenario = mockScenario;
+        
+        // Show scenario info
+        this.displayScenarioInfo(mockScenario);
+        
+        // Run the animation
+        await this.animateScenarioFromData(mockScenario);
+        
+        // Display results
+        this.displayScenarioResult(mockScenario.result);
+        
+        this.showToast('Quality investigation scenario completed', 'success');
+    }
+
+    // Enhanced component highlighting for current scenario
+    highlightScenarioComponents(event) {
+        // Clear previous scenario highlights
+        document.querySelectorAll('.system-node').forEach(node => {
+            node.classList.remove('scenario-involved');
+        });
+
+        // Highlight nodes involved in current scenario
+        if (this.currentScenario && this.currentScenario.agents) {
+            this.currentScenario.agents.forEach(agentName => {
+                const nodeElement = this.getNodeElement(agentName);
+                if (nodeElement) {
+                    nodeElement.classList.add('scenario-involved');
+                }
+            });
+        }
+
+        // Always highlight source and target
+        const sourceNode = this.getNodeElement(event.source_system);
+        const targetNode = this.getNodeElement(event.target_system);
+        if (sourceNode) sourceNode.classList.add('scenario-involved');
+        if (targetNode) targetNode.classList.add('scenario-involved');
+    }
+
+    // Add pulse effect to nodes
+    addNodePulseEffect(node) {
+        node.style.animation = 'nodePulse 1.5s ease-in-out';
+        setTimeout(() => {
+            node.style.animation = '';
+        }, 1500);
+    }
+
+    // Update real-time statistics
+    updateRealtimeStats(event) {
+        // Update event count
+        this.eventCount++;
+        document.getElementById('metricEvents').textContent = this.eventCount;
+        
+        // Update latency display
+        if (event.processing_time_ms) {
+            document.getElementById('metricLatency').textContent = `${event.processing_time_ms}ms`;
+        }
+        
+        // Update systems count (unique systems involved)
+        if (!this.systemsInvolved) {
+            this.systemsInvolved = new Set();
+        }
+        this.systemsInvolved.add(event.source_system);
+        this.systemsInvolved.add(event.target_system);
+        document.getElementById('metricSystems').textContent = this.systemsInvolved.size;
+    }
+
+    // Enhanced scenario display with more context
+    displayScenarioInfo(scenario) {
+        // Use status bar instead of blocking panel
+        this.showScenarioStatusBar(scenario);
+        
+        // Also keep the side panel option for detailed view
+        const panel = document.getElementById('scenarioInfoPanel');
+        
+        // Update panel details (but don't show it by default)
+        document.getElementById('scenarioTitle').textContent = scenario.name || 'Active Scenario';
+        document.getElementById('scenarioQuery').textContent = scenario.query || 'Processing request...';
+        document.getElementById('scenarioCategory').textContent = scenario.category || 'General';
+        document.getElementById('scenarioAgents').textContent = scenario.agents ? scenario.agents.length : '4';
+        document.getElementById('scenarioSystems').textContent = this.countUniqueSystems(scenario) || '16';
+        document.getElementById('scenarioLatency').textContent = `${scenario.total_latency_ms || '0'}ms`;
+        
+        // Add scenario type badge
+        this.addScenarioTypeBadge(scenario.category);
+        
+        // Highlight involved agents immediately
+        if (scenario.agents && Array.isArray(scenario.agents)) {
+            scenario.agents.forEach(agentName => {
+                const nodeElement = this.getNodeElement(agentName);
+                if (nodeElement) {
+                    nodeElement.classList.add('scenario-involved');
+                    // Add slight delay for staggered effect
+                    setTimeout(() => {
+                        nodeElement.classList.add('scenario-active');
+                    }, Math.random() * 1000);
+                }
+            });
+        }
+        
+        console.log('Scenario info displayed:', scenario);
+    }
+
+    // Show scenario status bar (non-blocking)
+    showScenarioStatusBar(scenario) {
+        console.log('Showing scenario status bar for:', scenario);
+        const statusBar = document.getElementById('scenarioStatusBar');
+        if (!statusBar) {
+            console.error('Status bar element not found');
+            return;
+        }
+        
+        // Build status bar content with cleaner design
+        const agentCount = scenario.agents ? scenario.agents.length : 0;
+        const statusText = `${scenario.name || 'Running Scenario'}`;
+        
+        statusBar.innerHTML = `
+            <div class="scenario-status-content">
+                <div class="scenario-title">${statusText}</div>
+                <div class="scenario-agents">${agentCount} Agents Active</div>
+            </div>
+            <button class="info-btn" onclick="eventFlowViz.toggleDetailedPanel()" title="Show detailed scenario info">
+                <i class="bi bi-info-circle"></i>
+            </button>
+        `;
+        
+        // Show the status bar using CSS class
+        statusBar.classList.add('visible');
+        console.log('Status bar shown with visible class');
+    }
+
+    hideScenarioStatusBar() {
+        const statusBar = document.getElementById('scenarioStatusBar');
+        if (statusBar) {
+            statusBar.classList.remove('visible');
+        }
+    }
+
+    toggleDetailedPanel() {
+        const panel = document.getElementById('scenarioInfoPanel');
+        if (panel) {
+            panel.classList.toggle('active');
+        }
+    }
+
+    cleanupAllNodeStates() {
+        console.log('🧹 Cleaning up all node states after scenario completion');
+        document.querySelectorAll('.system-node').forEach(node => {
+            node.classList.remove('active', 'processing', 'receiving', 'scenario-active', 'scenario-involved');
+        });
+        
+        // Also cleanup connection lines
+        document.querySelectorAll('.connection-line').forEach(line => {
+            line.classList.remove('active');
+        });
+    }
+
+    // Count unique systems in scenario
+    countUniqueSystems(scenario) {
+        if (!scenario.flow) return 0;
+        const systems = new Set();
+        scenario.flow.forEach(step => {
+            systems.add(step.from);
+            systems.add(step.to);
+        });
+        return systems.size;
+    }
+
+    // Add visual badge for scenario type
+    addScenarioTypeBadge(category) {
+        const titleElement = document.getElementById('scenarioTitle');
+        const existingBadge = titleElement.querySelector('.scenario-badge');
+        if (existingBadge) {
+            existingBadge.remove();
+        }
+        
+        let badgeColor = '#4299e1';
+        let badgeText = 'General';
+        
+        switch(category) {
+            case 'Single Agent':
+                badgeColor = '#48bb78';
+                badgeText = '1 Agent';
+                break;
+            case 'Multi Agent':
+                badgeColor = '#ed8936';
+                badgeText = 'Multi';
+                break;
+            case 'Complex Flow':
+                badgeColor = '#9f7aea';
+                badgeText = 'Complex';
+                break;
+        }
+        
+        const badge = document.createElement('span');
+        badge.className = 'scenario-badge ms-2';
+        badge.style.cssText = `
+            background: ${badgeColor};
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: 500;
+        `;
+        badge.textContent = badgeText;
+        titleElement.appendChild(badge);
+    }
+
+    // Enhanced event log display
+    addEventToLog(event) {
+        // Remove placeholder if it exists (only on first event)
+        if (this.eventLogContent.children.length === 1) {
+            const firstChild = this.eventLogContent.firstChild;
+            if (firstChild && firstChild.className && firstChild.className.includes('text-center')) {
+                this.eventLogContent.removeChild(firstChild);
+            }
+        }
+
+        // Parse event data with enhanced information
+        const eventInfo = this.parseEventInfoEnhanced(event);
+        
+        // Create enhanced event entry
+        const entry = document.createElement('div');
+        entry.className = 'event-entry';
+        entry.style.cssText = `
+            background: ${eventInfo.bgColor};
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            border-left: 3px solid ${eventInfo.borderColor};
+            border-radius: 12px;
+            padding: 16px;
+            color: #e2e8f0;
+            transition: all 0.2s ease;
+            margin-bottom: 12px;
+            position: relative;
+            overflow: hidden;
+        `;
+        
+        // Add animated progress bar for processing events
+        if (event.event_type?.includes('PROCESSING') || event.event_type?.includes('ANALYSIS')) {
+            const progressBar = document.createElement('div');
+            progressBar.style.cssText = `
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                height: 2px;
+                background: ${eventInfo.borderColor};
+                animation: progressLoad 2s ease-in-out;
+                width: 100%;
+            `;
+            entry.appendChild(progressBar);
+        }
+        
+        // Enhanced hover effects
+        entry.addEventListener('mouseenter', () => {
+            entry.style.transform = 'translateX(-4px) scale(1.02)';
+            entry.style.background = eventInfo.bgColor.replace('0.08', '0.15');
+            entry.style.boxShadow = `0 6px 20px ${eventInfo.borderColor}40`;
+        });
+        entry.addEventListener('mouseleave', () => {
+            entry.style.transform = 'translateX(0) scale(1)';
+            entry.style.background = eventInfo.bgColor;
+            entry.style.boxShadow = 'none';
+        });
+
+        entry.innerHTML = `
+            <div class="d-flex justify-content-between align-items-start mb-2">
+                <div class="flex-grow-1">
+                    <h6 class="mb-1" style="color: #f1f5f9; font-weight: 600; font-size: 0.9rem;">
+                        <i class="bi ${eventInfo.icon} me-2" style="color: ${eventInfo.borderColor};"></i>
+                        ${eventInfo.title}
+                    </h6>
+                    <div class="d-flex align-items-center gap-2">
+                        <small style="color: #94a3b8; font-size: 0.75rem;">
+                            Step ${event.payload?.step || '?'} of ${event.payload?.total_steps || '?'}
+                        </small>
+                        <span style="color: #64748b;">•</span>
+                        <small style="color: #94a3b8; font-size: 0.75rem;">
+                            ${this.getRelativeTime(event.timestamp)}
+                        </small>
+                        ${event.processing_time_ms ? `
+                            <span style="color: #64748b;">•</span>
+                            <small style="color: #10b981; font-size: 0.75rem; font-weight: 500;">
+                                ${event.processing_time_ms}ms
+                            </small>
+                        ` : ''}
+                    </div>
+                </div>
+                <div class="d-flex flex-column align-items-end gap-1">
+                    <span class="badge" style="background: ${eventInfo.badgeColor}; color: white; font-size: 0.75rem; padding: 4px 10px; border-radius: 12px;">
+                        ${eventInfo.badgeText}
+                    </span>
+                    <small style="color: #64748b; font-size: 0.7rem;">
+                        ${event.source_system} → ${event.target_system}
+                    </small>
+                </div>
+            </div>
+            <p class="mb-2" style="color: #cbd5e1; font-size: 0.85rem; line-height: 1.5;">
+                ${event.payload?.description || eventInfo.description}
+            </p>
+            ${eventInfo.details ? `
+                <div style="background: rgba(51, 65, 85, 0.3); padding: 10px 12px; border-radius: 6px; font-size: 0.75rem; color: #94a3b8; border-left: 2px solid ${eventInfo.borderColor}40;">
+                    ${eventInfo.details}
+                </div>
+            ` : ''}
+        `;
+        
+        // Add entry to log with smooth animation
+        entry.style.opacity = '0';
+        entry.style.transform = 'translateY(-10px)';
+        this.eventLogContent.insertBefore(entry, this.eventLogContent.firstChild);
+        
+        // Animate in
+        setTimeout(() => {
+            entry.style.transition = 'all 0.3s ease';
+            entry.style.opacity = '1';
+            entry.style.transform = 'translateY(0)';
+        }, 50);
+        
+        // Auto-scroll to latest
+        this.eventLogContent.scrollTop = 0;
+    }
+
+    // Enhanced event info parsing
+    parseEventInfoEnhanced(event) {
+        const eventType = event.event_type || '';
+        let info = {
+            title: eventType.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, l => l.toUpperCase()),
+            icon: 'bi-activity',
+            borderColor: '#4299e1',
+            bgColor: 'rgba(66, 153, 225, 0.08)',
+            badgeColor: '#4299e1',
+            badgeText: 'Event',
+            description: event.payload?.description || 'System event occurred',
+            details: null
+        };
+
+        // Enhanced event type classification
+        if (eventType.includes('FORMULATION')) {
+            info.icon = 'bi-beaker';
+            info.borderColor = '#10b981';
+            info.bgColor = 'rgba(16, 185, 129, 0.08)';
+            info.badgeColor = '#10b981';
+            info.badgeText = 'Formulation';
+        } else if (eventType.includes('SAP') || eventType.includes('ERP')) {
+            info.icon = 'bi-building';
+            info.borderColor = '#f59e0b';
+            info.bgColor = 'rgba(245, 158, 11, 0.08)';
+            info.badgeColor = '#f59e0b';
+            info.badgeText = 'SAP';
+        } else if (eventType.includes('LIMS') || eventType.includes('TEST')) {
+            info.icon = 'bi-microscope';
+            info.borderColor = '#8b5cf6';
+            info.bgColor = 'rgba(139, 92, 246, 0.08)';
+            info.badgeColor = '#8b5cf6';
+            info.badgeText = 'LIMS';
+        } else if (eventType.includes('REGULATORY')) {
+            info.icon = 'bi-shield-check';
+            info.borderColor = '#ef4444';
+            info.bgColor = 'rgba(239, 68, 68, 0.08)';
+            info.badgeColor = '#ef4444';
+            info.badgeText = 'Regulatory';
+        } else if (eventType.includes('SUPPLIER') || eventType.includes('SUPPLY')) {
+            info.icon = 'bi-truck';
+            info.borderColor = '#06b6d4';
+            info.bgColor = 'rgba(6, 182, 212, 0.08)';
+            info.badgeColor = '#06b6d4';
+            info.badgeText = 'Supply Chain';
+        } else if (eventType.includes('VECTOR') || eventType.includes('RAG')) {
+            info.icon = 'bi-database-gear';
+            info.borderColor = '#84cc16';
+            info.bgColor = 'rgba(132, 204, 22, 0.08)';
+            info.badgeColor = '#84cc16';
+            info.badgeText = 'AI/RAG';
+        } else if (eventType.includes('AGENT')) {
+            info.icon = 'bi-robot';
+            info.borderColor = '#ec4899';
+            info.bgColor = 'rgba(236, 72, 153, 0.08)';
+            info.badgeColor = '#ec4899';
+            info.badgeText = 'Agent';
+        }
+
+        // Add payload details if available
+        if (event.payload) {
+            const details = [];
+            Object.entries(event.payload).forEach(([key, value]) => {
+                if (key !== 'description' && key !== 'step' && key !== 'total_steps' && value !== null) {
+                    const formattedKey = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                    details.push(`${formattedKey}: ${this.formatValue(value)}`);
+                }
+            });
+            if (details.length > 0) {
+                info.details = details.join('<br>');
+            }
+        }
+
+        return info;
     }
 }
 

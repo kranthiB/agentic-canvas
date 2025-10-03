@@ -372,6 +372,9 @@ def simulate_random_scenario():
                 'category': scenario['category'],
                 'query': scenario['query'],
                 'query_hi': scenario.get('query_hi', ''),
+                'agents': scenario['agents'],
+                'systems': scenario['systems'],
+                'flow': scenario['flow'],
                 'agents_count': len(scenario['agents']),
                 'systems_count': len(scenario['systems']),
                 'total_latency_ms': cumulative_latency

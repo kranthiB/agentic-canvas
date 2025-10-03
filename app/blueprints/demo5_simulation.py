@@ -294,6 +294,114 @@ def quick_demo():
         }), 500
 
 
+@sim_bp.route('/api/events/realtime-stats')
+@login_required
+def get_realtime_event_stats():
+    """
+    Get real-time statistics about current event processing.
+    Provides enhanced metrics for the dashboard.
+    """
+    try:
+        # Get recent events (last 100)
+        recent_events = event_simulator.event_history[-100:]
+        
+        # Calculate statistics
+        total_events = len(event_simulator.event_history)
+        unique_systems = set()
+        total_latency = 0
+        event_types = {}
+        
+        for event in recent_events:
+            unique_systems.add(event.source_system)
+            unique_systems.add(event.target_system)
+            if event.processing_time_ms:
+                total_latency += event.processing_time_ms
+            
+            if hasattr(event.event_type, 'value'):
+                event_type = event.event_type.value
+            else:
+                event_type = str(event.event_type)
+            event_types[event_type] = event_types.get(event_type, 0) + 1
+        
+        if recent_events:
+            avg_latency = total_latency / len(recent_events)
+        else:
+            avg_latency = 0
+        
+        return jsonify({
+            'success': True,
+            'timestamp': datetime.now().isoformat(),
+            'stats': {
+                'total_events': total_events,
+                'recent_events': len(recent_events),
+                'unique_systems': len(unique_systems),
+                'total_latency_ms': total_latency,
+                'avg_latency_ms': round(avg_latency, 2),
+                'systems_involved': list(unique_systems),
+                'event_types': event_types
+            }
+        })
+    
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+
+@sim_bp.route('/api/events/query-context')
+@login_required
+def get_event_query_context():
+    """
+    Get the context and related events for current scenarios.
+    Shows what queries are being processed and their event chains.
+    """
+    try:
+        from app.models.demo5_models import TEQueryHistory, TEEventTrace
+        
+        # Get recent queries with their event chains
+        recent_queries = TEQueryHistory.query.order_by(
+            TEQueryHistory.created_at.desc()
+        ).limit(5).all()
+        
+        query_contexts = []
+        for query in recent_queries:
+            # Get events for this session
+            events = TEEventTrace.query.filter_by(
+                correlation_id=query.session_id
+            ).all()
+            
+            # Calculate unique systems
+            source_systems = [e.source_system for e in events]
+            target_systems = [e.target_system for e in events]
+            unique_systems = set(source_systems + target_systems)
+            
+            query_contexts.append({
+                'query_text': query.query_text,
+                'query_category': query.query_category,
+                'agents_involved': query.agents_involved,
+                'session_id': query.session_id,
+                'timestamp': query.created_at.isoformat(),
+                'event_count': len(events),
+                'systems_involved': len(unique_systems),
+                'total_processing_time': sum([
+                    e.processing_time_ms or 0 for e in events
+                ])
+            })
+        
+        return jsonify({
+            'success': True,
+            'timestamp': datetime.now().isoformat(),
+            'query_contexts': query_contexts
+        })
+    
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+
 @sim_bp.route('/api/system/status')
 @login_required
 def system_status():
