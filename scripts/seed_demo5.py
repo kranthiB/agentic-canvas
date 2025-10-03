@@ -11,7 +11,7 @@ from datetime import datetime, date
 from app import create_app, db
 from app.models.demo5_models import (
     TEProduct, TETechnicalDoc, TEFormulationTrial,
-    TESAPInventory, TELIMSTest, TESupplier
+    TESAPInventory, TELIMSTest, TESupplier, TEGreetingResponse
 )
 
 def seed_all():
@@ -29,6 +29,7 @@ def seed_all():
         TESAPInventory.query.delete()
         TELIMSTest.query.delete()
         TESupplier.query.delete()
+        TEGreetingResponse.query.delete()
         db.session.commit()
         print("✓ Cleared\n")
         
@@ -113,6 +114,37 @@ def seed_all():
             db.session.add(s)
         db.session.commit()
         print(f"✓ Added {len(suppliers)} suppliers\n")
+        
+        # Greeting Responses
+        print("Seeding greeting responses...")
+        greetings = [
+            # English greetings
+            TEGreetingResponse(greeting_type="greeting", language="en", 
+                             response_text="Hello! 👋 I'm your TotalEnergies Engineer's Copilot. I can help with formulation development, supply chain intelligence, quality control, technical documentation, and process optimization. I work in both English and Hindi. How can I assist you today?",
+                             response_category="greeting", priority=1),
+            TEGreetingResponse(greeting_type="greeting", language="en",
+                             response_text="Hi there! I'm the Engineer's Copilot for TotalEnergies. I specialize in lubricant R&D, supplier management, inventory tracking, and technical analysis. What technical challenge can I help you solve?",
+                             response_category="greeting", priority=2),
+            TEGreetingResponse(greeting_type="capabilities", language="en",
+                             response_text="🤖 **My Core Capabilities:**\n\n🔬 **Formulation Intelligence:** Lubricant recommendations, additive optimization, base oil selection\n🏭 **Supply Chain:** Real-time supplier info, inventory monitoring, procurement recommendations\n🧪 **Quality Control:** LIMS analysis, batch investigation, compliance validation\n📊 **Documentation:** Access to 1000+ technical documents and specifications\n🌐 **Multi-Language:** Full functionality in English and Hindi\n⚡ **Real-Time:** 2.3s average response time with source citations\n\nTry asking about specific products, suppliers, test results, or formulation challenges!",
+                             response_category="capabilities", priority=1),
+            
+            # Hindi greetings  
+            TEGreetingResponse(greeting_type="greeting", language="hi",
+                             response_text="नमस्ते! 👋 मैं आपका TotalEnergies Engineer's Copilot हूं। मैं फॉर्मूलेशन विकास, आपूर्ति श्रृंखला बुद्धिमत्ता, गुणवत्ता नियंत्रण, तकनीकी दस्तावेज और प्रक्रिया अनुकूलन में सहायता कर सकता हूं। मैं अंग्रेजी और हिंदी दोनों में काम करता हूं। आज मैं आपकी कैसे सहायता कर सकता हूं?",
+                             response_category="greeting", priority=1),
+            TEGreetingResponse(greeting_type="greeting", language="hi",
+                             response_text="हैलो! मैं TotalEnergies के लिए Engineer's Copilot हूं। मैं स्नेहक R&D, आपूर्तिकर्ता प्रबंधन, इन्वेंट्री ट्रैकिंग और तकनीकी विश्लेषण में विशेषज्ञ हूं। मैं आपकी किस तकनीकी चुनौती को हल करने में मदद कर सकता हूं?",
+                             response_category="greeting", priority=2),
+            TEGreetingResponse(greeting_type="capabilities", language="hi",
+                             response_text="🤖 **मेरी मुख्य क्षमताएं:**\n\n🔬 **फॉर्मूलेशन बुद्धिमत्ता:** स्नेहक सिफारिशें, एडिटिव अनुकूलन, बेस ऑयल चयन\n🏭 **आपूर्ति श्रृंखला:** वास्तविक समय आपूर्तिकर्ता जानकारी, इन्वेंट्री निगरानी\n🧪 **गुणवत्ता नियंत्रण:** LIMS विश्लेषण, बैच जांच, अनुपालन सत्यापन\n📊 **दस्तावेज:** 1000+ तकनीकी दस्तावेजों तक पहुंच\n🌐 **बहु-भाषा:** अंग्रेजी और हिंदी में पूर्ण कार्यक्षमता\n⚡ **वास्तविक समय:** 2.3 सेकंड औसत प्रतिक्रिया समय\n\nविशिष्ट उत्पादों, आपूर्तिकर्ताओं, परीक्षण परिणामों या फॉर्मूलेशन चुनौतियों के बारे में पूछें!",
+                             response_category="capabilities", priority=1),
+        ]
+        
+        for g in greetings:
+            db.session.add(g)
+        db.session.commit()
+        print(f"✓ Added {len(greetings)} greeting responses\n")
         
         print("=" * 60)
         print("✅ DATABASE SETUP COMPLETE!")

@@ -275,3 +275,29 @@ class TEEventTrace(BaseModel, TimestampMixin):
             'processing_time_ms': self.processing_time_ms,
             'timestamp': self.created_at.isoformat() if self.created_at else None
         }
+
+
+# =====================================================
+# 9. Greeting Responses & Capabilities
+# =====================================================
+class TEGreetingResponse(BaseModel, TimestampMixin):
+    """Store greeting responses and copilot capabilities"""
+    __tablename__ = 'te_greeting_responses'
+    
+    greeting_type = db.Column(db.String(50), nullable=False, index=True)  # hello, hi, namaste, capabilities, help
+    language = db.Column(db.String(10), nullable=False, default='en')  # en, hi
+    response_text = db.Column(db.Text, nullable=False)
+    response_category = db.Column(db.String(50), nullable=False)  # greeting, capabilities, help
+    priority = db.Column(db.Integer, default=1)  # For randomizing responses
+    active = db.Column(db.Boolean, default=True)
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'greeting_type': self.greeting_type,
+            'language': self.language,
+            'response_text': self.response_text,
+            'response_category': self.response_category,
+            'priority': self.priority,
+            'active': self.active
+        }

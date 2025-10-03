@@ -14,7 +14,7 @@ from app import db
 try:
     from app.models.demo5_models import (
         TEProduct, TETechnicalDoc, TEFormulationTrial,
-        TEQueryHistory
+        TEQueryHistory, TEGreetingResponse
     )
     TE_MODELS_AVAILABLE = True
 except ImportError:
@@ -159,8 +159,10 @@ def api_process_query():
     try:
         data = request.json
         query = data.get('query')
-        language = data.get('language', 'english')
+        language = data.get('language', 'english')  # Default to 'english'
         scenario_id = data.get('scenario_id')
+        
+
         
         correlation_id = str(uuid.uuid4())
         
@@ -177,8 +179,59 @@ def api_process_query():
             # Handle specific queries based on content with improved pattern matching
             query_lower = query.lower()
             
+            # Check for greetings and capability queries FIRST - highest priority
+            if _is_greeting_query(query_lower, language):
+                result = _handle_greeting_query(query, language, correlation_id)
+            
+            # Hindi language patterns - add common Hindi terms
+            elif language == 'hindi' or language == 'hi':
+                # Convert some common Hindi terms for pattern matching
+                hindi_patterns = {
+                    'कम स्टॉक': 'low stock',
+                    'स्टॉक स्तर': 'stock levels', 
+                    'सामग्री': 'materials',
+                    'आपूर्तिकर्ता': 'suppliers',
+                    'आपूर्तिकर्ताओं': 'suppliers',
+                    'बैच': 'batch',
+                    'असफल': 'fail',
+                    'विस्कोसिटी': 'viscosity',
+                    'फॉर्मूलेशन': 'formulation',
+                    'परीक्षण': 'testing',
+                    'गुजरात': 'gujarat',
+                    'प्रमाणन': 'certifications',
+                    'प्रमाणपत्र': 'certifications',
+                    'नमी': 'moisture',
+                    'एलपीजी': 'lpg',
+                    'सिलेंडर': 'cylinders',
+                    'सफेद जमाव': 'white deposits',
+                    'ऑटोमोटिव': 'automotive',
+                    'आवश्यकताएं': 'requirements',
+                    'इन्वेंट्री': 'inventory',
+                    'स्तर': 'levels',
+                    'ट्रायल': 'trial',
+                    'दिखाएं': 'show',
+                    'भारी शुल्क': 'heavy duty',
+                    'भारी': 'heavy',
+                    'वेरिएंट': 'variant',
+                    'विकसित': 'develop',
+                    'हमें': 'we need',
+                    'चाहिए': 'need',
+                    'सप्ताह': 'weeks',
+                    'डिलीवर': 'deliver',
+                    'मुंबई': 'mumbai',
+                    'अनुशंसित': 'recommended',
+                    'मात्रा': 'dosage',
+                    'अनुप्रयोगों': 'applications',
+                    'बेस ऑयल': 'base oil'
+                }
+                
+                # Replace Hindi terms with English equivalents for pattern matching
+                for hindi, english in hindi_patterns.items():
+                    if hindi in query_lower:
+                        query_lower = query_lower.replace(hindi, english)
+            
             # ZDDP reduction for BS VI compliance
-            if ('zddp' in query_lower and 'bs vi' in query_lower) or \
+            elif ('zddp' in query_lower and 'bs vi' in query_lower) or \
                ('zddp' in query_lower and 'phosphorus' in query_lower and 'compliance' in query_lower) or \
                ('reduce zddp' in query_lower and ('bs vi' in query_lower or 'compliance' in query_lower)):
                 result = _simulate_zddp_bs_vi_compliance_query(query, language, correlation_id)
@@ -2081,6 +2134,233 @@ def _simulate_lpg_white_deposits_investigation(query, language, correlation_id):
         ],
         'processing_time_ms': random.randint(3000, 4000)
     }
+
+
+def _is_greeting_query(query_lower, language):
+    """Check if the query is a greeting or capability inquiry"""
+    greeting_patterns = {
+        'en': ['hello', 'hi', 'hey', 'good morning', 'good afternoon', 'good evening',
+               'what can you do', 'what are your capabilities', 'help', 'who are you',
+               'what is this', 'how can you help', 'what do you know'],
+        'hi': ['नमस्ते', 'हैलो', 'हाय', 'आप कैसे हैं', 'आप क्या कर सकते हैं',
+               'आपकी क्षमताएं क्या हैं', 'मदद', 'आप कौन हैं', 'यह क्या है',
+               'आप कैसे मदद कर सकते हैं', 'आप क्या जानते हैं']
+    }
+    
+    lang_code = 'hi' if language in ['hindi', 'hi'] else 'en'
+    patterns = greeting_patterns.get(lang_code, greeting_patterns['en'])
+    
+    return any(pattern in query_lower for pattern in patterns)
+
+
+def _handle_greeting_query(query, language, correlation_id):
+    """Handle greeting queries with database-stored responses"""
+    
+    # Determine query type
+    query_lower = query.lower()
+    
+    if any(word in query_lower for word in ['capabilities', 'can you do', 'help', 'know']):
+        greeting_type = 'capabilities'
+    elif any(word in query_lower for word in ['who are you', 'what is this']):
+        greeting_type = 'introduction'
+    else:
+        greeting_type = 'greeting'
+    
+    lang_code = 'hi' if language in ['hindi', 'hi'] else 'en'
+    
+    try:
+        # Try to get response from database
+        greeting_response = TEGreetingResponse.query.filter_by(
+            greeting_type=greeting_type,
+            language=lang_code,
+            active=True
+        ).order_by(db.func.random()).first()
+        
+        if greeting_response:
+            response_text = greeting_response.response_text
+        else:
+            # Fallback responses if database is empty
+            response_text = _get_fallback_greeting_response(greeting_type, lang_code)
+        
+    except Exception:
+        # Fallback if database query fails
+        response_text = _get_fallback_greeting_response(greeting_type, lang_code)
+    
+    return {
+        'category': 'greeting',
+        'agents': ['knowledge_orchestrator'],
+        'response': response_text,
+        'sources': [
+            {'type': 'Greeting_DB', 'document': 'Dynamic Greeting Responses'},
+            {'type': 'Capabilities_DB', 'document': 'Engineer Copilot Capabilities'}
+        ],
+        'processing_time_ms': random.randint(800, 1200)
+    }
+
+
+def _get_fallback_greeting_response(greeting_type, language):
+    """Fallback greeting responses when database is not available"""
+    
+    fallback_responses = {
+        'greeting': {
+            'en': """Hello! 👋 I'm your TotalEnergies Engineer's Copilot.
+
+I'm here to assist you with:
+• **Formulation Development** - Lubricant formulations, additives, base oils
+• **Supply Chain Intelligence** - Supplier information, inventory levels, lead times  
+• **Quality Control** - Test results, batch analysis, compliance checks
+• **Technical Documentation** - Specifications, protocols, regulatory requirements
+• **Process Optimization** - Production insights, cost analysis, efficiency improvements
+
+I can answer questions in both **English** and **हिंदी**.
+
+How can I help you today?""",
+            
+            'hi': """नमस्ते! 👋 मैं आपका TotalEnergies Engineer's Copilot हूं।
+
+मैं आपकी सहायता कर सकता हूं:
+• **फॉर्मूलेशन विकास** - स्नेहक फॉर्मूलेशन, एडिटिव्स, बेस ऑयल
+• **आपूर्ति श्रृंखला बुद्धिमत्ता** - आपूर्तिकर्ता जानकारी, इन्वेंट्री स्तर, लीड टाइम
+• **गुणवत्ता नियंत्रण** - परीक्षण परिणाम, बैच विश्लेषण, अनुपालन जांच
+• **तकनीकी दस्तावेज** - विनिर्देश, प्रोटोकॉल, नियामक आवश्यकताएं
+• **प्रक्रिया अनुकूलन** - उत्पादन अंतर्दृष्टि, लागत विश्लेषण, दक्षता सुधार
+
+मैं **अंग्रेजी** और **हिंदी** दोनों भाषाओं में प्रश्नों का उत्तर दे सकता हूं।
+
+आज मैं आपकी कैसे सहायता कर सकता हूं?"""
+        },
+        
+        'capabilities': {
+            'en': """🤖 **Engineer's Copilot Capabilities:**
+
+**🔬 Formulation Intelligence:**
+• Lubricant formulation recommendations (Engine oils, Gear oils, Hydraulic fluids)
+• Additive package optimization (ZDDP, VI improvers, Dispersants)
+• Base oil selection guidance (Group I/II/III, PAO, Ester)
+• Performance prediction and cost optimization
+
+**🏭 Supply Chain & Inventory:**
+• Real-time supplier information and lead times
+• Inventory level monitoring and low-stock alerts
+• Procurement recommendations and supplier comparisons
+• Material availability across multiple locations
+
+**🧪 Quality & Testing:**
+• LIMS data analysis and batch investigation
+• Test protocol generation and standard compliance
+• Quality failure root cause analysis
+• Regulatory requirement validation (API, ACEA, BIS, PESO)
+
+**📊 Technical Documentation:**
+• Access to 1000+ technical documents and specifications
+• Formulation trial history and performance data
+• Industry standards and regulatory compliance guides
+• Best practices and troubleshooting guides
+
+**🌐 Multi-Language Support:**
+• Full functionality in English and Hindi
+• Technical terminology translation
+• Localized responses for Indian market requirements
+
+**⚡ Real-Time Processing:**
+• Average response time: 2.3 seconds
+• Multi-agent collaboration for complex queries
+• Source citation and confidence scoring
+
+Try asking me about specific products, suppliers, test results, or formulation challenges!""",
+            
+            'hi': """🤖 **Engineer's Copilot की क्षमताएं:**
+
+**🔬 फॉर्मूलेशन बुद्धिमत्ता:**
+• स्नेहक फॉर्मूलेशन सिफारिशें (इंजन ऑयल, गियर ऑयल, हाइड्रोलिक तरल पदार्थ)
+• एडिटिव पैकेज अनुकूलन (ZDDP, VI सुधारक, डिस्पर्सेंट)
+• बेस ऑयल चयन मार्गदर्शन (Group I/II/III, PAO, Ester)
+• प्रदर्शन भविष्यवाणी और लागत अनुकूलन
+
+**🏭 आपूर्ति श्रृंखला और इन्वेंट्री:**
+• वास्तविक समय आपूर्तिकर्ता जानकारी और लीड टाइम
+• इन्वेंट्री स्तर निगरानी और कम-स्टॉक अलर्ट
+• खरीद सिफारिशें और आपूर्तिकर्ता तुलना
+• कई स्थानों पर सामग्री उपलब्धता
+
+**🧪 गुणवत्ता और परीक्षण:**
+• LIMS डेटा विश्लेषण और बैच जांच
+• परीक्षण प्रोटोकॉल जनरेशन और मानक अनुपालन
+• गुणवत्ता असफलता मूल कारण विश्लेषण
+• नियामक आवश्यकता सत्यापन (API, ACEA, BIS, PESO)
+
+**📊 तकनीकी दस्तावेज:**
+• 1000+ तकनीकी दस्तावेजों और विनिर्देशों तक पहुंच
+• फॉर्मूलेशन ट्रायल इतिहास और प्रदर्शन डेटा
+• उद्योग मानक और नियामक अनुपालन गाइड
+• सर्वोत्तम प्रथाओं और समस्या निवारण गाइड
+
+**🌐 बहु-भाषा समर्थन:**
+• अंग्रेजी और हिंदी में पूर्ण कार्यक्षमता
+• तकनीकी शब्दावली अनुवाद
+• भारतीय बाजार आवश्यकताओं के लिए स्थानीयकृत प्रतिक्रियाएं
+
+**⚡ वास्तविक समय प्रसंस्करण:**
+• औसत प्रतिक्रिया समय: 2.3 सेकंड
+• जटिल प्रश्नों के लिए बहु-एजेंट सहयोग
+• स्रोत उद्धरण और विश्वास स्कोरिंग
+
+मुझसे विशिष्ट उत्पादों, आपूर्तिकर्ताओं, परीक्षण परिणामों या फॉर्मूलेशन चुनौतियों के बारे में पूछने का प्रयास करें!"""
+        },
+        
+        'introduction': {
+            'en': """I'm the **TotalEnergies Engineer's Copilot** - your AI-powered technical assistant for lubricant R&D and manufacturing.
+
+**What I Am:**
+• Advanced AI system specialized in petroleum products and lubricants
+• Connected to TotalEnergies technical databases and knowledge systems
+• Multi-agent architecture with specialized expertise areas
+
+**My Core Functions:**
+• Formulation development and optimization
+• Supply chain and procurement intelligence  
+• Quality control and batch analysis
+• Technical documentation and compliance
+• Real-time data analysis and insights
+
+**How I Work:**
+• Natural language processing in English and Hindi
+• Access to live inventory, supplier, and quality data
+• Multi-source information synthesis
+• Evidence-based recommendations with source citations
+
+I'm designed specifically for TotalEnergies engineers, chemists, and technical staff to accelerate R&D processes and improve operational efficiency.
+
+What technical challenge can I help you solve today?""",
+            
+            'hi': """मैं **TotalEnergies Engineer's Copilot** हूं - स्नेहक R&D और निर्माण के लिए आपका AI-संचालित तकनीकी सहायक।
+
+**मैं क्या हूं:**
+• पेट्रोलियम उत्पादों और स्नेहकों में विशेषज्ञता वाला उन्नत AI सिस्टम
+• TotalEnergies तकनीकी डेटाबेस और ज्ञान प्रणालियों से जुड़ा हुआ
+• विशेषज्ञता क्षेत्रों के साथ बहु-एजेंट आर्किटेक्चर
+
+**मेरे मुख्य कार्य:**
+• फॉर्मूलेशन विकास और अनुकूलन
+• आपूर्ति श्रृंखला और खरीद बुद्धिमत्ता
+• गुणवत्ता नियंत्रण और बैच विश्लेषण
+• तकनीकी दस्तावेज और अनुपालन
+• वास्तविक समय डेटा विश्लेषण और अंतर्दृष्टि
+
+**मैं कैसे काम करता हूं:**
+• अंग्रेजी और हिंदी में प्राकृतिक भाषा प्रसंस्करण
+• लाइव इन्वेंट्री, आपूर्तिकर्ता और गुणवत्ता डेटा तक पहुंच
+• बहु-स्रोत जानकारी संश्लेषण
+• स्रोत उद्धरण के साथ साक्ष्य-आधारित सिफारिशें
+
+मैं विशेष रूप से TotalEnergies इंजीनियरों, रसायनज्ञों और तकनीकी कर्मचारियों के लिए R&D प्रक्रियाओं को तेज करने और परिचालन दक्षता में सुधार के लिए डिज़ाइन किया गया हूं।
+
+आज मैं आपकी किस तकनीकी चुनौती को हल करने में मदद कर सकता हूं?"""
+        }
+    }
+    
+    return fallback_responses.get(greeting_type, {}).get(language, 
+           fallback_responses['greeting']['en'])
 
 
 # Only dashboard and query processing routes are used
