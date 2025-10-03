@@ -1,388 +1,403 @@
 {% extends "base.html" %}
 
-{% block title %}Engineer's Copilot Dashboard{% endblock %}
+{% block title %}Engineer's Copilot - TotalEnergies{% endblock %}
 
 {% block extra_css %}
-<style>
-    .chat-container {
-        height: 600px;
-        display: flex;
-        flex-direction: column;
-        background: var(--bg-secondary);
-        border-radius: 12px;
-        overflow: hidden;
-    }
-    
-    .chat-messages {
-        flex: 1;
-        overflow-y: auto;
-        padding: 1.5rem;
-    }
-    
-    .message {
-        margin-bottom: 1.5rem;
-        display: flex;
-        gap: 1rem;
-    }
-    
-    .message.user {
-        flex-direction: row-reverse;
-    }
-    
-    .message-avatar {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.25rem;
-        flex-shrink: 0;
-    }
-    
-    .message.user .message-avatar {
-        background: linear-gradient(135deg, #58a6ff, #3fb950);
-    }
-    
-    .message.agent .message-avatar {
-        background: linear-gradient(135deg, #d29922, #cc5de8);
-    }
-    
-    .message-content {
-        background: var(--bg-tertiary);
-        padding: 1rem 1.25rem;
-        border-radius: 12px;
-        max-width: 70%;
-    }
-    
-    .message.user .message-content {
-        background: linear-gradient(135deg, rgba(88, 166, 255, 0.2), rgba(63, 185, 80, 0.2));
-        margin-left: auto;
-    }
-    
-    .chat-input-container {
-        padding: 1.5rem;
-        border-top: 1px solid var(--border-color);
-        background: var(--bg-tertiary);
-    }
-    
-    .knowledge-card {
-        border-left: 4px solid var(--accent-primary);
-        transition: all 0.3s ease;
-    }
-    
-    .knowledge-card:hover {
-        transform: translateX(4px);
-        border-left-width: 6px;
-    }
-</style>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/demo5-common.css') }}">
 {% endblock %}
 
 {% block content %}
 <div class="container-fluid py-4">
-    <!-- Page Header -->
-    <div class="row mb-4">
-        <div class="col-lg-8">
-            <h2 class="mb-2">
-                <span class="demo-icon">
-                    <i class="bi bi-cpu" style="color: #3949AB; position: relative;"></i>
-                    <i class="bi bi-gear" style="color: #7C4DFF; font-size: 0.6rem; position: absolute; margin-left: -0.3rem; margin-top: -0.5rem;"></i>
-                </span> Engineer's Copilot
-            </h2>
-            <p class="text-muted mb-0">
-                <span class="badge me-2" style="background: var(--gradient-copilot); color: white;">Tier 2-Gen</span>
-                AI Research Assistant for TCAP Mumbai Lubricant Development
-            </p>
-        </div>
-        <div class="col-lg-4 text-lg-end">
-            <div class="agent-status active">
-                <span class="spinner-grow spinner-grow-sm text-success"></span>
-                <span class="fw-semibold">Copilot Ready</span>
+    <!-- Dashboard Header -->
+    <div class="dashboard-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h2 class="mb-1">
+                    <i class="bi bi-robot"></i> Engineer's Copilot
+                </h2>
+                <p class="mb-0 small opacity-75">AI Research Assistant for TCAP Mumbai Lubricant Development</p>
+            </div>
+            <div class="d-flex gap-3 align-items-center">
+                <div class="language-toggle">
+                    <button onclick="setLanguage('english')" id="btnEnglish" class="active">
+                        <i class="bi bi-globe"></i> English
+                    </button>
+                    <button onclick="setLanguage('hindi')" id="btnHindi">
+                        <i class="bi bi-translate"></i> हिंदी
+                    </button>
+                </div>
+                <a href="{{ url_for('demo5_simulation.event_flow_dashboard') }}" class="btn btn-light btn-sm">
+                    <i class="bi bi-diagram-3"></i> Event Flow
+                </a>
             </div>
         </div>
     </div>
 
-    <!-- Statistics Overview -->
-    <div class="row g-4 mb-4">
-        <div class="col-lg-3 col-md-6">
-            <div class="metric-card">
-                <div class="metric-label">Research Papers</div>
-                <div class="metric-value text-primary">{{ stats.total_papers }}</div>
-                <div class="metric-subtitle">Knowledge Base</div>
+    <!-- Metrics Row -->
+    <div class="row g-3 mb-3">
+        <div class="col-md-3">
+            <div class="metric-card" style="border-left-color: #667eea;">
+                <h4 class="mb-1">{{ stats.active_products if stats.active_products else 20 }}</h4>
+                <small class="text-muted">Active Products</small>
             </div>
         </div>
-        
-        <div class="col-lg-3 col-md-6">
-            <div class="metric-card">
-                <div class="metric-label">Formulation Trials</div>
-                <div class="metric-value text-success">{{ stats.formulation_trials }}</div>
-                <div class="metric-subtitle">Historical Data</div>
+        <div class="col-md-3">
+            <div class="metric-card" style="border-left-color: #f5576c;">
+                <h4 class="mb-1">
+                    {% set trials = stats.formulation_trials %}
+                    {{ (trials.in_progress + trials.testing) if trials else 8 }}
+                </h4>
+                <small class="text-muted">Ongoing Trials</small>
             </div>
         </div>
-        
-        <div class="col-lg-3 col-md-6">
-            <div class="metric-card">
-                <div class="metric-label">Queries Processed</div>
-                <div class="metric-value text-info">{{ stats.queries_today }}</div>
-                <div class="metric-subtitle">Today</div>
+        <div class="col-md-3">
+            <div class="metric-card" style="border-left-color: #4facfe;">
+                <h4 class="mb-1">{{ stats.queries_today if stats.queries_today else 0 }}</h4>
+                <small class="text-muted">Queries Today</small>
             </div>
         </div>
-        
-        <div class="col-lg-3 col-md-6">
-            <div class="metric-card">
-                <div class="metric-label">Avg Response Time</div>
-                <div class="metric-value text-warning">{{ "%.1f"|format(stats.avg_response_time) }}s</div>
-                <div class="metric-subtitle">Real-time</div>
+        <div class="col-md-3">
+            <div class="metric-card" style="border-left-color: #43e97b;">
+                <h4 class="mb-1">6/6</h4>
+                <small class="text-muted">Systems Connected</small>
             </div>
         </div>
     </div>
 
-    <!-- Main Interface -->
-    <div class="row g-4 mb-4">
-        <!-- Chat Interface -->
-        <div class="col-lg-8">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">
-                        <i class="bi bi-chat-dots text-primary"></i>
-                        Research Assistant Chat
-                    </h5>
-                    <div class="btn-group btn-group-sm" role="group">
-                        <input type="radio" class="btn-check" name="language" id="langEn" value="english" checked>
-                        <label class="btn btn-outline-primary" for="langEn">English</label>
-                        
-                        <input type="radio" class="btn-check" name="language" id="langHi" value="hindi">
-                        <label class="btn btn-outline-primary" for="langHi">हिन्दी</label>
+    <!-- Chat Interface -->
+    <div class="chat-container">
+        <div class="chat-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="bi bi-chat-dots-fill"></i> Ask me anything about formulations, testing, regulations, or supply chain
+                </h5>
+                <button class="clear-chat" onclick="clearChat()">
+                    <i class="bi bi-arrow-counterclockwise"></i> Clear Chat
+                </button>
+            </div>
+        </div>
+        
+        <div class="chat-messages" id="chatMessages">
+            <!-- Empty State -->
+            <div class="empty-state" id="emptyState">
+                <i class="bi bi-chat-square-text"></i>
+                <h5>How can I help you today?</h5>
+                <p>Ask me about formulations, test protocols, regulations, or supply chain</p>
+                
+                <div class="suggestions">
+                    <div class="suggestion-chip" onclick="askQuestion('What\\'s the recommended viscosity index improver dosage for Quartz 9000 5W-30?')">
+                        <i class="bi bi-flask"></i>
+                        VI Improver Dosage
                     </div>
-                </div>
-                <div class="card-body p-0">
-                    <div class="chat-container">
-                        <div class="chat-messages" id="chatMessages">
-                            <div class="message agent">
-                                <div class="message-avatar">🤖</div>
-                                <div class="message-content">
-                                    <p class="mb-0">Hello! I'm your Engineer's Copilot. I have access to 30+ years of TCAP research data, including research papers, formulation trials, and test protocols. How can I assist you today?</p>
-                                    <small class="text-muted d-block mt-2">नमस्ते! मैं आपका इंजीनियर का सहायक हूं। मैं आपकी मदद कैसे कर सकता हूं?</small>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="chat-input-container">
-                            <form id="chatForm" class="d-flex gap-2">
-                                <input type="text" 
-                                       class="form-control form-control-lg" 
-                                       id="chatInput" 
-                                       placeholder="Ask about formulations, test protocols, or research insights..."
-                                       autocomplete="off">
-                                <button type="submit" class="btn btn-primary btn-lg px-4">
-                                    <i class="bi bi-send"></i>
-                                </button>
-                            </form>
-                            <div class="d-flex gap-2 mt-2">
-                                <button class="btn btn-sm btn-outline-secondary" onclick="quickQuery('formulation')">
-                                    Formulation Help
-                                </button>
-                                <button class="btn btn-sm btn-outline-secondary" onclick="quickQuery('protocol')">
-                                    Test Protocol
-                                </button>
-                                <button class="btn btn-sm btn-outline-secondary" onclick="quickQuery('specs')">
-                                    Specifications
-                                </button>
-                            </div>
-                        </div>
+                    <div class="suggestion-chip" onclick="askQuestion('Which suppliers can deliver Group III base oil to Mumbai within 2 weeks?')">
+                        <i class="bi bi-truck"></i>
+                        Supplier Availability
+                    </div>
+                    <div class="suggestion-chip" onclick="askQuestion('Can we reduce ZDDP to meet BS VI compliance?')">
+                        <i class="bi bi-shield-check"></i>
+                        BS VI Compliance
+                    </div>
+                    <div class="suggestion-chip" onclick="askQuestion('What are the test requirements for automotive LPG?')">
+                        <i class="bi bi-clipboard-check"></i>
+                        LPG Testing
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- Knowledge Base & Quick Actions -->
-        <div class="col-lg-4">
-            <div class="card mb-3">
-                <div class="card-header">
-                    <h6 class="mb-0">
-                        <i class="bi bi-book"></i>
-                        Quick Actions
-                    </h6>
-                </div>
-                <div class="card-body">
-                    <div class="d-grid gap-2">
-                        <button class="btn btn-outline-primary" id="btnGenerateFormulation">
-                            <i class="bi bi-flask"></i>
-                            Generate Formulation
-                        </button>
-                        <button class="btn btn-outline-success" id="btnCreateProtocol">
-                            <i class="bi bi-clipboard-check"></i>
-                            Create Test Protocol
-                        </button>
-                        <button class="btn btn-outline-info" id="btnSearchPapers">
-                            <i class="bi bi-search"></i>
-                            Search Research Papers
-                        </button>
-                        <button class="btn btn-outline-warning" id="btnAnalyzeTrials">
-                            <i class="bi bi-graph-up"></i>
-                            Analyze Past Trials
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="card-header">
-                    <h6 class="mb-0">
-                        <i class="bi bi-database"></i>
-                        Knowledge Base Stats
-                    </h6>
-                </div>
-                <div class="card-body">
-                    <div class="mb-3">
-                        <div class="d-flex justify-content-between mb-1">
-                            <small class="text-muted">Papers Indexed</small>
-                            <small class="fw-semibold">{{ stats.total_papers }}/50</small>
-                        </div>
-                        <div class="progress" style="height: 4px;">
-                            <div class="progress-bar bg-primary" style="width: {{ (stats.total_papers / 50 * 100)|int }}%"></div>
-                        </div>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <div class="d-flex justify-content-between mb-1">
-                            <small class="text-muted">Formulations</small>
-                            <small class="fw-semibold">{{ stats.formulation_trials }}/200</small>
-                        </div>
-                        <div class="progress" style="height: 4px;">
-                            <div class="progress-bar bg-success" style="width: {{ (stats.formulation_trials / 200 * 100)|int }}%"></div>
-                        </div>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <div class="d-flex justify-content-between mb-1">
-                            <small class="text-muted">Test Protocols</small>
-                            <small class="fw-semibold">{{ stats.test_protocols }}/100</small>
-                        </div>
-                        <div class="progress" style="height: 4px;">
-                            <div class="progress-bar bg-info" style="width: {{ (stats.test_protocols / 100 * 100)|int }}%"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Recent Queries -->
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">
-                        <i class="bi bi-clock-history"></i>
-                        Recent Research Queries
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="row g-3">
-                        {% for query in recent_queries %}
-                        <div class="col-md-6">
-                            <div class="knowledge-card card">
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between align-items-start mb-2">
-                                        <h6 class="mb-0">{{ query.query_type|title }}</h6>
-                                        <span class="badge bg-primary">{{ query.language|upper }}</span>
-                                    </div>
-                                    <p class="small text-muted mb-2">{{ query.query[:100] }}...</p>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <small class="text-muted">
-                                            <i class="bi bi-clock"></i>
-                                            {{ query.created_at.strftime('%H:%M') }}
-                                        </small>
-                                        <button class="btn btn-sm btn-outline-primary" 
-                                                onclick="viewQueryDetails({{ query.id }})">
-                                            View Response
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
+        
+        <div class="chat-input-container">
+            <div class="chat-input-wrapper">
+                <input 
+                    type="text" 
+                    class="chat-input" 
+                    id="chatInput" 
+                    placeholder="Type your question here..."
+                    onkeypress="handleKeyPress(event)"
+                >
+                <button class="btn-send" id="btnSend" onclick="sendMessage()">
+                    <span class="spinner"></span>
+                    <span class="send-icon">
+                        <i class="bi bi-send-fill"></i> Send
+                    </span>
+                </button>
             </div>
         </div>
     </div>
 </div>
+
 {% endblock %}
 
 {% block extra_js %}
 <script>
-// Chat functionality
-const chatMessages = document.getElementById('chatMessages');
-const chatForm = document.getElementById('chatForm');
-const chatInput = document.getElementById('chatInput');
+let currentLanguage = localStorage.getItem('language') || 'english';
+let messageCount = 0;
+let isProcessing = false;
 
-function addMessage(content, isUser = false) {
+function setLanguage(lang) {
+    currentLanguage = lang;
+    localStorage.setItem('language', lang);
+    document.getElementById('btnEnglish').classList.toggle('active', lang === 'english');
+    document.getElementById('btnHindi').classList.toggle('active', lang === 'hindi');
+}
+
+// Set initial language
+setLanguage(currentLanguage);
+
+function handleKeyPress(event) {
+    if (event.key === 'Enter' && !event.shiftKey && !isProcessing) {
+        event.preventDefault();
+        sendMessage();
+    }
+}
+
+function askQuestion(question) {
+    if (isProcessing) return;
+    document.getElementById('chatInput').value = question;
+    sendMessage();
+}
+
+function clearChat() {
+    const messagesContainer = document.getElementById('chatMessages');
+    messagesContainer.innerHTML = `
+        <div class="empty-state" id="emptyState">
+            <i class="bi bi-chat-square-text"></i>
+            <h5>How can I help you today?</h5>
+            <p>Ask me about formulations, test protocols, regulations, or supply chain</p>
+            
+            <div class="suggestions">
+                <div class="suggestion-chip" onclick="askQuestion('What\\'s the recommended viscosity index improver dosage for Quartz 9000 5W-30?')">
+                    <i class="bi bi-flask"></i>
+                    VI Improver Dosage
+                </div>
+                <div class="suggestion-chip" onclick="askQuestion('Which suppliers can deliver Group III base oil to Mumbai within 2 weeks?')">
+                    <i class="bi bi-truck"></i>
+                    Supplier Availability
+                </div>
+                <div class="suggestion-chip" onclick="askQuestion('Can we reduce ZDDP to meet BS VI compliance?')">
+                    <i class="bi bi-shield-check"></i>
+                    BS VI Compliance
+                </div>
+                <div class="suggestion-chip" onclick="askQuestion('What are the test requirements for automotive LPG?')">
+                    <i class="bi bi-clipboard-check"></i>
+                    LPG Testing
+                </div>
+            </div>
+        </div>
+    `;
+    messageCount = 0;
+}
+
+async function sendMessage() {
+    if (isProcessing) return;
+    
+    const input = document.getElementById('chatInput');
+    const message = input.value.trim();
+    
+    if (!message) return;
+    
+    isProcessing = true;
+    
+    // Hide empty state
+    const emptyState = document.getElementById('emptyState');
+    if (emptyState) {
+        emptyState.style.display = 'none';
+    }
+    
+    // Clear input
+    input.value = '';
+    
+    // Disable controls
+    const btnSend = document.getElementById('btnSend');
+    btnSend.disabled = true;
+    btnSend.classList.add('loading');
+    input.disabled = true;
+    
+    // Add user message
+    await addMessage('user', message);
+    await sleep(300);
+    
+    // Add typing indicator with processing status
+    addTypingIndicator();
+    
+    // Simulate processing steps
+    const steps = [
+        'Analyzing your question...',
+        'Routing to appropriate agents...',
+        'Searching knowledge base...',
+        'Querying enterprise systems...',
+        'Generating response...'
+    ];
+    
+    for (let i = 0; i < steps.length; i++) {
+        updateProcessingStatus(steps[i]);
+        await sleep(600); // Delay between steps
+    }
+    
+    // Determine scenario based on keywords
+    const scenarioId = detectScenario(message);
+    
+    // Send to API
+    try {
+        const response = await fetch('/demo5/api/query/process', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                query: message,
+                scenario_id: scenarioId,
+                language: currentLanguage
+            })
+        });
+        
+        const data = await response.json();
+        
+        // Extra delay for realism
+        await sleep(800);
+        
+        // Remove typing indicator
+        removeTypingIndicator();
+        
+        if (data.success) {
+            // Add assistant response
+            await addMessage('assistant', data.response, {
+                agents: data.agents,
+                sources: data.sources,
+                processingTime: data.processing_time_ms
+            });
+        } else {
+            await addMessage('assistant', `Error: ${data.error}`, { isError: true });
+        }
+    } catch (err) {
+        removeTypingIndicator();
+        await addMessage('assistant', `Error: ${err.message}`, { isError: true });
+    } finally {
+        // Re-enable controls
+        btnSend.disabled = false;
+        btnSend.classList.remove('loading');
+        input.disabled = false;
+        input.focus();
+        isProcessing = false;
+    }
+}
+
+function detectScenario(message) {
+    const msg = message.toLowerCase();
+    
+    if (msg.includes('viscosity') || msg.includes('vi improver') || msg.includes('quartz')) {
+        return 'scenario1';
+    } else if (msg.includes('supplier') || msg.includes('base oil') || msg.includes('group iii')) {
+        return 'scenario2';
+    } else if (msg.includes('zddp') || msg.includes('bs vi') || msg.includes('emission')) {
+        return 'scenario3';
+    } else if (msg.includes('lpg') || msg.includes('contamination') || msg.includes('cylinder')) {
+        return 'scenario4';
+    }
+    
+    return null;
+}
+
+async function addMessage(role, content, metadata = {}) {
+    const messagesContainer = document.getElementById('chatMessages');
     const messageDiv = document.createElement('div');
-    messageDiv.className = `message ${isUser ? 'user' : 'agent'}`;
+    messageDiv.className = `message ${role}`;
+    messageDiv.style.opacity = '0';
+    
+    const avatarIcon = role === 'user' ? 'person-fill' : 'robot';
+    
+    let metaHtml = '';
+    if (metadata.agents && metadata.agents.length > 0) {
+        metaHtml += `<div class="message-meta">`;
+        metaHtml += `<span><i class="bi bi-cpu"></i> ${metadata.agents.join(', ')}</span>`;
+        
+        if (metadata.sources && metadata.sources.length > 0) {
+            metadata.sources.forEach(s => {
+                metaHtml += `<span class="source-badge"><i class="bi bi-database"></i> ${s.type}</span>`;
+            });
+        }
+        
+        if (metadata.processingTime) {
+            metaHtml += `<span><i class="bi bi-clock"></i> ${metadata.processingTime}ms</span>`;
+        }
+        
+        metaHtml += `</div>`;
+    }
+    
+    const contentClass = metadata.isError ? 'text-danger' : '';
     
     messageDiv.innerHTML = `
-        <div class="message-avatar">${isUser ? '👤' : '🤖'}</div>
-        <div class="message-content">
-            <p class="mb-0">${content}</p>
+        <div class="message-avatar">
+            <i class="bi bi-${avatarIcon}"></i>
+        </div>
+        <div class="message-content ${contentClass}">
+            ${formatMessage(content)}
+            ${metaHtml}
         </div>
     `;
     
-    chatMessages.appendChild(messageDiv);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
+    messagesContainer.appendChild(messageDiv);
+    
+    // Animate in
+    await sleep(50);
+    messageDiv.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+    messageDiv.style.opacity = '1';
+    
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    messageCount++;
 }
 
-chatForm?.addEventListener('submit', async function(e) {
-    e.preventDefault();
+function formatMessage(content) {
+    return content
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\n/g, '<br>')
+        .replace(/✓/g, '<i class="bi bi-check-circle-fill text-success"></i>')
+        .replace(/✗/g, '<i class="bi bi-x-circle-fill text-danger"></i>')
+        .replace(/⭐/g, '<i class="bi bi-star-fill text-warning"></i>');
+}
+
+function addTypingIndicator() {
+    const messagesContainer = document.getElementById('chatMessages');
+    const typingDiv = document.createElement('div');
+    typingDiv.className = 'message assistant';
+    typingDiv.id = 'typingIndicator';
     
-    const query = chatInput.value.trim();
-    if (!query) return;
+    typingDiv.innerHTML = `
+        <div class="message-avatar">
+            <i class="bi bi-robot"></i>
+        </div>
+        <div class="message-content">
+            <div class="typing-indicator">
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+            </div>
+            <div class="processing-status" id="processingStatus"></div>
+        </div>
+    `;
     
-    // Add user message
-    addMessage(query, true);
-    chatInput.value = '';
-    
-    // Show typing indicator
-    addMessage('<span class="spinner-border spinner-border-sm"></span> Thinking...', false);
-    
-    try {
-        const language = document.querySelector('input[name="language"]:checked').value;
-        const data = await Utils.apiCall('/demo5/api/query', {
-            method: 'POST',
-            body: JSON.stringify({ query, language })
-        });
-        
-        // Remove typing indicator
-        chatMessages.removeChild(chatMessages.lastChild);
-        
-        // Add agent response
-        addMessage(data.response, false);
-        
-    } catch (error) {
-        chatMessages.removeChild(chatMessages.lastChild);
-        addMessage('Sorry, I encountered an error. Please try again.', false);
+    messagesContainer.appendChild(typingDiv);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+function updateProcessingStatus(status) {
+    const statusEl = document.getElementById('processingStatus');
+    if (statusEl) {
+        statusEl.textContent = status;
     }
-});
-
-function quickQuery(type) {
-    const queries = {
-        'formulation': 'Recommend a formulation for 5W-30 synthetic engine oil',
-        'protocol': 'Generate test protocol for viscosity measurement',
-        'specs': 'What are API SN Plus specifications?'
-    };
-    
-    chatInput.value = queries[type] || '';
-    chatInput.focus();
 }
 
-function viewQueryDetails(queryId) {
-    window.location.href = `/demo5/query/${queryId}`;
+function removeTypingIndicator() {
+    const typingIndicator = document.getElementById('typingIndicator');
+    if (typingIndicator) {
+        typingIndicator.remove();
+    }
 }
 
-// Initialize
-document.addEventListener('DOMContentLoaded', () => {
-    chatInput.focus();
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// Focus input on load
+window.addEventListener('load', () => {
+    document.getElementById('chatInput').focus();
 });
 </script>
 {% endblock %}

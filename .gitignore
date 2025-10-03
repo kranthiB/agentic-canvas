@@ -156,6 +156,7 @@ Thumbs.db
 /data/uploads/*
 /logs/*
 /instance/*
+/docs/*
 
 # Docker
 .dockerignore
