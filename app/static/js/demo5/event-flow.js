@@ -33,10 +33,35 @@ class EnhancedEventFlowVisualizer {
             closeScenarioBtn.addEventListener('click', () => this.hideScenarioPanel());
         }
         
+        // Initialize persona tooltip
+        this.initPersonaTooltip();
+        
         // Initialize real-time updates
         this.startRealtimeUpdates();
         
         // Initialized successfully
+    }
+
+    // Initialize persona tooltip functionality
+    initPersonaTooltip() {
+        const engineerUI = document.getElementById('node-UI');
+        const tooltip = document.getElementById('personaTooltip');
+        
+        if (engineerUI && tooltip) {
+            engineerUI.addEventListener('mouseenter', (e) => {
+                const rect = engineerUI.getBoundingClientRect();
+                const canvasRect = this.canvas.getBoundingClientRect();
+                
+                // Position tooltip directly to the right of the Engineer UI box
+                tooltip.style.left = `${rect.right - canvasRect.left + 15}px`;
+                tooltip.style.top = `${rect.top - canvasRect.top}px`;
+                tooltip.classList.add('visible');
+            });
+            
+            engineerUI.addEventListener('mouseleave', () => {
+                tooltip.classList.remove('visible');
+            });
+        }
     }
 
     // Start real-time statistics updates

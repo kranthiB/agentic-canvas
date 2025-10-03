@@ -810,6 +810,51 @@
 .toast-custom.error { border-left-color: #f56565; }
 .toast-custom.info { border-left-color: #4299e1; }
 
+/* Tooltip Styling */
+.tooltip-custom {
+    position: absolute;
+    background: rgba(15, 23, 42, 0.95);
+    border: 1px solid rgba(66, 153, 225, 0.5);
+    border-radius: 8px;
+    padding: 12px 16px;
+    color: white;
+    font-size: 11px;
+    line-height: 1.4;
+    z-index: 1000;
+    backdrop-filter: blur(15px);
+    box-shadow: 0 8px 24px rgba(66, 153, 225, 0.3);
+    min-width: 250px;
+    max-width: 350px;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+}
+
+.tooltip-custom.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.tooltip-custom h5 {
+    color: #4299e1;
+    margin: 0 0 8px 0;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.tooltip-custom .persona-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+    font-size: 10px;
+}
+
+.tooltip-custom .persona-item {
+    color: #cbd5e1;
+    padding: 2px 0;
+}
+
 /* Responsive Design */
 @media (max-width: 1600px) {
     .architecture-canvas {
@@ -928,10 +973,31 @@
             </div>
             
             <!-- Column 1: User Interface (x: 50) -->
-            <div class="system-node" id="node-UI" style="left: 50px; top: 80px;">
+            <div class="system-node" id="node-UI" style="left: 50px; top: 80px;" data-tooltip="personas">
                 <div class="node-icon"><i class="bi bi-laptop"></i></div>
                 <div class="node-label">Engineer UI</div>
-                <div class="node-status">Active</div>
+                <div class="node-status">10+ Personas</div>
+            </div>
+            
+            <!-- Persona Tooltip -->
+            <div class="tooltip-custom" id="personaTooltip">
+                <h5><i class="bi bi-people me-2"></i>Supported User Personas</h5>
+                <div class="persona-list">
+                    <div class="persona-item">• Formulation Engineer</div>
+                    <div class="persona-item">• Supply Chain Manager</div>
+                    <div class="persona-item">• Quality Control Manager</div>
+                    <div class="persona-item">• Regulatory Affairs</div>
+                    <div class="persona-item">• Product Development Team</div>
+                    <div class="persona-item">• R&D Engineer</div>
+                    <div class="persona-item">• Procurement Specialist</div>
+                    <div class="persona-item">• Production Planner</div>
+                    <div class="persona-item">• Regional Manager</div>
+                    <div class="persona-item">• Quality Analyst</div>
+                    <div class="persona-item">• Process Engineer</div>
+                    <div class="persona-item">• Compliance Officer</div>
+                    <div class="persona-item">• Technical Service</div>
+                    <div class="persona-item">• Plant Manager</div>
+                </div>
             </div>
             
             <div class="system-node" id="node-Unified-Gateway" style="left: 50px; top: 240px;">
