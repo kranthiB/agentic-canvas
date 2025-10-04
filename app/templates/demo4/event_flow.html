@@ -1,0 +1,545 @@
+{% extends "base.html" %}
+
+{% block title %}Event Flow - Mobility Maestro{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/demo4-event-flow.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="demo-container">
+    <!-- Header -->
+    <div class="demo-header">
+        <div class="header-left">
+            <h1 class="demo-title">
+                <i class="fas fa-charging-station"></i>
+                Event Flow Visualization
+            </h1>
+            <p class="demo-subtitle">Real-time Multi-Agent Orchestration for EV Charging Network</p>
+        </div>
+        <div class="header-center">
+            <div class="scenario-selector">
+                <select id="scenarioSelect" class="form-select">
+                    <option value="">Select a scenario...</option>
+                    <option value="scenario_1_crisis">Mumbai Permit Crisis</option>
+                    <option value="scenario_2_expansion">Q3 Network Expansion</option>
+                    <option value="scenario_3_pricing">Tata Power Pricing War</option>
+                    <option value="scenario_4_operations">Real-Time Operations</option>
+                    <option value="scenario_5_highway">Highway Corridor Expansion</option>
+                    <option value="scenario_6_acquisition">Competitive Acquisition</option>
+                    <option value="scenario_7_dynamic_pricing">Dynamic Pricing Optimization</option>
+                    <option value="scenario_9_grid_crisis">Grid Failure Crisis</option>
+                </select>
+                <button id="simulateFlow" class="btn btn-primary" disabled>
+                    <i class="fas fa-play"></i> Simulate Flow
+                </button>
+            </div>
+        </div>
+        <div class="header-right">
+            <a href="{{ url_for('demo4.dashboard') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+    </div>
+
+    <!-- Scenario Info -->
+    <div class="scenario-info" id="scenarioInfo" style="display: none;">
+        <div class="scenario-badge" id="scenarioBadge"></div>
+        <div class="scenario-details">
+            <strong id="scenarioName"></strong>
+            <span id="scenarioDescription"></span>
+        </div>
+    </div>
+
+    <!-- Statistics Dashboard -->
+    <div class="stats-dashboard">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-bolt"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-label">Active Events</div>
+                <div class="stat-value" id="activeEvents">0</div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-robot"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-label">Agents Invoked</div>
+                <div class="stat-value" id="agentsInvoked">0</div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-network-wired"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-label">Systems Queried</div>
+                <div class="stat-value" id="systemsQueried">0</div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-label">Processing Time</div>
+                <div class="stat-value" id="processingTime">0ms</div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-label">Success Rate</div>
+                <div class="stat-value" id="successRate">100%</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Architecture Visualization -->
+    <div class="event-flow-container">
+        <div class="architecture-canvas" id="architectureCanvas">
+            <!-- Layer 1: User Interface -->
+            <div class="layer-header" style="top: 20px; left: 290px; width: 220px;">User Interface Layer</div>
+
+            <div class="system-node" id="node-ui" style="top: 70px; left: 335px;" 
+                 data-system="UI" 
+                 data-description="Web interface for EV charging network management">
+                <i class="fas fa-desktop" style="font-size: 22px; color: #4299e1; margin-bottom: 6px;"></i>
+                <div class="node-name" style="font-size: 11px;">User Interface</div>
+                <div class="node-type" style="font-size: 9px;">Frontend</div>
+            </div>
+
+            <!-- Layer 2: Gateway & Orchestration -->
+            <div class="layer-header" style="top: 20px; left: 560px; width: 330px;">Gateway & Orchestration</div>
+
+            <div class="system-node" id="node-gateway" style="top: 70px; left: 590px;"
+                 data-system="Gateway"
+                 data-description="Routes requests to appropriate agents and handles response aggregation">
+                <i class="fas fa-project-diagram" style="font-size: 22px; color: #48bb78; margin-bottom: 6px;"></i>
+                <div class="node-name" style="font-size: 11px;">Unified Gateway</div>
+                <div class="node-type" style="font-size: 9px;">Router</div>
+            </div>
+
+            <div class="system-node orchestrator-node" id="node-orchestrator" style="top: 70px; left: 730px;"
+                 data-system="Orchestrator"
+                 data-description="Coordinates multi-agent workflows for comprehensive analysis">
+                <i class="fas fa-brain" style="font-size: 22px; color: #f59e0b; margin-bottom: 6px;"></i>
+                <div class="node-name" style="font-size: 11px;">EV Orchestrator</div>
+                <div class="node-type" style="font-size: 9px;">Coordinator</div>
+            </div>
+
+            <!-- Outer Dotted Box for AI Systems -->
+            <div class="ai-systems-border" style="top: 170px; left: 150px; width: 880px; height: 430px;"></div>
+
+            <!-- Header 1: AI Infrastructure -->
+            <div class="layer-header ai-infrastructure-header" style="top: 180px; left: 385px; width: 460px;">
+                <i class="fas fa-cogs" style="margin-right: 8px;"></i>AI Infrastructure - GENAI & Agentic Framework
+            </div>
+
+            <!-- AI INFRASTRUCTURE - Row 1: Core Services -->
+            <div class="system-node agent-node" id="node-llm-gateway" style="top: 235px; left: 210px;"
+                 data-system="LLMGateway"
+                 data-description="Routes requests to appropriate LLM models with load balancing">
+                <i class="fas fa-route" style="font-size: 18px; color: #a78bfa; margin-bottom: 6px;"></i>
+                <div class="node-name" style="font-size: 11px;">LLM Gateway</div>
+                <div class="node-type" style="font-size: 9px;">Router</div>
+            </div>
+
+            <div class="system-node agent-node" id="node-llm-service" style="top: 235px; left: 340px;"
+                 data-system="LLMService"
+                 data-description="Large Language Model service for reasoning, analysis, and decision-making">
+                <i class="fas fa-head-side-brain" style="font-size: 18px; color: #c084fc; margin-bottom: 6px;"></i>
+                <div class="node-name" style="font-size: 11px;">LLM Service</div>
+                <div class="node-type" style="font-size: 9px;">Foundation</div>
+            </div>
+
+            <div class="system-node agent-node" id="node-semantic-cache" style="top: 235px; left: 470px;"
+                 data-system="SemanticCache"
+                 data-description="Caches similar queries to reduce LLM calls and costs by 40-60%">
+                <i class="fas fa-tachometer-alt" style="font-size: 18px; color: #a78bfa; margin-bottom: 6px;"></i>
+                <div class="node-name" style="font-size: 11px;">Semantic Cache</div>
+                <div class="node-type" style="font-size: 9px;">Performance</div>
+            </div>
+
+            <div class="system-node agent-node" id="node-vector-db" style="top: 235px; left: 600px;"
+                 data-system="VectorDB"
+                 data-description="Embeddings storage for semantic search and retrieval">
+                <i class="fas fa-database" style="font-size: 18px; color: #c084fc; margin-bottom: 6px;"></i>
+                <div class="node-name" style="font-size: 11px;">Vector DB</div>
+                <div class="node-type" style="font-size: 9px;">Embeddings</div>
+            </div>
+
+            <div class="system-node agent-node" id="node-prompt-mgr" style="top: 235px; left: 730px;"
+                 data-system="PromptManager"
+                 data-description="Prompt templates, versioning, and optimization">
+                <i class="fas fa-file-code" style="font-size: 18px; color: #a78bfa; margin-bottom: 6px;"></i>
+                <div class="node-name" style="font-size: 11px;">Prompt Manager</div>
+                <div class="node-type" style="font-size: 9px;">Templates</div>
+            </div>
+
+            <div class="system-node agent-node" id="node-rag-engine" style="top: 240px; left: 860px;"
+                 data-system="RAGEngine"
+                 data-description="Retrieval-Augmented Generation for grounding responses in current data">
+                <i class="fas fa-search-plus" style="font-size: 18px; color: #c084fc; margin-bottom: 6px;"></i>
+                <div class="node-name" style="font-size: 11px;">RAG Engine</div>
+                <div class="node-type" style="font-size: 9px;">Retrieval</div>
+            </div>
+
+            <!-- AI INFRASTRUCTURE - Row 2: Intelligence & State -->
+
+            <div class="system-node agent-node" id="node-reasoning" style="top: 335px; left: 210px;"
+                 data-system="ReasoningEngine"
+                 data-description="Chain-of-thought reasoning and decision trees">
+                <i class="fas fa-project-diagram" style="font-size: 18px; color: #a78bfa; margin-bottom: 6px;"></i>
+                <div class="node-name" style="font-size: 11px;">Reasoning Engine</div>
+                <div class="node-type" style="font-size: 9px;">Logic</div>
+            </div>
+
+            <div class="system-node agent-node" id="node-guardrails" style="top: 335px; left: 340px;"
+                 data-system="Guardrails"
+                 data-description="Validates outputs for safety, accuracy, compliance, and business rules">
+                <i class="fas fa-shield-alt" style="font-size: 18px; color: #c084fc; margin-bottom: 6px;"></i>
+                <div class="node-name" style="font-size: 11px;">Guardrails</div>
+                <div class="node-type" style="font-size: 9px;">Validation</div>
+            </div>
+
+            <div class="system-node agent-node" id="node-agent-memory" style="top: 335px; left: 470px;"
+                 data-system="AgentMemory"
+                 data-description="Short-term and long-term memory for agent context persistence">
+                <i class="fas fa-memory" style="font-size: 18px; color: #a78bfa; margin-bottom: 6px;"></i>
+                <div class="node-name" style="font-size: 11px;">Agent Memory</div>
+                <div class="node-type" style="font-size: 9px;">State Mgmt</div>
+            </div>
+
+            <div class="system-node agent-node" id="node-tool-registry" style="top: 335px; left: 600px;"
+                 data-system="ToolRegistry"
+                 data-description="Catalog of available tools and function calling capabilities">
+                <i class="fas fa-toolbox" style="font-size: 18px; color: #c084fc; margin-bottom: 6px;"></i>
+                <div class="node-name" style="font-size: 11px;">Tool Registry</div>
+                <div class="node-type" style="font-size: 9px;">Functions</div>
+            </div>
+
+            <div class="system-node agent-node" id="node-context-mgr" style="top: 335px; left: 730px;"
+                 data-system="ContextManager"
+                 data-description="Manages conversation context and agent session state">
+                <i class="fas fa-layer-group" style="font-size: 18px; color: #a78bfa; margin-bottom: 6px;"></i>
+                <div class="node-name" style="font-size: 11px;">Context Manager</div>
+                <div class="node-type" style="font-size: 9px;">Session</div>
+            </div>
+
+            <div class="system-node agent-node" id="node-observability" style="top: 335px; left: 860px;"
+                 data-system="Observability"
+                 data-description="Tracing, logging, and monitoring for AI workflows and performance">
+                <i class="fas fa-chart-line" style="font-size: 18px; color: #c084fc; margin-bottom: 6px;"></i>
+                <div class="node-name" style="font-size: 11px;">Observability</div>
+                <div class="node-type" style="font-size: 9px;">Monitoring</div>
+            </div>
+
+            <!-- Header 2: Specialized Intelligence Agents -->
+            <div class="layer-header ai-infrastructure-header" style="top: 440px; left: 425px; width: 390px;">
+                <i class="fas fa-brain" style="margin-right: 8px;"></i>Specialized Intelligence Agents
+            </div>
+
+            <!-- SPECIALIZED AGENTS (1 ROW) -->
+            <div class="system-node agent-node" id="node-geographic" style="top: 495px; left: 305px;"
+                 data-system="GeographicIntelligence"
+                 data-description="Analyzes location suitability, traffic patterns, and demographics">
+                <i class="fas fa-map-marked-alt" style="font-size: 18px; color: #3b82f6; margin-bottom: 6px;"></i>
+                <div class="node-name" style="font-size: 11px;">Geographic Intel</div>
+                <div class="node-type" style="font-size: 9px;">Agent</div>
+            </div>
+
+            <div class="system-node agent-node" id="node-financial" style="top: 495px; left: 435px;"
+                 data-system="Financial"
+                 data-description="Calculates NPV, IRR, and 7-year revenue projections">
+                <i class="fas fa-chart-line" style="font-size: 18px; color: #10b981; margin-bottom: 6px;"></i>
+                <div class="node-name" style="font-size: 11px;">Financial Analysis</div>
+                <div class="node-type" style="font-size: 9px;">Agent</div>
+            </div>
+
+            <div class="system-node agent-node" id="node-market" style="top: 495px; left: 565px;"
+                 data-system="MarketIntelligence"
+                 data-description="Analyzes competition, demand forecasting, pricing strategies">
+                <i class="fas fa-chart-pie" style="font-size: 18px; color: #8b5cf6; margin-bottom: 6px;"></i>
+                <div class="node-name" style="font-size: 11px;">Market Intel</div>
+                <div class="node-type" style="font-size: 9px;">Agent</div>
+            </div>
+
+            <div class="system-node agent-node" id="node-permit" style="top: 495px; left: 695px;"
+                 data-system="Permit"
+                 data-description="Manages regulatory compliance and permit tracking">
+                <i class="fas fa-clipboard-check" style="font-size: 18px; color: #f59e0b; margin-bottom: 6px;"></i>
+                <div class="node-name" style="font-size: 11px;">Permit Manager</div>
+                <div class="node-type" style="font-size: 9px;">Agent</div>
+            </div>
+
+            <div class="system-node agent-node" id="node-network" style="top: 495px; left: 825px;"
+                 data-system="NetworkOptimization"
+                 data-description="Optimizes site selection and network configuration">
+                <i class="fas fa-network-wired" style="font-size: 18px; color: #ec4899; margin-bottom: 6px;"></i>
+                <div class="node-name" style="font-size: 11px;">Network Optimizer</div>
+                <div class="node-type" style="font-size: 9px;">Agent</div>
+            </div>
+
+            <!-- Layer 5: Government & Regulatory Systems -->
+            <div class="layer-header" style="top: 610px; left: 55px; width: 540px;">Government & Regulatory Systems</div>
+
+            <div class="system-node external-node" id="node-vahan" style="top: 660px; left: 30px;"
+                 data-system="VAHAN_API"
+                 data-description="Government vehicle registration database for EV data">
+                <i class="fas fa-car" style="font-size: 16px; color: #6366f1; margin-bottom: 6px;"></i>
+                <div class="node-name" style="font-size: 10px;">VAHAN API</div>
+                <div class="node-type" style="font-size: 8px;">Gov DB</div>
+            </div>
+
+            <div class="system-node external-node" id="node-census" style="top: 660px; left: 150px;"
+                 data-system="Census_DB"
+                 data-description="Indian Census data for demographics">
+                <i class="fas fa-users" style="font-size: 16px; color: #06b6d4; margin-bottom: 6px;"></i>
+                <div class="node-name" style="font-size: 10px;">Census DB</div>
+                <div class="node-type" style="font-size: 8px;">Database</div>
+            </div>
+
+            <div class="system-node external-node" id="node-municipal" style="top: 660px; left: 270px;"
+                 data-system="MunicipalPortal"
+                 data-description="Municipal portals for land clearances">
+                <i class="fas fa-landmark" style="font-size: 16px; color: #14b8a6; margin-bottom: 6px;"></i>
+                <div class="node-name" style="font-size: 10px;">Municipal</div>
+                <div class="node-type" style="font-size: 8px;">Portal</div>
+            </div>
+
+            <div class="system-node external-node" id="node-nhai" style="top: 660px; left: 390px;"
+                 data-system="NHAI"
+                 data-description="National Highway Authority for corridor approvals">
+                <i class="fas fa-road" style="font-size: 16px; color: #f59e0b; margin-bottom: 6px;"></i>
+                <div class="node-name" style="font-size: 10px;">NHAI</div>
+                <div class="node-type" style="font-size: 8px;">Highway</div>
+            </div>
+
+            <div class="system-node external-node" id="node-pwd" style="top: 660px; left: 510px;"
+                 data-system="StatePWD"
+                 data-description="Public Works Department approvals">
+                <i class="fas fa-hard-hat" style="font-size: 16px; color: #8b5cf6; margin-bottom: 6px;"></i>
+                <div class="node-name" style="font-size: 10px;">State PWD</div>
+                <div class="node-type" style="font-size: 8px;">Construction</div>
+            </div>
+
+            <!-- Layer 6: Power & Energy Infrastructure -->
+            <div class="layer-header" style="top: 770px; left: 55px; width: 540px;">Power & Energy Infrastructure</div>
+
+            <div class="system-node external-node" id="node-pgcil" style="top: 820px; left: 30px;"
+                 data-system="PGCIL"
+                 data-description="Power Grid Corporation of India">
+                <i class="fas fa-bolt" style="font-size: 16px; color: #ef4444; margin-bottom: 6px;"></i>
+                <div class="node-name" style="font-size: 10px;">PGCIL</div>
+                <div class="node-type" style="font-size: 8px;">Grid</div>
+            </div>
+
+            <div class="system-node external-node" id="node-discom" style="top: 820px; left: 150px;"
+                 data-system="DISCOM"
+                 data-description="State electricity boards">
+                <i class="fas fa-plug" style="font-size: 16px; color: #f59e0b; margin-bottom: 6px;"></i>
+                <div class="node-name" style="font-size: 10px;">DISCOM</div>
+                <div class="node-type" style="font-size: 8px;">Power</div>
+            </div>
+
+            <div class="system-node external-node" id="node-grid" style="top: 820px; left: 270px;"
+                 data-system="GridMonitoring"
+                 data-description="Real-time grid health monitoring">
+                <i class="fas fa-broadcast-tower" style="font-size: 16px; color: #06b6d4; margin-bottom: 6px;"></i>
+                <div class="node-name" style="font-size: 10px;">Grid Monitor</div>
+                <div class="node-type" style="font-size: 8px;">Monitor</div>
+            </div>
+
+            <div class="system-node external-node" id="node-solar" style="top: 820px; left: 390px;"
+                 data-system="SolarMonitoring"
+                 data-description="Solar generation monitoring">
+                <i class="fas fa-solar-panel" style="font-size: 16px; color: #f59e0b; margin-bottom: 6px;"></i>
+                <div class="node-name" style="font-size: 10px;">Solar Monitor</div>
+                <div class="node-type" style="font-size: 8px;">Renewable</div>
+            </div>
+
+            <div class="system-node external-node" id="node-battery" style="top: 820px; left: 510px;"
+                 data-system="BatteryManagement"
+                 data-description="Battery storage management">
+                <i class="fas fa-battery-full" style="font-size: 16px; color: #10b981; margin-bottom: 6px;"></i>
+                <div class="node-name" style="font-size: 10px;">Battery Mgmt</div>
+                <div class="node-type" style="font-size: 8px;">Storage</div>
+            </div>
+
+            <!-- Layer 7: Market Intelligence & Analytics -->
+            <div class="layer-header" style="top: 610px; left: 665px; width: 520px;">Market Intelligence & Analytics</div>
+
+            <div class="system-node external-node" id="node-traffic" style="top: 660px; left: 640px;"
+                 data-system="TrafficAnalysis"
+                 data-description="Traffic pattern analysis">
+                <i class="fas fa-traffic-light" style="font-size: 16px; color: #8b5cf6; margin-bottom: 6px;"></i>
+                <div class="node-name" style="font-size: 10px;">Traffic</div>
+                <div class="node-type" style="font-size: 8px;">Analytics</div>
+            </div>
+
+            <div class="system-node external-node" id="node-competitor" style="top: 660px; left: 760px;"
+                 data-system="Competitor_DB"
+                 data-description="Competitor intelligence database">
+                <i class="fas fa-building" style="font-size: 16px; color: #ef4444; margin-bottom: 6px;"></i>
+                <div class="node-name" style="font-size: 10px;">Competitor</div>
+                <div class="node-type" style="font-size: 8px;">Intel</div>
+            </div>
+
+            <div class="system-node external-node" id="node-weather" style="top: 660px; left: 880px;"
+                 data-system="WeatherAPI"
+                 data-description="Weather data for forecasting">
+                <i class="fas fa-cloud-sun" style="font-size: 16px; color: #06b6d4; margin-bottom: 6px;"></i>
+                <div class="node-name" style="font-size: 10px;">Weather</div>
+                <div class="node-type" style="font-size: 8px;">API</div>
+            </div>
+
+            <div class="system-node external-node" id="node-ml" style="top: 660px; left: 1000px;"
+                 data-system="MLPlatform"
+                 data-description="ML platform for predictions">
+                <i class="fas fa-chart-area" style="font-size: 16px; color: #8b5cf6; margin-bottom: 6px;"></i>
+                <div class="node-name" style="font-size: 10px;">ML Platform</div>
+                <div class="node-type" style="font-size: 8px;">AI/ML</div>
+            </div>
+
+            <div class="system-node external-node" id="node-pricing" style="top: 660px; left: 1120px;"
+                 data-system="PricingEngine"
+                 data-description="Dynamic pricing optimization">
+                <i class="fas fa-tags" style="font-size: 16px; color: #10b981; margin-bottom: 6px;"></i>
+                <div class="node-name" style="font-size: 10px;">Pricing</div>
+                <div class="node-type" style="font-size: 8px;">Engine</div>
+            </div>
+
+            <!-- Layer 8: Business & Operational Systems -->
+            <div class="layer-header" style="top: 770px; left: 665px; width: 520px;">Business & Operational Systems</div>
+
+            <div class="system-node external-node" id="node-finance-sys" style="top: 820px; left: 640px;"
+                 data-system="Financial_System"
+                 data-description="TotalEnergies ERP">
+                <i class="fas fa-rupee-sign" style="font-size: 16px; color: #10b981; margin-bottom: 6px;"></i>
+                <div class="node-name" style="font-size: 10px;">Finance ERP</div>
+                <div class="node-type" style="font-size: 8px;">System</div>
+            </div>
+
+            <div class="system-node external-node" id="node-crm" style="top: 820px; left: 760px;"
+                 data-system="CRM"
+                 data-description="Customer relationship management">
+                <i class="fas fa-users-cog" style="font-size: 16px; color: #3b82f6; margin-bottom: 6px;"></i>
+                <div class="node-name" style="font-size: 10px;">CRM</div>
+                <div class="node-type" style="font-size: 8px;">Customer</div>
+            </div>
+
+            <div class="system-node external-node" id="node-contract" style="top: 820px; left: 880px;"
+                 data-system="ContractMgmt"
+                 data-description="Contract lifecycle management">
+                <i class="fas fa-file-contract" style="font-size: 16px; color: #8b5cf6; margin-bottom: 6px;"></i>
+                <div class="node-name" style="font-size: 10px;">Contracts</div>
+                <div class="node-type" style="font-size: 8px;">Legal</div>
+            </div>
+
+            <div class="system-node external-node" id="node-alerts" style="top: 820px; left: 1000px;"
+                 data-system="AlertSystem"
+                 data-description="Real-time notifications">
+                <i class="fas fa-bell" style="font-size: 16px; color: #ef4444; margin-bottom: 6px;"></i>
+                <div class="node-name" style="font-size: 10px;">Alerts</div>
+                <div class="node-type" style="font-size: 8px;">Notify</div>
+            </div>
+
+            <div class="system-node external-node" id="node-mobile" style="top: 820px; left: 1120px;"
+                 data-system="MobileUnits"
+                 data-description="Mobile charging fleet dispatch">
+                <i class="fas fa-truck" style="font-size: 16px; color: #f59e0b; margin-bottom: 6px;"></i>
+                <div class="node-name" style="font-size: 10px;">Mobile Units</div>
+                <div class="node-type" style="font-size: 8px;">Fleet</div>
+            </div>
+
+            <!-- SVG Canvas for connections -->
+            <svg id="connectionsSvg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;">
+                <defs>
+                    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                        <polygon points="0 0, 10 3.5, 0 7" fill="rgba(66, 153, 225, 0.6)" />
+                    </marker>
+                    <marker id="arrowhead-active" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                        <polygon points="0 0, 10 3.5, 0 7" fill="#4299e1" />
+                    </marker>
+                </defs>
+            </svg>
+        </div>
+    </div>
+
+    <!-- Event Log -->
+    <div class="event-log-container">
+        <div class="event-log-header">
+            <h3><i class="fas fa-list"></i> Event Stream</h3>
+            <button id="clearLog" class="btn btn-sm btn-secondary">
+                <i class="fas fa-trash"></i> Clear Log
+            </button>
+        </div>
+        <div class="event-log" id="eventLog">
+            <div class="event-log-empty">
+                <i class="fas fa-info-circle"></i>
+                <p>No events yet. Run a scenario to see the event flow.</p>
+            </div>
+        </div>
+        
+        <!-- Scenario Outcome Section -->
+        <div class="scenario-outcome" id="scenarioOutcome" style="display: none;">
+            <div class="outcome-header">
+                <div class="outcome-badge">
+                    <i class="fas fa-trophy"></i>
+                    OUTCOME
+                </div>
+                <h3 id="outcomeTitle">Scenario Complete</h3>
+                <p id="outcomeSummary" class="outcome-summary"></p>
+            </div>
+            
+            <div class="outcome-content">
+                <div class="outcome-section">
+                    <h4><i class="fas fa-chart-line"></i> Business Results</h4>
+                    <ul id="businessResults" class="outcome-list"></ul>
+                </div>
+                
+                <div class="outcome-section">
+                    <h4><i class="fas fa-tools"></i> Problems Solved</h4>
+                    <ul id="problemsSolved" class="outcome-list"></ul>
+                </div>
+                
+                <div class="outcome-section">
+                    <h4><i class="fas fa-lightbulb"></i> Key Innovations</h4>
+                    <ul id="keyInnovations" class="outcome-list"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Processing scenario...</p>
+        </div>
+    </div>
+</div>
+
+<!-- Tooltip -->
+<div id="systemTooltip" class="system-tooltip" style="display: none;">
+    <div class="tooltip-header">
+        <i class="fas fa-info-circle"></i>
+        <span id="tooltipTitle"></span>
+    </div>
+    <div class="tooltip-content" id="tooltipContent"></div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/demo4/event-flow.js') }}"></script>
+{% endblock %}

@@ -134,6 +134,7 @@ def register_blueprints(app):
     from app.blueprints.demo2_grid import demo2_bp
     from app.blueprints.demo3_safety import demo3_bp
     from app.blueprints.demo4_mobility import demo4_bp
+    from app.blueprints.demo4_scenario_engine import demo4_scenario_bp
     from app.blueprints.demo5_copilot import demo5_bp
     from app.blueprints.demo5_simulation import sim_bp
     from app.blueprints.demo5_scenario_engine import scenario_bp
@@ -144,6 +145,7 @@ def register_blueprints(app):
     app.register_blueprint(demo2_bp, url_prefix='/demo2')
     app.register_blueprint(demo3_bp, url_prefix='/demo3')
     app.register_blueprint(demo4_bp, url_prefix='/demo4')
+    app.register_blueprint(demo4_scenario_bp, url_prefix='/demo4')
     app.register_blueprint(demo5_bp, url_prefix='/demo5')
     app.register_blueprint(sim_bp, url_prefix='/demo5')
     app.register_blueprint(scenario_bp, url_prefix='/demo5')

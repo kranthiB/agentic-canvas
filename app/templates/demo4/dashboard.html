@@ -1,315 +1,293 @@
 {% extends "base.html" %}
 
-{% block title %}Mobility Maestro Dashboard{% endblock %}
+{% block title %}Network Map - Mobility Maestro{% endblock %}
 
 {% block extra_css %}
-<link href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet">
-<style>
-    .site-card {
-        transition: all 0.3s ease;
-        border-left: 4px solid;
-    }
-    
-    .site-card.tier1 { border-left-color: #059669; }
-    .site-card.tier2 { border-left-color: #2563eb; }
-    .site-card.tier3 { border-left-color: #d97706; }
-    
-    .site-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 8px 24px rgba(0, 212, 255, 0.2);
-    }
-    
-    .score-circle {
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.5rem;
-        font-weight: 700;
-        border: 4px solid;
-    }
-    
-    .score-high {
-        background: rgba(5, 150, 105, 0.12);
-        border-color: #059669;
-        color: #047857;
-    }
-    
-    .score-medium {
-        background: rgba(37, 99, 235, 0.12);
-        border-color: #2563eb;
-        color: #1e40af;
-    }
-    
-    .score-low {
-        background: rgba(217, 119, 6, 0.12);
-        border-color: #d97706;
-        color: #b45309;
-    }
-    
-    #indiaMap {
-        height: 500px;
-        border-radius: 12px;
-        overflow: hidden;
-    }
-</style>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+<link rel="stylesheet" href="{{ url_for('static', filename='css/demo4-map.css') }}">
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid py-4">
-    <!-- Page Header -->
-    <div class="row mb-4">
-        <div class="col-lg-8">
-            <h2 class="mb-2">
-                <span class="demo-icon">
-                    <i class="bi bi-ev-station" style="color: #006064; position: relative;"></i>
-                    <i class="bi bi-geo-alt" style="color: #00ACC1; font-size: 0.6rem; position: absolute; margin-left: -0.3rem; margin-top: -0.3rem;"></i>
-                </span> Mobility Maestro
-            </h2>
-            <p class="text-muted mb-0">
-                <span class="badge me-2" style="background: var(--gradient-mobility); color: white;">Tier 3</span>
-                EV Charging Network Optimization Across 28 Indian States
-            </p>
+<div class="map-container">
+    <!-- Header -->
+    <div class="map-header">
+        <div class="header-left">
+            <h1 class="map-title">
+                <i class="fas fa-map-marked-alt"></i>
+                EV Charging Network Map
+            </h1>
+            <p class="map-subtitle">Interactive visualization of charging stations across India</p>
         </div>
-        <div class="col-lg-4 text-lg-end">
-            <div class="agent-status active">
-                <span class="spinner-grow spinner-grow-sm text-success"></span>
-                <span class="fw-semibold">Network Optimizer Active</span>
-            </div>
+        <div class="header-right">
+            <a href="{{ url_for('demo4_scenario.event_flow_page') }}" class="btn btn-primary">
+                <i class="fas fa-project-diagram"></i> Event Flow
+            </a>
         </div>
     </div>
 
-    <!-- Network Overview Metrics -->
-    <div class="row g-4 mb-4">
-        <div class="col-xl-3 col-md-6">
-            <div class="metric-card">
-                <div class="metric-label">Candidate Sites</div>
-                <div class="metric-value text-primary">{{ stats.total_candidates }}</div>
-                <div class="metric-subtitle">Across India</div>
+    <!-- Main Content -->
+    <div class="map-content">
+        <!-- Sidebar -->
+        <div class="map-sidebar">
+            <!-- Statistics Panel -->
+            <div class="sidebar-panel">
+                <h3 class="panel-title">
+                    <i class="fas fa-chart-bar"></i>
+                    Network Statistics
+                </h3>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-label">Total Sites</div>
+                        <div class="stat-value" id="totalSites">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Evaluated</div>
+                        <div class="stat-value text-success" id="evaluatedSites">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">High Score</div>
+                        <div class="stat-value text-warning" id="highScoreSites">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Cities</div>
+                        <div class="stat-value text-info" id="citiesCount">0</div>
+                    </div>
+                </div>
             </div>
-        </div>
-        
-        <div class="col-xl-3 col-md-6">
-            <div class="metric-card">
-                <div class="metric-label">Evaluated Sites</div>
-                <div class="metric-value text-success">{{ stats.evaluated_sites }}</div>
-                <div class="metric-subtitle">AI Analysis Complete</div>
-            </div>
-        </div>
-        
-        <div class="col-xl-3 col-md-6">
-            <div class="metric-card">
-                <div class="metric-label">Recommended Sites</div>
-                <div class="metric-value text-info">{{ stats.recommended_sites }}</div>
-                <div class="metric-subtitle">Score > 70</div>
-            </div>
-        </div>
-        
-        <div class="col-xl-3 col-md-6">
-            <div class="metric-card">
-                <div class="metric-label">Projected ROI</div>
-                <div class="metric-value text-warning">{{ "%.1f"|format(stats.avg_roi) }}%</div>
-                <div class="metric-subtitle">3-Year Average</div>
-            </div>
-        </div>
-    </div>
 
-    <!-- India Map & Controls -->
-    <div class="row g-4 mb-4">
-        <div class="col-lg-8">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">
-                        <i class="bi bi-map text-info"></i>
-                        Network Coverage Map - India
-                    </h5>
-                </div>
-                <div class="card-body p-0">
-                    <div id="indiaMap"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- AI Optimization Controls -->
-        <div class="col-lg-4">
-            <div class="card h-100">
-                <div class="card-header">
-                    <h5 class="mb-0">
-                        <i class="bi bi-robot text-primary"></i>
-                        Network Optimizer
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="d-grid gap-3">
-                        <button class="btn btn-primary btn-lg" id="btnEvaluateSite">
-                            <i class="bi bi-geo-alt"></i>
-                            Evaluate New Site
+            <!-- Filters Panel -->
+            <div class="sidebar-panel">
+                <h3 class="panel-title">
+                    <i class="fas fa-filter"></i>
+                    Filters
+                </h3>
+                
+                <!-- City Tier Filter -->
+                <div class="filter-group">
+                    <label class="filter-label">City Tier</label>
+                    <div class="btn-group-vertical w-100">
+                        <button class="btn btn-filter active" data-filter="tier" data-value="all">
+                            <i class="fas fa-globe"></i> All Tiers
                         </button>
-                        
-                        <button class="btn btn-success btn-lg" id="btnOptimizeNetwork">
-                            <i class="bi bi-diagram-3"></i>
-                            Optimize Network
+                        <button class="btn btn-filter" data-filter="tier" data-value="tier_1">
+                            <i class="fas fa-city"></i> Tier 1 (Metro)
                         </button>
-                        
-                        <button class="btn btn-info btn-lg" id="btnGenerateReport">
-                            <i class="bi bi-file-earmark-bar-graph"></i>
-                            Generate Report
+                        <button class="btn btn-filter" data-filter="tier" data-value="tier_2">
+                            <i class="fas fa-building"></i> Tier 2 (Major)
+                        </button>
+                        <button class="btn btn-filter" data-filter="tier" data-value="tier_3">
+                            <i class="fas fa-home"></i> Tier 3 (Emerging)
                         </button>
                     </div>
-                    
-                    <hr class="my-4">
-                    
-                    <div class="mb-3">
-                        <h6 class="mb-2">Filter by City Tier</h6>
-                        <div class="btn-group w-100" role="group">
-                            <input type="radio" class="btn-check" name="tierFilter" id="tier1" checked>
-                            <label class="btn btn-outline-success" for="tier1">Tier 1</label>
-                            
-                            <input type="radio" class="btn-check" name="tierFilter" id="tier2">
-                            <label class="btn btn-outline-info" for="tier2">Tier 2</label>
-                            
-                            <input type="radio" class="btn-check" name="tierFilter" id="tier3">
-                            <label class="btn btn-outline-warning" for="tier3">Tier 3</label>
+                </div>
+
+                <!-- Status Filter -->
+                <div class="filter-group">
+                    <label class="filter-label">Site Status</label>
+                    <div class="btn-group-vertical w-100">
+                        <button class="btn btn-filter active" data-filter="status" data-value="all">
+                            <i class="fas fa-list"></i> All Status
+                        </button>
+                        <button class="btn btn-filter" data-filter="status" data-value="evaluated">
+                            <i class="fas fa-check-circle"></i> Evaluated
+                        </button>
+                        <button class="btn btn-filter" data-filter="status" data-value="candidate">
+                            <i class="fas fa-hourglass-half"></i> Candidate
+                        </button>
+                        <button class="btn btn-filter" data-filter="status" data-value="selected">
+                            <i class="fas fa-star"></i> Selected
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Score Range Filter -->
+                <div class="filter-group">
+                    <label class="filter-label">
+                        Score Range: <span id="scoreRangeValue">0-100</span>
+                    </label>
+                    <input type="range" class="form-range" id="scoreRange" min="0" max="100" value="0">
+                </div>
+            </div>
+
+            <!-- Layers Panel -->
+            <div class="sidebar-panel">
+                <h3 class="panel-title">
+                    <i class="fas fa-layers"></i>
+                    Map Layers
+                </h3>
+                
+                <div class="layer-toggle">
+                    <label class="layer-label">
+                        <input type="checkbox" id="layerSites" checked>
+                        <i class="fas fa-charging-station"></i>
+                        Charging Stations
+                    </label>
+                </div>
+                
+                <div class="layer-toggle">
+                    <label class="layer-label">
+                        <input type="checkbox" id="layerClusters" checked>
+                        <i class="fas fa-object-group"></i>
+                        Cluster Markers
+                    </label>
+                </div>
+                
+                <div class="layer-toggle">
+                    <label class="layer-label">
+                        <input type="checkbox" id="layerHeatmap">
+                        <i class="fas fa-fire"></i>
+                        Traffic Heatmap
+                    </label>
+                </div>
+                
+                <div class="layer-toggle">
+                    <label class="layer-label">
+                        <input type="checkbox" id="layerCityLabels" checked>
+                        <i class="fas fa-tags"></i>
+                        City Labels
+                    </label>
+                </div>
+            </div>
+
+            <!-- Scenario Panel -->
+            <div class="sidebar-panel">
+                <h3 class="panel-title">
+                    <i class="fas fa-play-circle"></i>
+                    Quick Scenarios
+                </h3>
+                
+                <div class="d-grid gap-2">
+                    <button class="btn btn-scenario btn-success" id="scenarioExpansion">
+                        <i class="fas fa-expand-arrows-alt"></i>
+                        Mumbai Expansion
+                    </button>
+                    <button class="btn btn-scenario btn-info" id="scenarioOptimization">
+                        <i class="fas fa-chart-line"></i>
+                        Network Optimization
+                    </button>
+                    <button class="btn btn-scenario btn-warning" id="scenarioCrisis">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        Crisis Response
+                    </button>
+                </div>
+            </div>
+
+            <!-- Legend -->
+            <div class="sidebar-panel">
+                <h3 class="panel-title">
+                    <i class="fas fa-info-circle"></i>
+                    Legend
+                </h3>
+                
+                <div class="legend-item">
+                    <div class="legend-marker marker-excellent"></div>
+                    <div class="legend-text">Excellent (80-100)</div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-marker marker-good"></div>
+                    <div class="legend-text">Good (65-79)</div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-marker marker-fair"></div>
+                    <div class="legend-text">Fair (50-64)</div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-marker marker-poor"></div>
+                    <div class="legend-text">Poor (&lt;50)</div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-marker marker-unevaluated"></div>
+                    <div class="legend-text">Not Evaluated</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Map Container -->
+        <div class="map-wrapper">
+            <div id="networkMap"></div>
+            
+            <!-- Map Controls -->
+            <div class="map-controls">
+                <button class="map-control-btn" id="btnZoomIn" title="Zoom In">
+                    <i class="fas fa-plus"></i>
+                </button>
+                <button class="map-control-btn" id="btnZoomOut" title="Zoom Out">
+                    <i class="fas fa-minus"></i>
+                </button>
+                <button class="map-control-btn" id="btnResetView" title="Reset View">
+                    <i class="fas fa-home"></i>
+                </button>
+                <button class="map-control-btn" id="btnLocateMe" title="Locate Me">
+                    <i class="fas fa-crosshairs"></i>
+                </button>
+                <button class="map-control-btn" id="btnFullscreen" title="Fullscreen">
+                    <i class="fas fa-expand"></i>
+                </button>
+            </div>
+
+            <!-- Search Box -->
+            <div class="map-search">
+                <div class="search-input-group">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Search by city, state, or site ID...">
+                    <button id="btnClearSearch" style="display: none;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div id="searchResults" class="search-results" style="display: none;"></div>
+            </div>
+
+            <!-- Active Scenario Overlay -->
+            <div id="scenarioOverlay" class="scenario-overlay" style="display: none;">
+                <div class="scenario-overlay-content">
+                    <div class="scenario-overlay-header">
+                        <h4 id="scenarioOverlayTitle"></h4>
+                        <button id="btnCloseScenario" class="btn-close-scenario">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="scenario-overlay-body">
+                        <div class="scenario-progress">
+                            <div class="progress-bar" id="scenarioProgress"></div>
                         </div>
+                        <div id="scenarioStatus" class="scenario-status"></div>
                     </div>
-                    
-                    <div id="optimizationResult"></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Top Recommended Sites -->
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">
-                        <i class="bi bi-star"></i>
-                        Top Recommended Sites
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="row g-3">
-                        {% for site in top_sites %}
-                        <div class="col-md-6 col-lg-4">
-                            <div class="site-card tier{{ site.city_tier }} card">
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between align-items-start mb-3">
-                                        <div>
-                                            <h6 class="mb-1">{{ site.city }}, {{ site.state }}</h6>
-                                            <span class="badge bg-{{ 'success' if site.city_tier == 1 else 'info' if site.city_tier == 2 else 'warning' }}">
-                                                Tier {{ site.city_tier }}
-                                            </span>
-                                        </div>
-                                        <div class="score-circle score-{{ 'high' if site.overall_score >= 80 else 'medium' if site.overall_score >= 60 else 'low' }}">
-                                            {{ site.overall_score }}
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="mb-2">
-                                        <div class="d-flex justify-content-between mb-1">
-                                            <small class="text-muted">Traffic Score</small>
-                                            <small class="fw-semibold">{{ site.traffic_score }}/100</small>
-                                        </div>
-                                        <div class="progress" style="height: 4px;">
-                                            <div class="progress-bar bg-primary" style="width: {{ site.traffic_score }}%"></div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="mb-2">
-                                        <div class="d-flex justify-content-between mb-1">
-                                            <small class="text-muted">Demographics Score</small>
-                                            <small class="fw-semibold">{{ site.demographics_score }}/100</small>
-                                        </div>
-                                        <div class="progress" style="height: 4px;">
-                                            <div class="progress-bar bg-success" style="width: {{ site.demographics_score }}%"></div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="mb-3">
-                                        <div class="d-flex justify-content-between mb-1">
-                                            <small class="text-muted">Infrastructure Score</small>
-                                            <small class="fw-semibold">{{ site.infrastructure_score }}/100</small>
-                                        </div>
-                                        <div class="progress" style="height: 4px;">
-                                            <div class="progress-bar bg-warning" style="width: {{ site.infrastructure_score }}%"></div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <small class="text-muted">Est. ROI:</small>
-                                            <span class="fw-bold text-success"> {{ "%.1f"|format(site.estimated_roi_percent) }}%</span>
-                                        </div>
-                                        <button class="btn btn-sm btn-primary" onclick="viewSiteDetails({{ site.id }})">
-                                            Details <i class="bi bi-arrow-right"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
+    <!-- Site Detail Modal -->
+    <div id="siteDetailModal" class="site-modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalSiteTitle"></h3>
+                <button class="btn-close" id="btnCloseModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Content loaded dynamically -->
             </div>
         </div>
+    </div>
+</div>
+
+<!-- Loading Overlay -->
+<div id="mapLoadingOverlay" class="loading-overlay" style="display: none;">
+    <div class="loading-spinner">
+        <i class="fas fa-spinner fa-spin"></i>
+        <p>Loading map data...</p>
     </div>
 </div>
 {% endblock %}
 
 {% block extra_js %}
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script>
-// Initialize India map
-let indiaMap = null;
-
-function initMap() {
-    indiaMap = L.map('indiaMap').setView([20.5937, 78.9629], 5);
-    
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors'
-    }).addTo(indiaMap);
-    
-    // Add markers for recommended sites
-    {% for site in all_sites %}
-    const marker{{ site.id }} = L.marker([{{ site.latitude }}, {{ site.longitude }}])
-        .addTo(indiaMap)
-        .bindPopup(`
-            <strong>{{ site.city }}, {{ site.state }}</strong><br>
-            Score: {{ site.overall_score }}/100<br>
-            ROI: {{ "%.1f"|format(site.estimated_roi_percent) }}%
-        `);
-    {% endfor %}
-}
-
-function viewSiteDetails(siteId) {
-    window.location.href = `/demo4/site/${siteId}`;
-}
-
-// Optimize network button handler
-document.getElementById('btnOptimizeNetwork')?.addEventListener('click', async function() {
-    const btn = this;
-    btn.disabled = true;
-    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Optimizing...';
-    
-    try {
-        const data = await Utils.apiCall('/demo4/api/optimize-network', { method: 'POST' });
-        
-        Utils.showToast('Network optimization completed', 'success');
-        setTimeout(() => location.reload(), 1500);
-    } catch (error) {
-        Utils.showToast('Optimization failed', 'danger');
-    } finally {
-        btn.disabled = false;
-        btn.innerHTML = '<i class="bi bi-diagram-3"></i> Optimize Network';
-    }
-});
-
-document.addEventListener('DOMContentLoaded', () => {
-    initMap();
-});
-</script>
+<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+<script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+<script src="{{ url_for('static', filename='js/demo4/map-controller.js') }}"></script>
+<script src="{{ url_for('static', filename='js/demo4/map-scenarios.js') }}"></script>
 {% endblock %}
