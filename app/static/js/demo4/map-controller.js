@@ -40,8 +40,8 @@ class EVNetworkMapController {
             maxZoom: 18
         });
         
-        // Add tile layer (dark theme)
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        // Add tile layer (light theme)
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
             attribution: '© OpenStreetMap © CartoDB',
             subdomains: 'abcd',
             maxZoom: 19
@@ -57,8 +57,8 @@ class EVNetworkMapController {
                 if (count > 25) size = 'large';
                 
                 return L.divIcon({
-                    html: `<div class="marker-cluster marker-cluster-${size}">${count}</div>`,
-                    className: 'custom-cluster-icon',
+                    html: `<div style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white; width: 100%; height: 100%; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; text-shadow: 0 1px 3px rgba(0,0,0,0.4);">${count}</div>`,
+                    className: `marker-cluster marker-cluster-${size}`,
                     iconSize: L.point(40, 40)
                 });
             }
@@ -360,7 +360,15 @@ class EVNetworkMapController {
                             </div>
                         </div>
                     </div>
-                ` : '<p style="color: #a0aec0;">Site not yet evaluated.</p>'}
+                ` : `
+                    <div class="detail-section" style="text-align: center; padding: 40px 20px;">
+                        <p style="color: var(--text-muted); margin-bottom: 20px; font-size: 15px;">Site not yet evaluated.</p>
+                        <button class="btn-evaluate" onclick="window.mapController.evaluateSite('${site.site_id}')">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Evaluate Site</span>
+                        </button>
+                    </div>
+                `}
                 
                 ${permits && permits.length > 0 ? `
                     <div class="detail-section">
@@ -386,7 +394,41 @@ class EVNetworkMapController {
     }
     
     async evaluateSite(siteId) {
-        this.showLoading(true);
+        // Close modal if open
+        document.getElementById('siteDetailModal').style.display = 'none';
+        
+        // Show evaluation progress overlay
+        const progressOverlay = this.createEvaluationProgressOverlay(siteId);
+        document.body.appendChild(progressOverlay);
+        
+        const steps = [
+            { id: 'traffic', text: 'Analyzing traffic patterns', duration: 800 },
+            { id: 'demographics', text: 'Evaluating demographics', duration: 900 },
+            { id: 'infrastructure', text: 'Assessing infrastructure', duration: 1000 },
+            { id: 'financial', text: 'Calculating financials', duration: 1100 },
+            { id: 'permits', text: 'Checking permits', duration: 700 }
+        ];
+        
+        // Animate steps
+        for (let i = 0; i < steps.length; i++) {
+            const step = steps[i];
+            const stepEl = progressOverlay.querySelector(`#step-${step.id}`);
+            const progressBar = progressOverlay.querySelector('.evaluation-progress-fill');
+            
+            // Mark as active
+            stepEl.classList.add('active');
+            
+            // Update progress bar
+            const progress = ((i + 1) / steps.length) * 100;
+            progressBar.style.width = `${progress}%`;
+            
+            // Wait for step duration
+            await new Promise(resolve => setTimeout(resolve, step.duration));
+            
+            // Mark as completed
+            stepEl.classList.remove('active');
+            stepEl.classList.add('completed');
+        }
         
         try {
             const response = await fetch(`/demo4/api/sites/evaluate-comprehensive`, {
@@ -398,18 +440,97 @@ class EVNetworkMapController {
             const data = await response.json();
             
             if (data.success) {
-                // Reload sites data
+                // Show success state
+                await new Promise(resolve => setTimeout(resolve, 500));
+                progressOverlay.remove();
+                
+                // Reload data and show updated modal
                 await this.loadSitesData();
-                alert('Site evaluation completed successfully!');
+                await this.showSiteDetails(siteId);
+                
+                // Show success message
+                this.showToast('Evaluation completed successfully!', 'success');
             } else {
-                alert('Evaluation failed: ' + (data.error || 'Unknown error'));
+                throw new Error(data.error || 'Evaluation failed');
             }
         } catch (error) {
             console.error('Error evaluating site:', error);
-            alert('Evaluation failed');
-        } finally {
-            this.showLoading(false);
+            progressOverlay.remove();
+            this.showToast('Evaluation failed: ' + error.message, 'error');
         }
+    }
+    
+    createEvaluationProgressOverlay(siteId) {
+        const site = this.sitesData.find(s => s.site_id === siteId);
+        const siteName = site ? `${site.city}, ${site.state}` : siteId;
+        
+        const overlay = document.createElement('div');
+        overlay.className = 'evaluation-progress';
+        overlay.innerHTML = `
+            <div class="evaluation-card">
+                <div class="evaluation-header">
+                    <div class="evaluation-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3 class="evaluation-title">Evaluating Site</h3>
+                    <p class="evaluation-subtitle">${siteName}</p>
+                </div>
+                
+                <div class="evaluation-steps">
+                    <div class="evaluation-step" id="step-traffic">
+                        <div class="step-icon"><i class="fas fa-car"></i></div>
+                        <div class="step-text">Analyzing traffic patterns</div>
+                    </div>
+                    <div class="evaluation-step" id="step-demographics">
+                        <div class="step-icon"><i class="fas fa-users"></i></div>
+                        <div class="step-text">Evaluating demographics</div>
+                    </div>
+                    <div class="evaluation-step" id="step-infrastructure">
+                        <div class="step-icon"><i class="fas fa-road"></i></div>
+                        <div class="step-text">Assessing infrastructure</div>
+                    </div>
+                    <div class="evaluation-step" id="step-financial">
+                        <div class="step-icon"><i class="fas fa-dollar-sign"></i></div>
+                        <div class="step-text">Calculating financials</div>
+                    </div>
+                    <div class="evaluation-step" id="step-permits">
+                        <div class="step-icon"><i class="fas fa-clipboard-check"></i></div>
+                        <div class="step-text">Checking permits</div>
+                    </div>
+                </div>
+                
+                <div class="evaluation-progress-bar">
+                    <div class="evaluation-progress-fill" style="width: 0%;"></div>
+                </div>
+            </div>
+        `;
+        
+        return overlay;
+    }
+    
+    showToast(message, type = 'info') {
+        const toast = document.createElement('div');
+        toast.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: ${type === 'success' ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)' : 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)'};
+            color: white;
+            padding: 16px 24px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            z-index: 30000;
+            font-weight: 600;
+            animation: slideInRight 0.3s ease;
+        `;
+        toast.textContent = message;
+        
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.style.animation = 'slideOutRight 0.3s ease';
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
     }
     
     // Continued in next part...

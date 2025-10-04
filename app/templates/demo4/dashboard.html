@@ -3,21 +3,25 @@
 {% block title %}Network Map - Mobility Maestro{% endblock %}
 
 {% block extra_css %}
+<!-- Font Awesome for Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+<!-- Leaflet CSS -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+<!-- Custom Map CSS -->
 <link rel="stylesheet" href="{{ url_for('static', filename='css/demo4-map.css') }}">
 {% endblock %}
 
 {% block content %}
 <div class="map-container">
-    <!-- Header -->
+    <!-- Header - Demo5 Style -->
     <div class="map-header">
         <div class="header-left">
-            <h1 class="map-title">
+            <h2 class="map-title">
                 <i class="fas fa-map-marked-alt"></i>
                 EV Charging Network Map
-            </h1>
+            </h2>
             <p class="map-subtitle">Interactive visualization of charging stations across India</p>
         </div>
         <div class="header-right">
@@ -210,20 +214,20 @@
             
             <!-- Map Controls -->
             <div class="map-controls">
-                <button class="map-control-btn" id="btnZoomIn" title="Zoom In">
-                    <i class="fas fa-plus"></i>
+                <button class="map-control-btn" id="btnZoomIn" title="Zoom In" aria-label="Zoom In">
+                    <i class="fas fa-search-plus"></i>
                 </button>
-                <button class="map-control-btn" id="btnZoomOut" title="Zoom Out">
-                    <i class="fas fa-minus"></i>
+                <button class="map-control-btn" id="btnZoomOut" title="Zoom Out" aria-label="Zoom Out">
+                    <i class="fas fa-search-minus"></i>
                 </button>
-                <button class="map-control-btn" id="btnResetView" title="Reset View">
-                    <i class="fas fa-home"></i>
+                <button class="map-control-btn" id="btnResetView" title="Reset View" aria-label="Reset View">
+                    <i class="fas fa-undo-alt"></i>
                 </button>
-                <button class="map-control-btn" id="btnLocateMe" title="Locate Me">
-                    <i class="fas fa-crosshairs"></i>
+                <button class="map-control-btn" id="btnLocateMe" title="My Location" aria-label="My Location">
+                    <i class="fas fa-location-arrow"></i>
                 </button>
-                <button class="map-control-btn" id="btnFullscreen" title="Fullscreen">
-                    <i class="fas fa-expand"></i>
+                <button class="map-control-btn" id="btnFullscreen" title="Fullscreen" aria-label="Toggle Fullscreen">
+                    <i class="fas fa-expand-arrows-alt"></i>
                 </button>
             </div>
 
