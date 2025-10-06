@@ -1,0 +1,1217 @@
+{% extends "base.html" %}
+
+{% block title %}Mumbai Permit Crisis - Scenario 1{% endblock %}
+
+{% block extra_css %}
+<!-- Font Awesome for Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+<!-- Custom Map CSS -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/demo4-map.css') }}">
+<!-- Scenario 1 Enhanced Layout -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/demo4-scenario1-enhanced.css') }}">
+<!-- Scenario 1 Custom CSS -->
+<style>
+/* Crisis Alert Banner */
+.crisis-alert-banner {
+    background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+    color: white;
+    padding: 1.5rem 2rem;
+    margin: 1rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
+    animation: slideDown 0.5s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.crisis-alert-banner::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 10px,
+        rgba(255, 255, 255, 0.05) 10px,
+        rgba(255, 255, 255, 0.05) 20px
+    );
+    pointer-events: none;
+}
+
+.alert-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+    position: relative;
+    z-index: 1;
+}
+
+.alert-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0;
+}
+
+.alert-icon {
+    font-size: 28px;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 0.8;
+    }
+}
+
+.alert-body {
+    position: relative;
+    z-index: 1;
+}
+
+.alert-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.alert-metric {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    padding: 1rem;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.alert-metric-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    opacity: 0.9;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.alert-metric-value {
+    font-size: 22px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Alert actions styling moved to external CSS file */
+
+/* Button styles moved to external CSS file */
+
+.btn-investigate:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Button styles moved to external CSS file */
+
+.btn-dismiss:hover {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+/* Crisis Mode KPI Cards */
+.kpi-crisis-mode .stat-item {
+    border: 2px solid #dc2626;
+    background: linear-gradient(135deg, #fef2f2 0%, #ffffff 100%);
+    animation: borderPulse 2s infinite;
+}
+
+@keyframes borderPulse {
+    0%, 100% {
+        border-color: #dc2626;
+        box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4);
+    }
+    50% {
+        border-color: #ef4444;
+        box-shadow: 0 0 0 8px rgba(220, 38, 38, 0);
+    }
+}
+
+.kpi-crisis-mode .stat-value {
+    color: #dc2626;
+}
+
+.kpi-crisis-mode .stat-label {
+    color: #991b1b;
+}
+
+.crisis-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    color: #dc2626;
+    font-weight: 700;
+    margin-top: 6px;
+}
+
+.crisis-indicator i {
+    font-size: 16px;
+}
+
+/* Event Flow Panel */
+.event-flow-panel {
+    background: var(--bg-card);
+    border-radius: 12px;
+    padding: 1.5rem;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-md);
+    margin-top: 1rem;
+}
+
+.event-stream {
+    max-height: 400px;
+    overflow-y: auto;
+    padding: 1rem;
+    background: #f8fafc;
+    border-radius: 8px;
+    border: 1px solid var(--border-light);
+}
+
+.event-item {
+    display: flex;
+    gap: 12px;
+    padding: 12px;
+    background: white;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    border-left: 4px solid;
+    box-shadow: var(--shadow-sm);
+    animation: slideInRight 0.3s ease;
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.event-item.agent-orchestrator {
+    border-left-color: #8b5cf6;
+}
+
+.event-item.agent-permit {
+    border-left-color: #3b82f6;
+}
+
+.event-item.agent-financial {
+    border-left-color: #10b981;
+}
+
+.event-item.agent-market {
+    border-left-color: #f59e0b;
+}
+
+.event-timestamp {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.event-agent {
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--text-primary);
+}
+
+.event-action {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+/* Mumbai Sites Map Enhancement */
+.mumbai-site-marker {
+    background: #dc2626 !important;
+    border-color: #fff !important;
+    animation: markerPulse 2s infinite;
+}
+
+@keyframes markerPulse {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7);
+        transform: scale(1);
+    }
+    50% {
+        box-shadow: 0 0 0 10px rgba(220, 38, 38, 0);
+        transform: scale(1.1);
+    }
+}
+
+/* Action Plan Panel */
+.action-plan-panel {
+    background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 100%);
+    border-radius: 12px;
+    padding: 1.5rem;
+    border: 2px solid #3b82f6;
+    margin-top: 1rem;
+}
+
+.action-plan-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 1.5rem;
+}
+
+.action-plan-header h3 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.action-plan-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.action-item {
+    background: white;
+    padding: 16px;
+    border-radius: 10px;
+    border-left: 4px solid;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s ease;
+}
+
+.action-item:hover {
+    transform: translateX(4px);
+    box-shadow: var(--shadow-md);
+}
+
+.action-item.priority-high {
+    border-left-color: #dc2626;
+}
+
+.action-item.priority-medium {
+    border-left-color: #f59e0b;
+}
+
+.action-item.priority-low {
+    border-left-color: #10b981;
+}
+
+.action-title {
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.priority-badge {
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.priority-high .priority-badge {
+    background: rgba(220, 38, 38, 0.15);
+    color: #dc2626;
+    border: 1px solid rgba(220, 38, 38, 0.3);
+}
+
+.priority-medium .priority-badge {
+    background: rgba(245, 158, 11, 0.15);
+    color: #f59e0b;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.priority-low .priority-badge {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.action-details {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 10px;
+    line-height: 1.6;
+}
+
+.action-metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.action-metric {
+    background: var(--bg-primary);
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid var(--border-light);
+}
+
+.action-metric-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+    font-weight: 600;
+}
+
+.action-metric-value {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+/* CEO Approval Modal */
+.ceo-approval-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 20000;
+    animation: fadeIn 0.3s ease;
+}
+
+.approval-card {
+    background: white;
+    border-radius: 20px;
+    padding: 2.5rem;
+    max-width: 700px;
+    width: 90%;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.approval-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.approval-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 20px;
+    background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    color: white;
+}
+
+.approval-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 10px;
+}
+
+.approval-subtitle {
+    font-size: 15px;
+    color: var(--text-secondary);
+}
+
+.approval-summary {
+    background: var(--bg-primary);
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.summary-row:last-child {
+    border-bottom: none;
+}
+
+.summary-label {
+    font-size: 14px;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.summary-value {
+    font-size: 14px;
+    color: var(--text-primary);
+    font-weight: 700;
+}
+
+.approval-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.btn-approve {
+    flex: 1;
+    padding: 16px;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.btn-approve:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
+}
+
+.btn-reject {
+    flex: 1;
+    padding: 16px;
+    background: white;
+    color: var(--text-secondary);
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-reject:hover {
+    border-color: #dc2626;
+    color: #dc2626;
+    background: #fef2f2;
+}
+
+/* Execution Animation */
+.execution-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 25000;
+}
+
+.execution-progress {
+    background: white;
+    border-radius: 20px;
+    padding: 3rem;
+    max-width: 600px;
+    width: 90%;
+    text-align: center;
+}
+
+.execution-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 2rem;
+}
+
+.execution-step {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    background: var(--bg-primary);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.execution-step.completed {
+    background: rgba(16, 185, 129, 0.1);
+}
+
+.step-icon-exec {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: var(--text-muted);
+    flex-shrink: 0;
+}
+
+.execution-step.completed .step-icon-exec {
+    background: #10b981;
+    color: white;
+}
+
+.step-text-exec {
+    flex: 1;
+    text-align: left;
+    font-size: 14px;
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+.execution-step.completed .step-text-exec {
+    color: var(--text-primary);
+}
+
+/* Success Confetti Effect */
+@keyframes confetti {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(100vh) rotate(720deg);
+        opacity: 0;
+    }
+}
+
+/* Quick Start Guide */
+.quick-start-guide {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 30000;
+    animation: fadeIn 0.3s ease;
+}
+
+.guide-content {
+    background: white;
+    border-radius: 20px;
+    padding: 2.5rem;
+    max-width: 550px;
+    width: 90%;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.guide-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.guide-header h3 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.guide-header i {
+    color: #3b82f6;
+}
+
+.btn-close-guide {
+    background: rgba(0, 0, 0, 0.05);
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 18px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    border-radius: 6px;
+}
+
+.btn-close-guide:hover {
+    background: #ef4444;
+    color: white;
+}
+
+.guide-body {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 2rem;
+}
+
+.guide-step {
+    display: flex;
+    gap: 16px;
+    align-items: start;
+    padding: 16px;
+    background: var(--bg-primary);
+    border-radius: 12px;
+    border-left: 4px solid #3b82f6;
+}
+
+.step-number {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.step-content h4 {
+    margin: 0 0 6px 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.step-content p {
+    margin: 0;
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="map-container">
+    <!-- Header -->
+    <div class="map-header">
+        <div class="header-left">
+            <h2 class="map-title">
+                <i class="fas fa-exclamation-triangle"></i>
+                Scenario 1: Mumbai Permit Crisis
+            </h2>
+            <p class="map-subtitle">Real-time crisis response and resolution workflow</p>
+        </div>
+        <div class="header-right">
+            <button class="btn btn-alert" id="btnShowAlert" title="Critical Alert">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span class="alert-badge" id="alertCount">!
+                    <span class="alert-count-badge" id="alertCountNumber">1</span>
+                </span>
+            </button>
+            <a href="{{ url_for('demo4_scenario.dashboard') }}" class="btn btn-primary">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+    </div>
+
+    <!-- Recommended Actions Modal -->
+    <div class="recommended-actions-modal" id="recommendedActionsModal">
+        <div class="recommended-actions-content">
+            <div class="recommended-actions-header">
+                <h3 class="recommended-actions-title">
+                    <i class="fas fa-lightbulb"></i>
+                    Recommended Actions
+                </h3>
+                <button class="btn-close-event-flow" onclick="closeRecommendedActions()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="recommended-actions-body">
+                <div class="actions-section">
+                    <div class="actions-header">
+                        <h4><i class="fas fa-tasks" style="color: #ef4444;"></i> Actions</h4>
+                        <div class="actions-navigation">
+                            <button class="nav-btn prev-action" id="prevAction" onclick="navigateAction(-1)">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <span class="action-counter" id="actionCounter">1 / 3</span>
+                            <button class="nav-btn next-action" id="nextAction" onclick="navigateAction(1)">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="actions-carousel" id="actionsCarousel">
+                        <div class="action-card active" data-action="0">
+                            <div class="action-header">
+                                <div class="action-title">Escalate to BMC Leadership</div>
+                                <div class="action-priority high">HIGH</div>
+                            </div>
+                            <div class="action-description">
+                                Direct engagement with BMC Commissioner and Additional Commissioner (Infrastructure)
+                            </div>
+                            <div class="action-metrics">
+                                <div class="metric-item">
+                                    <span class="metric-label">Timeline:</span>
+                                    <span class="metric-value">30 days</span>
+                                </div>
+                                <div class="metric-item">
+                                    <span class="metric-label">Cost:</span>
+                                    <span class="metric-value">₹2L</span>
+                                </div>
+                                <div class="metric-item">
+                                    <span class="metric-label">Outcome:</span>
+                                    <span class="metric-value">Fast-track approval process</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="action-card" data-action="1">
+                            <div class="action-header">
+                                <div class="action-title">Legal & Regulatory Review</div>
+                                <div class="action-priority medium">MEDIUM</div>
+                            </div>
+                            <div class="action-description">
+                                Comprehensive legal assessment and regulatory compliance audit for all affected sites
+                            </div>
+                            <div class="action-metrics">
+                                <div class="metric-item">
+                                    <span class="metric-label">Timeline:</span>
+                                    <span class="metric-value">45 days</span>
+                                </div>
+                                <div class="metric-item">
+                                    <span class="metric-label">Cost:</span>
+                                    <span class="metric-value">₹5L</span>
+                                </div>
+                                <div class="metric-item">
+                                    <span class="metric-label">Outcome:</span>
+                                    <span class="metric-value">Compliance clearance</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="action-card" data-action="2">
+                            <div class="action-header">
+                                <div class="action-title">Stakeholder Engagement Program</div>
+                                <div class="action-priority low">LOW</div>
+                            </div>
+                            <div class="action-description">
+                                Proactive engagement with local authorities, community leaders, and business partners
+                            </div>
+                            <div class="action-metrics">
+                                <div class="metric-item">
+                                    <span class="metric-label">Timeline:</span>
+                                    <span class="metric-value">60 days</span>
+                                </div>
+                                <div class="metric-item">
+                                    <span class="metric-label">Cost:</span>
+                                    <span class="metric-value">₹3L</span>
+                                </div>
+                                <div class="metric-item">
+                                    <span class="metric-label">Outcome:</span>
+                                    <span class="metric-value">Community support</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="actions-section">
+                    <h4><i class="fas fa-map-marker-alt" style="color: #3b82f6;"></i> Affected Sites</h4>
+                    <div id="affectedSitesList">
+                        <!-- Sites will be populated by JavaScript -->
+                    </div>
+                </div>
+                
+                <div class="actions-section">
+                    <h4><i class="fas fa-chart-line" style="color: #059669;"></i> Investment Summary</h4>
+                    <div class="investment-summary">
+                        <div class="investment-amount">₹12 Lakh</div>
+                        <div class="investment-details">
+                            Total investment required across 15 sites<br>
+                            <strong>ROI:</strong> 35% | <strong>Timeline:</strong> 75 days
+                        </div>
+                    </div>
+                </div>
+
+                <div class="actions-section">
+                    <div class="action-buttons">
+                        <button class="btn-approve-all">
+                            <i class="fas fa-check-circle"></i>
+                            Request CEO Approval
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Crisis Alert Modal -->
+    <div class="crisis-alert-modal" id="crisisAlertModal" style="display: none;">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="alert-title">
+                    <i class="fas fa-exclamation-circle alert-icon"></i>
+                    CRITICAL ALERT: 15 Mumbai Sites Delayed >90 Days
+                </h3>
+                <button class="btn-close-modal" id="btnCloseModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="alert-description">
+                    BMC permit bottleneck detected. Immediate action required to prevent major revenue loss and competitive disadvantage.
+                </p>
+            
+            <div class="alert-summary">
+                <div class="alert-metric">
+                    <div class="alert-metric-label">Network Growth Impact</div>
+                    <div class="alert-metric-value">
+                        <i class="fas fa-arrow-down"></i>
+                        -28% below target
+                    </div>
+                </div>
+                <div class="alert-metric">
+                    <div class="alert-metric-label">At-Risk Investment</div>
+                    <div class="alert-metric-value">
+                        <i class="fas fa-rupee-sign"></i>
+                        27 Crores
+                    </div>
+                </div>
+                <div class="alert-metric">
+                    <div class="alert-metric-label">Competitive Gap</div>
+                    <div class="alert-metric-value">
+                        <i class="fas fa-chart-line"></i>
+                        Widening
+                    </div>
+                </div>
+                <div class="alert-metric">
+                    <div class="alert-metric-label">Sites Affected</div>
+                    <div class="alert-metric-value">
+                        <i class="fas fa-map-marker-alt"></i>
+                        15 Sites
+                    </div>
+                </div>
+            </div>
+
+            <div class="alert-actions">
+                <button class="btn-investigate" id="btnInvestigate">
+                    <i class="fas fa-search"></i>
+                    Investigate Crisis
+                </button>
+                <button class="btn-dismiss" id="btnDismissAlert">
+                    <i class="fas fa-times"></i>
+                    Dismiss
+                </button>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="map-content">
+        <!-- Sidebar -->
+        <div class="map-sidebar">
+            <!-- Crisis KPIs -->
+            <div class="sidebar-panel kpi-crisis-mode">
+                <h3 class="panel-title">
+                    <i class="fas fa-chart-bar"></i>
+                    Crisis Metrics
+                </h3>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-label">Sites Blocked</div>
+                        <div class="stat-value">15</div>
+                        <div class="crisis-indicator">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            Critical
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Days Delayed</div>
+                        <div class="stat-value">90+</div>
+                        <div class="crisis-indicator">
+                            <i class="fas fa-clock"></i>
+                            Urgent
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Revenue Risk</div>
+                        <div class="stat-value">₹27Cr</div>
+                        <div class="crisis-indicator">
+                            <i class="fas fa-chart-line"></i>
+                            High
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Tata Power Sites</div>
+                        <div class="stat-value">8</div>
+                        <div class="crisis-indicator">
+                            <i class="fas fa-users"></i>
+                            Nearby
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mumbai Sites List -->
+            <div class="sidebar-panel">
+                <h3 class="panel-title">
+                    <i class="fas fa-map-marker-alt"></i>
+                    Affected Sites
+                </h3>
+                <div class="sites-container">
+                    <div id="mumbaiSitesList">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+
+
+            <!-- Legend -->
+            <div class="sidebar-panel">
+                <h3 class="panel-title">
+                    <i class="fas fa-info-circle"></i>
+                    Map Legend
+                </h3>
+                
+                <div class="legend-item">
+                    <div class="legend-marker" style="background: #dc2626;"></div>
+                    <div class="legend-text">Blocked Sites (15)</div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-marker" style="background: #f59e0b;"></div>
+                    <div class="legend-text">Competitor Sites (8)</div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-marker" style="background: #10b981;"></div>
+                    <div class="legend-text">Operational Sites</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Map Container -->
+        <div class="map-wrapper">
+            <div id="networkMap"></div>
+            
+            <!-- Map Controls -->
+            <div class="map-controls">
+                <button class="map-control-btn" id="btnZoomIn" title="Zoom In">
+                    <i class="fas fa-search-plus"></i>
+                </button>
+                <button class="map-control-btn" id="btnZoomOut" title="Zoom Out">
+                    <i class="fas fa-search-minus"></i>
+                </button>
+                <button class="map-control-btn" id="btnResetView" title="Reset View">
+                    <i class="fas fa-undo-alt"></i>
+                </button>
+                <button class="map-control-btn" id="btnFullscreen" title="Fullscreen">
+                    <i class="fas fa-expand-arrows-alt"></i>
+                </button>
+            </div>
+
+            <!-- Event Flow Panel (Shows after investigation) -->
+            <div class="event-flow-panel" id="eventFlowPanel" style="display: none;">
+                <div class="event-flow-header">
+                    <div class="event-flow-title-section">
+                        <h3 class="event-flow-title">
+                            <i class="fas fa-project-diagram"></i>
+                            Multi-Agent Event Flow
+                        </h3>
+                        <div class="event-progress" id="eventProgress" style="display: none;">
+                            <span class="progress-text" id="progressText">Processing... (0/0)</span>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="progressFill"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn-close-event-flow" id="btnCloseEventFlow">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="event-stream" id="eventStream">
+                    <!-- Events populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CEO Approval Modal -->
+<div class="ceo-approval-modal" id="approvalModal" style="display: none;">
+    <div class="approval-card">
+        <div class="approval-header">
+            <div class="approval-icon">
+                <i class="fas fa-user-tie"></i>
+            </div>
+            <h3 class="approval-title">CEO Approval Required</h3>
+            <p class="approval-subtitle">Crisis Response Strategy for Mumbai Permit Bottleneck</p>
+        </div>
+
+        <div class="approval-summary">
+            <div class="summary-row">
+                <span class="summary-label">Total Investment</span>
+                <span class="summary-value">₹12 Lakh</span>
+            </div>
+            <div class="summary-row">
+                <span class="summary-label">Expected Revenue Saved</span>
+                <span class="summary-value">₹4.2 Crores</span>
+            </div>
+            <div class="summary-row">
+                <span class="summary-label">Timeline Improvement</span>
+                <span class="summary-value">127 days → 52 days</span>
+            </div>
+            <div class="summary-row">
+                <span class="summary-label">ROI</span>
+                <span class="summary-value" style="color: #10b981;">35x</span>
+            </div>
+            <div class="summary-row">
+                <span class="summary-label">Sites Recovered</span>
+                <span class="summary-value">15 of 15 (100%)</span>
+            </div>
+        </div>
+
+        <div class="approval-actions">
+            <button class="btn-approve" id="btnApproveAction">
+                <i class="fas fa-check-circle"></i>
+                Approve Full Action Plan
+            </button>
+            <button class="btn-reject" id="btnRejectAction">
+                <i class="fas fa-times-circle"></i>
+                Reject
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Execution Overlay -->
+<div class="execution-overlay" id="executionOverlay" style="display: none;">
+    <div class="execution-progress">
+        <h2 style="font-size: 28px; font-weight: 700; margin-bottom: 1rem;">
+            Executing Action Plan
+        </h2>
+        <p style="color: var(--text-secondary); margin-bottom: 2rem;">
+            Automated workflows are being executed...
+        </p>
+
+        <div class="execution-steps" id="executionSteps">
+            <!-- Steps populated by JavaScript -->
+        </div>
+
+        <button class="btn btn-primary mt-4" id="btnCloseExecution" style="display: none; padding: 14px 32px;">
+            <i class="fas fa-check-circle"></i>
+            View Results
+        </button>
+    </div>
+</div>
+
+<!-- Quick Start Guide -->
+<div id="quickStartGuide" class="quick-start-guide" style="display: none;">
+    <div class="guide-content">
+        <div class="guide-header">
+            <h3><i class="fas fa-info-circle"></i> Quick Start Guide</h3>
+            <button id="btnCloseGuide" class="btn-close-guide">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="guide-body">
+            <div class="guide-step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h4>Click "Investigate Crisis"</h4>
+                    <p>Start the multi-agent analysis workflow</p>
+                </div>
+            </div>
+            <div class="guide-step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h4>Watch Event Flow</h4>
+                    <p>See agents working together in real-time</p>
+                </div>
+            </div>
+            <div class="guide-step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h4>Review Action Plan</h4>
+                    <p>5-point resolution strategy will appear</p>
+                </div>
+            </div>
+            <div class="guide-step">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <h4>Request CEO Approval</h4>
+                    <p>Submit for executive decision</p>
+                </div>
+            </div>
+        </div>
+        <button class="btn btn-primary w-100" id="btnStartDemo">
+            <i class="fas fa-play"></i> Start Demo
+        </button>
+    </div>
+</div>
+
+<!-- Loading Overlay -->
+<div id="mapLoadingOverlay" class="loading-overlay" style="display: none;">
+    <div class="loading-spinner">
+        <i class="fas fa-spinner fa-spin"></i>
+        <p>Loading crisis data...</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+<script src="{{ url_for('static', filename='js/demo4/scenario1.js') }}"></script>
+{% endblock %}

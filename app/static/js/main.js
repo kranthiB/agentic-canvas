@@ -80,13 +80,13 @@ const Utils = {
         const icon = iconMap[type] || iconMap.info;
         
         const toastHtml = `
-            <div class="toast align-items-center text-bg-${type} border-0" role="alert">
-                <div class="d-flex">
-                    <div class="toast-body">
-                        <i class="bi bi-${icon} me-2"></i>
-                        ${message}
-                    </div>
-                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            <div class="toast text-bg-${type} border-0" role="alert">
+                <div class="toast-content">
+                    <i class="fas fa-${icon}"></i>
+                    <span class="toast-message">${message}</span>
+                    <button type="button" class="toast-close-btn" onclick="this.parentElement.parentElement.remove()">
+                        <i class="fas fa-times"></i>
+                    </button>
                 </div>
             </div>
         `;
@@ -102,12 +102,21 @@ const Utils = {
         
         toastContainer.insertAdjacentHTML('beforeend', toastHtml);
         const toastElement = toastContainer.lastElementChild;
-        const toast = new bootstrap.Toast(toastElement, { delay: duration });
-        toast.show();
         
-        toastElement.addEventListener('hidden.bs.toast', () => {
-            toastElement.remove();
-        });
+        // Auto-hide after duration
+        if (duration > 0) {
+            setTimeout(() => {
+                if (toastElement && toastElement.parentNode) {
+                    toastElement.style.opacity = '0';
+                    toastElement.style.transform = 'translateX(100%)';
+                    setTimeout(() => {
+                        if (toastElement && toastElement.parentNode) {
+                            toastElement.remove();
+                        }
+                    }, 300);
+                }
+            }, duration);
+        }
     },
     
     /**

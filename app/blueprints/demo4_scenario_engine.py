@@ -28,6 +28,20 @@ demo4_scenario_bp = Blueprint('demo4_scenario', __name__)
 
 
 
+@demo4_scenario_bp.route('/dashboard')
+@login_required
+def dashboard():
+    """Main dashboard - interactive map view"""
+    return render_template('demo4/dashboard.html')
+
+
+@demo4_scenario_bp.route('/scenario1')
+@login_required
+def scenario1():
+    """Scenario 1: Mumbai Permit Crisis"""
+    return render_template('demo4/scenario1.html')
+
+
 @demo4_scenario_bp.route('/event-flow')
 @login_required
 def event_flow_page():
@@ -237,6 +251,36 @@ def api_optimize_network():
             'success': False,
             'error': str(e)
         }), 500
+
+
+@demo4_scenario_bp.route('/api/scenario1/mumbai-sites', methods=['GET'])
+@login_required
+def api_scenario1_mumbai_sites():
+    """Get Mumbai crisis scenario data"""
+    mumbai_sites = [
+        {'id': 'MUM-001', 'name': 'Nariman Point', 'lat': 18.9254, 'lng': 72.8243, 'investment': 2.2, 'daysDelayed': 92},
+        {'id': 'MUM-002', 'name': 'Andheri SEEPZ', 'lat': 19.1136, 'lng': 72.8697, 'investment': 1.8, 'daysDelayed': 95},
+        {'id': 'MUM-003', 'name': 'Bandra West', 'lat': 19.0596, 'lng': 72.8295, 'investment': 2.0, 'daysDelayed': 88},
+        {'id': 'MUM-004', 'name': 'Powai Tech Park', 'lat': 19.1197, 'lng': 72.9059, 'investment': 1.9, 'daysDelayed': 91},
+        {'id': 'MUM-005', 'name': 'BKC Business District', 'lat': 19.0608, 'lng': 72.8683, 'investment': 2.5, 'daysDelayed': 96},
+        {'id': 'MUM-006', 'name': 'Malad Industrial', 'lat': 19.1865, 'lng': 72.8486, 'investment': 1.7, 'daysDelayed': 89},
+        {'id': 'MUM-007', 'name': 'Goregaon East', 'lat': 19.1653, 'lng': 72.8526, 'investment': 1.6, 'daysDelayed': 87},
+        {'id': 'MUM-008', 'name': 'Vikhroli', 'lat': 19.1076, 'lng': 72.9248, 'investment': 1.5, 'daysDelayed': 93},
+        {'id': 'MUM-009', 'name': 'Thane West', 'lat': 19.2183, 'lng': 72.9781, 'investment': 1.8, 'daysDelayed': 90},
+        {'id': 'MUM-010', 'name': 'Navi Mumbai', 'lat': 19.0330, 'lng': 73.0297, 'investment': 2.1, 'daysDelayed': 94},
+        {'id': 'MUM-011', 'name': 'Lower Parel', 'lat': 18.9968, 'lng': 72.8288, 'investment': 2.3, 'daysDelayed': 97},
+        {'id': 'MUM-012', 'name': 'Worli', 'lat': 19.0176, 'lng': 72.8169, 'investment': 2.4, 'daysDelayed': 91},
+        {'id': 'MUM-013', 'name': 'Kurla Complex', 'lat': 19.0728, 'lng': 72.8826, 'investment': 1.9, 'daysDelayed': 88},
+        {'id': 'MUM-014', 'name': 'Mulund', 'lat': 19.1722, 'lng': 72.9577, 'investment': 1.6, 'daysDelayed': 92},
+        {'id': 'MUM-015', 'name': 'Borivali', 'lat': 19.2307, 'lng': 72.8567, 'investment': 1.7, 'daysDelayed': 89}
+    ]
+    
+    return jsonify({
+        'success': True,
+        'sites': mumbai_sites,
+        'total_investment': sum(s['investment'] for s in mumbai_sites),
+        'avg_delay': sum(s['daysDelayed'] for s in mumbai_sites) / len(mumbai_sites)
+    })
 
 
 
