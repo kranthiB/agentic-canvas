@@ -182,131 +182,132 @@ def api_process_query():
             # Check for greetings and capability queries FIRST - highest priority
             if _is_greeting_query(query_lower, language):
                 result = _handle_greeting_query(query, language, correlation_id)
-            
-            # Hindi language patterns - add common Hindi terms
-            elif language == 'hindi' or language == 'hi':
-                # Convert some common Hindi terms for pattern matching
-                hindi_patterns = {
-                    'कम स्टॉक': 'low stock',
-                    'स्टॉक स्तर': 'stock levels', 
-                    'सामग्री': 'materials',
-                    'आपूर्तिकर्ता': 'suppliers',
-                    'आपूर्तिकर्ताओं': 'suppliers',
-                    'बैच': 'batch',
-                    'असफल': 'fail',
-                    'विस्कोसिटी': 'viscosity',
-                    'फॉर्मूलेशन': 'formulation',
-                    'परीक्षण': 'testing',
-                    'गुजरात': 'gujarat',
-                    'प्रमाणन': 'certifications',
-                    'प्रमाणपत्र': 'certifications',
-                    'नमी': 'moisture',
-                    'एलपीजी': 'lpg',
-                    'सिलेंडर': 'cylinders',
-                    'सफेद जमाव': 'white deposits',
-                    'ऑटोमोटिव': 'automotive',
-                    'आवश्यकताएं': 'requirements',
-                    'इन्वेंट्री': 'inventory',
-                    'स्तर': 'levels',
-                    'ट्रायल': 'trial',
-                    'दिखाएं': 'show',
-                    'भारी शुल्क': 'heavy duty',
-                    'भारी': 'heavy',
-                    'वेरिएंट': 'variant',
-                    'विकसित': 'develop',
-                    'हमें': 'we need',
-                    'चाहिए': 'need',
-                    'सप्ताह': 'weeks',
-                    'डिलीवर': 'deliver',
-                    'मुंबई': 'mumbai',
-                    'अनुशंसित': 'recommended',
-                    'मात्रा': 'dosage',
-                    'अनुप्रयोगों': 'applications',
-                    'बेस ऑयल': 'base oil'
-                }
-                
-                # Replace Hindi terms with English equivalents for pattern matching
-                for hindi, english in hindi_patterns.items():
-                    if hindi in query_lower:
-                        query_lower = query_lower.replace(hindi, english)
-            
-            # ZDDP reduction for BS VI compliance
-            elif ('zddp' in query_lower and 'bs vi' in query_lower) or \
-               ('zddp' in query_lower and 'phosphorus' in query_lower and 'compliance' in query_lower) or \
-               ('reduce zddp' in query_lower and ('bs vi' in query_lower or 'compliance' in query_lower)):
-                result = _simulate_zddp_bs_vi_compliance_query(query, language, correlation_id)
-            
-            # Group III base oil supplier queries
-            elif ('group iii' in query_lower and 'base oil' in query_lower and 'suppliers' in query_lower) or \
-                 ('suppliers' in query_lower and 'group iii' in query_lower and ('deliver' in query_lower or 'mumbai' in query_lower)) or \
-                 ('need' in query_lower and 'group iii' in query_lower and ('mt' in query_lower or 'suppliers' in query_lower)):
-                result = _simulate_group_iii_supplier_query(query, language, correlation_id)
-            
-            # LPG white deposits investigation
-            elif ('white deposits' in query_lower and 'lpg' in query_lower) or \
-                 ('customer complaints' in query_lower and 'lpg cylinders' in query_lower) or \
-                 ('investigate' in query_lower and 'lpg' in query_lower and 'deposits' in query_lower):
-                result = _simulate_lpg_white_deposits_investigation(query, language, correlation_id)
-            
-            # Automotive LPG test requirements
-            elif ('test requirements' in query_lower or 'requirements' in query_lower) and ('automotive lpg' in query_lower or 'lpg' in query_lower):
-                result = _simulate_automotive_lpg_test_requirements(query, language, correlation_id)
-            
-            # VI Improver dosage for Quartz 9000
-            elif (('viscosity index improver' in query_lower or 'vi improver' in query_lower) and 'dosage' in query_lower) or \
-                 ('recommended' in query_lower and 'viscosity index improver' in query_lower and 'quartz 9000' in query_lower):
-                result = _simulate_vi_improver_dosage_query(query, language, correlation_id)
-            
-            # Complete Quartz 9000 formulation
-            elif ('recommended formulation' in query_lower or ('formulation' in query_lower and 'quartz 9000' in query_lower and 'recommended' in query_lower)):
-                result = _simulate_quartz_9000_formulation(query, language, correlation_id)
-            
-            # Heavy-duty variant development
-            elif ('develop' in query_lower and 'variant' in query_lower and 'heavy' in query_lower) or \
-                 ('new variant' in query_lower and 'heavy-duty' in query_lower) or \
-                 ('heavy-duty' in query_lower and 'quartz 9000' in query_lower):
-                result = _simulate_heavy_duty_variant_development(query, language, correlation_id)
-            
-            # ZDDP inventory
-            elif ('inventory levels' in query_lower or 'inventory' in query_lower or 'stock' in query_lower) and 'zddp' in query_lower:
-                result = _simulate_zddp_inventory_query(query, language, correlation_id)
-            
-            # Gujarat suppliers
-            elif ('approved suppliers' in query_lower or 'suppliers' in query_lower) and 'gujarat' in query_lower:
-                result = _simulate_gujarat_suppliers_query(query, language, correlation_id)
-            
-            # LPG moisture specification
-            elif ('moisture content specification' in query_lower or 'moisture' in query_lower) and 'lpg' in query_lower:
-                result = _simulate_lpg_moisture_spec_query(query, language, correlation_id)
-            
-            # Supplier certifications
-            elif 'certifications' in query_lower and 'suppliers' in query_lower:
-                result = _simulate_supplier_certifications_query(query, language, correlation_id)
-            
-            # Quartz 7000 viscosity
-            elif ('viscosity' in query_lower and 'quartz 7000' in query_lower) or \
-                 ('100°c' in query_lower and 'quartz 7000' in query_lower):
-                result = _simulate_quartz_7000_viscosity_query(query, language, correlation_id)
-            
-            # Existing handlers
-            elif 'lims' in query_lower and 'batch' in query_lower and 'fail' in query_lower:
-                result = _simulate_batch_failure_query(query, language, correlation_id)
-            elif 'pao content' in query_lower or 'pao' in query_lower:
-                result = _simulate_pao_content_query(query, language, correlation_id)
-            elif 'testing phase' in query_lower or ('batch' in query_lower and 'testing' in query_lower):
-                result = _simulate_testing_batches_query(query, language, correlation_id)
-            elif 'formulation' in query_lower and 'trial' in query_lower:
-                result = _simulate_formulation_trial_query(query, language, correlation_id)
-            elif 'low stock' in query_lower or 'stock levels' in query_lower:
-                result = _simulate_low_stock_query(query, language, correlation_id)
             else:
-                result = {
-                    'category': 'general',
-                    'agents': ['knowledge_orchestrator'],
-                    'response': f"Processing query: {query}",
-                    'sources': [],
-                    'processing_time_ms': 2000
-                }
+                # Hindi language patterns - translate for pattern matching
+                if language == 'hindi' or language == 'hi':
+                    # Convert Hindi terms to English for pattern matching
+                    hindi_patterns = {
+                        'कम स्टॉक': 'low stock',
+                        'स्टॉक स्तर': 'stock levels', 
+                        'सामग्री': 'materials',
+                        'आपूर्तिकर्ता': 'suppliers',
+                        'आपूर्तिकर्ताओं': 'suppliers',
+                        'बैच': 'batch',
+                        'असफल': 'fail',
+                        'विस्कोसिटी': 'viscosity',
+                        'फॉर्मूलेशन': 'formulation',
+                        'परीक्षण': 'testing',
+                        'गुजरात': 'gujarat',
+                        'प्रमाणन': 'certifications',
+                        'प्रमाणपत्र': 'certifications',
+                        'नमी': 'moisture',
+                        'एलपीजी': 'lpg',
+                        'सिलेंडर': 'cylinders',
+                        'सफेद जमाव': 'white deposits',
+                        'ऑटोमोटिव': 'automotive',
+                        'आवश्यकताएं': 'requirements',
+                        'इन्वेंट्री': 'inventory',
+                        'स्तर': 'levels',
+                        'ट्रायल': 'trial',
+                        'दिखाएं': 'show',
+                        'भारी शुल्क': 'heavy duty',
+                        'भारी': 'heavy',
+                        'वेरिएंट': 'variant',
+                        'विकसित': 'develop',
+                        'हमें': 'we need',
+                        'चाहिए': 'need',
+                        'सप्ताह': 'weeks',
+                        'डिलीवर': 'deliver',
+                        'मुंबई': 'mumbai',
+                        'अनुशंसित': 'recommended',
+                        'मात्रा': 'dosage',
+                        'अनुप्रयोगों': 'applications',
+                        'बेस ऑयल': 'base oil'
+                    }
+                    
+                    # Replace Hindi terms with English for pattern matching
+                    for hindi, english in hindi_patterns.items():
+                        if hindi in query_lower:
+                            query_lower = query_lower.replace(hindi, english)
+                
+                # Now check specific query patterns (works for both languages)
+                # ZDDP reduction for BS VI compliance
+                if ('zddp' in query_lower and 'bs vi' in query_lower) or \
+                   ('zddp' in query_lower and 'phosphorus' in query_lower and 'compliance' in query_lower) or \
+                   ('reduce zddp' in query_lower and ('bs vi' in query_lower or 'compliance' in query_lower)):
+                    result = _simulate_zddp_bs_vi_compliance_query(query, language, correlation_id)
+                
+                # Group III base oil supplier queries
+                elif ('group iii' in query_lower and 'base oil' in query_lower and 'suppliers' in query_lower) or \
+                     ('suppliers' in query_lower and 'group iii' in query_lower and ('deliver' in query_lower or 'mumbai' in query_lower)) or \
+                     ('need' in query_lower and 'group iii' in query_lower and ('mt' in query_lower or 'suppliers' in query_lower)):
+                    result = _simulate_group_iii_supplier_query(query, language, correlation_id)
+                
+                # LPG white deposits investigation
+                elif ('white deposits' in query_lower and 'lpg' in query_lower) or \
+                     ('customer complaints' in query_lower and 'lpg cylinders' in query_lower) or \
+                     ('investigate' in query_lower and 'lpg' in query_lower and 'deposits' in query_lower):
+                    result = _simulate_lpg_white_deposits_investigation(query, language, correlation_id)
+                
+                # Automotive LPG test requirements
+                elif ('test requirements' in query_lower or 'requirements' in query_lower) and ('automotive lpg' in query_lower or 'lpg' in query_lower):
+                    result = _simulate_automotive_lpg_test_requirements(query, language, correlation_id)
+                
+                # VI Improver dosage for Quartz 9000
+                elif (('viscosity index improver' in query_lower or 'vi improver' in query_lower) and 'dosage' in query_lower) or \
+                     ('recommended' in query_lower and 'viscosity index improver' in query_lower and 'quartz 9000' in query_lower):
+                    result = _simulate_vi_improver_dosage_query(query, language, correlation_id)
+                
+                # Complete Quartz 9000 formulation
+                elif ('recommended formulation' in query_lower or ('formulation' in query_lower and 'quartz 9000' in query_lower and 'recommended' in query_lower)):
+                    result = _simulate_quartz_9000_formulation(query, language, correlation_id)
+                
+                # Heavy-duty variant development
+                elif ('develop' in query_lower and 'variant' in query_lower and 'heavy' in query_lower) or \
+                     ('new variant' in query_lower and 'heavy-duty' in query_lower) or \
+                     ('heavy-duty' in query_lower and 'quartz 9000' in query_lower):
+                    result = _simulate_heavy_duty_variant_development(query, language, correlation_id)
+                
+                # ZDDP inventory
+                elif ('inventory levels' in query_lower or 'inventory' in query_lower or 'stock' in query_lower) and 'zddp' in query_lower:
+                    result = _simulate_zddp_inventory_query(query, language, correlation_id)
+                
+                # Gujarat suppliers
+                elif ('approved suppliers' in query_lower or 'suppliers' in query_lower) and 'gujarat' in query_lower:
+                    result = _simulate_gujarat_suppliers_query(query, language, correlation_id)
+                
+                # LPG moisture specification
+                elif ('moisture content specification' in query_lower or 'moisture' in query_lower) and 'lpg' in query_lower:
+                    result = _simulate_lpg_moisture_spec_query(query, language, correlation_id)
+                
+                # Supplier certifications
+                elif 'certifications' in query_lower and 'suppliers' in query_lower:
+                    result = _simulate_supplier_certifications_query(query, language, correlation_id)
+                
+                # Quartz 7000 viscosity
+                elif ('viscosity' in query_lower and 'quartz 7000' in query_lower) or \
+                     ('100°c' in query_lower and 'quartz 7000' in query_lower):
+                    result = _simulate_quartz_7000_viscosity_query(query, language, correlation_id)
+                
+                # Existing handlers
+                elif 'lims' in query_lower and 'batch' in query_lower and 'fail' in query_lower:
+                    result = _simulate_batch_failure_query(query, language, correlation_id)
+                elif 'pao content' in query_lower or 'pao' in query_lower:
+                    result = _simulate_pao_content_query(query, language, correlation_id)
+                elif 'testing phase' in query_lower or ('batch' in query_lower and 'testing' in query_lower):
+                    result = _simulate_testing_batches_query(query, language, correlation_id)
+                elif 'formulation' in query_lower and 'trial' in query_lower:
+                    result = _simulate_formulation_trial_query(query, language, correlation_id)
+                elif 'low stock' in query_lower or 'stock levels' in query_lower:
+                    result = _simulate_low_stock_query(query, language, correlation_id)
+                else:
+                    result = {
+                        'category': 'general',
+                        'agents': ['knowledge_orchestrator'],
+                        'response': f"Processing query: {query}",
+                        'sources': [],
+                        'processing_time_ms': 2000
+                    }
         
         # Save to query history
         try:
@@ -2138,10 +2139,25 @@ def _simulate_lpg_white_deposits_investigation(query, language, correlation_id):
 
 def _is_greeting_query(query_lower, language):
     """Check if the query is a greeting or capability inquiry"""
+    
+    # First check if it's clearly a technical query
+    technical_indicators = [
+        'suppliers', 'batch', 'formulation', 'testing', 'inventory', 'stock',
+        'mt', 'tonnes', 'ton', 'deliver', 'mumbai', 'base oil', 'group iii',
+        'lpg', 'cylinders', 'white deposits', 'complaints', 'root cause',
+        'corrective actions', 'investigate', 'viscosity', 'dosage', 'ppm',
+        'weeks', 'days', 'specifications', 'quality', 'zddp', 'compliance'
+    ]
+    
+    # If query contains technical terms, it's not a greeting
+    if any(tech_term in query_lower for tech_term in technical_indicators):
+        return False
+    
     greeting_patterns = {
-        'en': ['hello', 'hi', 'hey', 'good morning', 'good afternoon', 'good evening',
-               'what can you do', 'what are your capabilities', 'help', 'who are you',
-               'what is this', 'how can you help', 'what do you know'],
+        'en': ['hello', 'hi there', 'hey there', 'good morning',
+               'good afternoon', 'good evening', 'what can you do',
+               'what are your capabilities', 'who are you',
+               'what is this', 'how can you help me', 'what do you know'],
         'hi': ['नमस्ते', 'हैलो', 'हाय', 'आप कैसे हैं', 'आप क्या कर सकते हैं',
                'आपकी क्षमताएं क्या हैं', 'मदद', 'आप कौन हैं', 'यह क्या है',
                'आप कैसे मदद कर सकते हैं', 'आप क्या जानते हैं']
@@ -2150,7 +2166,15 @@ def _is_greeting_query(query_lower, language):
     lang_code = 'hi' if language in ['hindi', 'hi'] else 'en'
     patterns = greeting_patterns.get(lang_code, greeting_patterns['en'])
     
-    return any(pattern in query_lower for pattern in patterns)
+    # Check for standalone greeting words at the beginning of query
+    query_words = query_lower.split()
+    if len(query_words) <= 3:  # Short queries more likely greetings
+        if any(pattern in query_lower for pattern in patterns):
+            return True
+    
+    # Check for specific greeting phrases
+    return any(pattern == query_lower.strip() or
+               query_lower.strip().startswith(pattern) for pattern in patterns)
 
 
 def _handle_greeting_query(query, language, correlation_id):
