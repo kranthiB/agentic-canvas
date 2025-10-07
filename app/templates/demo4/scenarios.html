@@ -1,0 +1,652 @@
+{% extends "base.html" %}
+
+{% block title %}Scenarios - Mobility Maestro{% endblock %}
+
+{% block content %}
+<!-- Scenarios Header Section -->
+<div class="container mt-4 mb-4" id="scenarios">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="display-6 fw-bold mb-2">Mobility Maestro Scenarios</h2>
+            <p class="text-muted mb-0">Interactive demonstrations of autonomous network planning and crisis management</p>
+        </div>
+        <div>
+            <a href="{{ url_for('demo4.dashboard') }}" class="btn btn-outline-primary">
+                <i class="bi bi-arrow-left me-2"></i> Back to Dashboard
+            </a>
+        </div>
+    </div>
+    
+    <div class="row g-4">
+        <!-- Scenario 1: Mumbai Permit Crisis -->
+        <div class="col-lg-4 col-md-6">
+            <div class="demo-card card h-100 shadow-hover border-0">
+                <div class="card-body p-4">
+                    <div class="demo-header mb-4">
+                        <div class="demo-icon-large mb-3">
+                            <div class="scenario-icon">
+                                <i class="bi bi-exclamation-triangle-fill" style="font-size: 2.5rem; color: #DC3545;"></i>
+                            </div>
+                        </div>
+                        <h3 class="card-title mb-2">Mumbai Permit Crisis</h3>
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <span class="badge bg-danger">Critical</span>
+                            <span class="badge bg-secondary">Scenario 1</span>
+                        </div>
+                    </div>
+                    
+                    <p class="card-text text-muted mb-4">
+                        15 Mumbai sites delayed by 90+ days due to permit bottlenecks. Agent-driven crisis resolution 
+                        with BMC engagement, regulatory escalation, and competitive impact mitigation.
+                    </p>
+                    
+                    <div class="mb-4">
+                        <p class="small fw-semibold text-uppercase text-muted mb-2">Key Features</p>
+                        <div class="d-flex flex-wrap gap-2">
+                            <span class="feature-badge bg-danger-subtle text-danger">Crisis Detection</span>
+                            <span class="feature-badge bg-warning-subtle text-warning">Multi-Agent Response</span>
+                            <span class="feature-badge bg-info-subtle text-info">Executive Decision</span>
+                            <span class="feature-badge bg-success-subtle text-success">Auto-Resolution</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <div class="row text-center">
+                            <div class="col-4">
+                                <div class="small text-muted">Impact</div>
+                                <div class="fw-bold text-danger">₹27 Cr</div>
+                            </div>
+                            <div class="col-4">
+                                <div class="small text-muted">Sites</div>
+                                <div class="fw-bold">15</div>
+                            </div>
+                            <div class="col-4">
+                                <div class="small text-muted">Timeline</div>
+                                <div class="fw-bold text-success">-75 days</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-danger w-100 btn-lg" onclick="launchScenario(1)">
+                        Launch Crisis Demo <i class="bi bi-arrow-right ms-2"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Scenario 2: Q3 Network Expansion -->
+        <div class="col-lg-4 col-md-6">
+            <div class="demo-card card h-100 shadow-hover border-0">
+                <div class="card-body p-4">
+                    <div class="demo-header mb-4">
+                        <div class="demo-icon-large mb-3">
+                            <div class="scenario-icon">
+                                <i class="bi bi-diagram-3-fill" style="font-size: 2.5rem; color: #0D6EFD;"></i>
+                            </div>
+                        </div>
+                        <h3 class="card-title mb-2">Q3 Network Expansion</h3>
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <span class="badge bg-primary">Strategic</span>
+                            <span class="badge bg-secondary">Scenario 2</span>
+                        </div>
+                    </div>
+                    
+                    <p class="card-text text-muted mb-4">
+                        ₹50 Cr budget allocation for 25-30 new sites. Multi-agent batch processing of 140 candidates 
+                        with parallel evaluation, optimization algorithms, and strategic site selection.
+                    </p>
+                    
+                    <div class="mb-4">
+                        <p class="small fw-semibold text-uppercase text-muted mb-2">Key Features</p>
+                        <div class="d-flex flex-wrap gap-2">
+                            <span class="feature-badge bg-primary-subtle text-primary">Batch Processing</span>
+                            <span class="feature-badge bg-success-subtle text-success">ROI Optimization</span>
+                            <span class="feature-badge bg-info-subtle text-info">Geographic Analysis</span>
+                            <span class="feature-badge bg-warning-subtle text-warning">Risk Assessment</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <div class="row text-center">
+                            <div class="col-4">
+                                <div class="small text-muted">Budget</div>
+                                <div class="fw-bold text-primary">₹50 Cr</div>
+                            </div>
+                            <div class="col-4">
+                                <div class="small text-muted">Candidates</div>
+                                <div class="fw-bold">140</div>
+                            </div>
+                            <div class="col-4">
+                                <div class="small text-muted">Selected</div>
+                                <div class="fw-bold text-success">28</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-primary w-100 btn-lg" onclick="launchScenario(2)">
+                        Launch Expansion Demo <i class="bi bi-arrow-right ms-2"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Scenario 3: Tata Power Pricing War -->
+        <div class="col-lg-4 col-md-6">
+            <div class="demo-card card h-100 shadow-hover border-0">
+                <div class="card-body p-4">
+                    <div class="demo-header mb-4">
+                        <div class="demo-icon-large mb-3">
+                            <div class="scenario-icon">
+                                <i class="bi bi-lightning-charge-fill" style="font-size: 2.5rem; color: #FD7E14;"></i>
+                            </div>
+                        </div>
+                        <h3 class="card-title mb-2">MGL Pricing War</h3>
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <span class="badge bg-warning">Competitive</span>
+                            <span class="badge bg-secondary">Scenario 3</span>
+                        </div>
+                    </div>
+                    
+                    <p class="card-text text-muted mb-4">
+                        Delhi NCR pricing disruption with 20% price cuts. Real-time market intelligence, 
+                        competitive response modeling, and dynamic pricing strategy implementation.
+                    </p>
+                    
+                    <div class="mb-4">
+                        <p class="small fw-semibold text-uppercase text-muted mb-2">Key Features</p>
+                        <div class="d-flex flex-wrap gap-2">
+                            <span class="feature-badge bg-warning-subtle text-warning">Price Monitoring</span>
+                            <span class="feature-badge bg-danger-subtle text-danger">Competitive Intel</span>
+                            <span class="feature-badge bg-primary-subtle text-primary">Dynamic Pricing</span>
+                            <span class="feature-badge bg-success-subtle text-success">Revenue Protection</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <div class="row text-center">
+                            <div class="col-4">
+                                <div class="small text-muted">Price Drop</div>
+                                <div class="fw-bold text-danger">-20%</div>
+                            </div>
+                            <div class="col-4">
+                                <div class="small text-muted">Stations</div>
+                                <div class="fw-bold">75</div>
+                            </div>
+                            <div class="col-4">
+                                <div class="small text-muted">Response</div>
+                                <div class="fw-bold text-success">4 mins</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-warning w-100 btn-lg" onclick="launchScenario(3)">
+                        Launch Pricing Demo <i class="bi bi-arrow-right ms-2"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Scenario 4: Highway Network Strategy -->
+        <div class="col-lg-4 col-md-6">
+            <div class="demo-card card h-100 shadow-hover border-0">
+                <div class="card-body p-4">
+                    <div class="demo-header mb-4">
+                        <div class="demo-icon-large mb-3">
+                            <div class="scenario-icon">
+                                <i class="bi bi-signpost-fill" style="font-size: 2.5rem; color: #198754;"></i>
+                            </div>
+                        </div>
+                        <h3 class="card-title mb-2">Highway Network Strategy</h3>
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <span class="badge bg-success">Strategic</span>
+                            <span class="badge bg-secondary">Scenario 4</span>
+                        </div>
+                    </div>
+                    
+                    <p class="card-text text-muted mb-4">
+                        Golden Quadrilateral corridor optimization with 12 strategic highway stations. 
+                        Long-haul truck demand analysis and inter-city connectivity planning.
+                    </p>
+                    
+                    <div class="mb-4">
+                        <p class="small fw-semibold text-uppercase text-muted mb-2">Key Features</p>
+                        <div class="d-flex flex-wrap gap-2">
+                            <span class="feature-badge bg-success-subtle text-success">Corridor Planning</span>
+                            <span class="feature-badge bg-info-subtle text-info">Traffic Analysis</span>
+                            <span class="feature-badge bg-primary-subtle text-primary">Route Optimization</span>
+                            <span class="feature-badge bg-warning-subtle text-warning">Logistics Hub</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <div class="row text-center">
+                            <div class="col-4">
+                                <div class="small text-muted">Corridors</div>
+                                <div class="fw-bold text-success">4</div>
+                            </div>
+                            <div class="col-4">
+                                <div class="small text-muted">Stations</div>
+                                <div class="fw-bold">12</div>
+                            </div>
+                            <div class="col-4">
+                                <div class="small text-muted">Coverage</div>
+                                <div class="fw-bold text-success">85%</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-success w-100 btn-lg" onclick="launchScenario(4)">
+                        Launch Highway Demo <i class="bi bi-arrow-right ms-2"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Scenario 5: Tier-2 City Expansion -->
+        <div class="col-lg-4 col-md-6">
+            <div class="demo-card card h-100 shadow-hover border-0">
+                <div class="card-body p-4">
+                    <div class="demo-header mb-4">
+                        <div class="demo-icon-large mb-3">
+                            <div class="scenario-icon">
+                                <i class="bi bi-building" style="font-size: 2.5rem; color: #8B5DFF;"></i>
+                            </div>
+                        </div>
+                        <h3 class="card-title mb-2">Tier-2 City Expansion</h3>
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <span class="badge bg-purple">Growth</span>
+                            <span class="badge bg-secondary">Scenario 5</span>
+                        </div>
+                    </div>
+                    
+                    <p class="card-text text-muted mb-4">
+                        Emerging market penetration in 8 Tier-2 cities with growth potential analysis. 
+                        Risk-adjusted investment strategies and local market intelligence integration.
+                    </p>
+                    
+                    <div class="mb-4">
+                        <p class="small fw-semibold text-uppercase text-muted mb-2">Key Features</p>
+                        <div class="d-flex flex-wrap gap-2">
+                            <span class="feature-badge bg-purple-subtle text-purple">Market Entry</span>
+                            <span class="feature-badge bg-info-subtle text-info">Growth Analysis</span>
+                            <span class="feature-badge bg-warning-subtle text-warning">Risk Modeling</span>
+                            <span class="feature-badge bg-success-subtle text-success">ROI Projection</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <div class="row text-center">
+                            <div class="col-4">
+                                <div class="small text-muted">Cities</div>
+                                <div class="fw-bold text-purple">8</div>
+                            </div>
+                            <div class="col-4">
+                                <div class="small text-muted">Population</div>
+                                <div class="fw-bold">2.5 Cr</div>
+                            </div>
+                            <div class="col-4">
+                                <div class="small text-muted">Growth</div>
+                                <div class="fw-bold text-success">+15%</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-purple w-100 btn-lg" onclick="launchScenario(5)">
+                        Launch Growth Demo <i class="bi bi-arrow-right ms-2"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Scenario 6: Environmental Compliance -->
+        <div class="col-lg-4 col-md-6">
+            <div class="demo-card card h-100 shadow-hover border-0">
+                <div class="card-body p-4">
+                    <div class="demo-header mb-4">
+                        <div class="demo-icon-large mb-3">
+                            <div class="scenario-icon">
+                                <i class="bi bi-shield-check" style="font-size: 2.5rem; color: #0891B2;"></i>
+                            </div>
+                        </div>
+                        <h3 class="card-title mb-2">Environmental Compliance</h3>
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <span class="badge bg-teal">Regulatory</span>
+                            <span class="badge bg-secondary">Scenario 6</span>
+                        </div>
+                    </div>
+                    
+                    <p class="card-text text-muted mb-4">
+                        NGT emission standards compliance across 45 existing stations. 
+                        Automated regulatory monitoring, upgrade planning, and compliance certification workflows.
+                    </p>
+                    
+                    <div class="mb-4">
+                        <p class="small fw-semibold text-uppercase text-muted mb-2">Key Features</p>
+                        <div class="d-flex flex-wrap gap-2">
+                            <span class="feature-badge bg-teal-subtle text-teal">NGT Compliance</span>
+                            <span class="feature-badge bg-warning-subtle text-warning">Upgrade Planning</span>
+                            <span class="feature-badge bg-info-subtle text-info">Monitoring</span>
+                            <span class="feature-badge bg-success-subtle text-success">Certification</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <div class="row text-center">
+                            <div class="col-4">
+                                <div class="small text-muted">Stations</div>
+                                <div class="fw-bold text-teal">45</div>
+                            </div>
+                            <div class="col-4">
+                                <div class="small text-muted">Compliance</div>
+                                <div class="fw-bold text-success">98%</div>
+                            </div>
+                            <div class="col-4">
+                                <div class="small text-muted">Savings</div>
+                                <div class="fw-bold text-success">₹8 Cr</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-teal w-100 btn-lg" onclick="launchScenario(6)">
+                        Launch Compliance Demo <i class="bi bi-arrow-right ms-2"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Scenario 7: Fleet Partnership Strategy -->
+        <div class="col-lg-4 col-md-6">
+            <div class="demo-card card h-100 shadow-hover border-0">
+                <div class="card-body p-4">
+                    <div class="demo-header mb-4">
+                        <div class="demo-icon-large mb-3">
+                            <div class="scenario-icon">
+                                <i class="bi bi-truck-flatbed" style="font-size: 2.5rem; color: #EF4444;"></i>
+                            </div>
+                        </div>
+                        <h3 class="card-title mb-2">Fleet Partnership Strategy</h3>
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <span class="badge bg-red">Partnership</span>
+                            <span class="badge bg-secondary">Scenario 7</span>
+                        </div>
+                    </div>
+                    
+                    <p class="card-text text-muted mb-4">
+                        Strategic partnerships with 5 major fleet operators (Tata Motors, Mahindra, Ashok Leyland). 
+                        Dedicated refueling contracts and volume-based pricing negotiations.
+                    </p>
+                    
+                    <div class="mb-4">
+                        <p class="small fw-semibold text-uppercase text-muted mb-2">Key Features</p>
+                        <div class="d-flex flex-wrap gap-2">
+                            <span class="feature-badge bg-red-subtle text-red">Fleet Analysis</span>
+                            <span class="feature-badge bg-primary-subtle text-primary">Volume Pricing</span>
+                            <span class="feature-badge bg-success-subtle text-success">Contract Terms</span>
+                            <span class="feature-badge bg-warning-subtle text-warning">Route Planning</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <div class="row text-center">
+                            <div class="col-4">
+                                <div class="small text-muted">Partners</div>
+                                <div class="fw-bold text-red">5</div>
+                            </div>
+                            <div class="col-4">
+                                <div class="small text-muted">Vehicles</div>
+                                <div class="fw-bold">12,500</div>
+                            </div>
+                            <div class="col-4">
+                                <div class="small text-muted">Revenue</div>
+                                <div class="fw-bold text-success">₹45 Cr</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-red w-100 btn-lg" onclick="launchScenario(7)">
+                        Launch Partnership Demo <i class="bi bi-arrow-right ms-2"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Scenario 9: Technology Upgrade -->
+        <div class="col-lg-4 col-md-6">
+            <div class="demo-card card h-100 shadow-hover border-0">
+                <div class="card-body p-4">
+                    <div class="demo-header mb-4">
+                        <div class="demo-icon-large mb-3">
+                            <div class="scenario-icon">
+                                <i class="bi bi-cpu-fill" style="font-size: 2.5rem; color: #6366F1;"></i>
+                            </div>
+                        </div>
+                        <h3 class="card-title mb-2">Technology Upgrade</h3>
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <span class="badge bg-indigo">Innovation</span>
+                            <span class="badge bg-secondary">Scenario 9</span>
+                        </div>
+                    </div>
+                    
+                    <p class="card-text text-muted mb-4">
+                        Digital transformation of 30 legacy stations with IoT sensors, predictive maintenance, 
+                        and automated billing systems. ROI analysis and phased rollout planning.
+                    </p>
+                    
+                    <div class="mb-4">
+                        <p class="small fw-semibold text-uppercase text-muted mb-2">Key Features</p>
+                        <div class="d-flex flex-wrap gap-2">
+                            <span class="feature-badge bg-indigo-subtle text-indigo">IoT Integration</span>
+                            <span class="feature-badge bg-purple-subtle text-purple">Predictive AI</span>
+                            <span class="feature-badge bg-success-subtle text-success">Automation</span>
+                            <span class="feature-badge bg-warning-subtle text-warning">Phased Rollout</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <div class="row text-center">
+                            <div class="col-4">
+                                <div class="small text-muted">Stations</div>
+                                <div class="fw-bold text-indigo">30</div>
+                            </div>
+                            <div class="col-4">
+                                <div class="small text-muted">Efficiency</div>
+                                <div class="fw-bold text-success">+40%</div>
+                            </div>
+                            <div class="col-4">
+                                <div class="small text-muted">Payback</div>
+                                <div class="fw-bold text-success">18 mo</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-indigo w-100 btn-lg" onclick="launchScenario(9)">
+                        Launch Tech Demo <i class="bi bi-arrow-right ms-2"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Scenario Modal -->
+<div class="modal fade" id="scenarioModal" tabindex="-1" aria-labelledby="scenarioModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="scenarioModalLabel">Scenario Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="scenarioModalBody">
+                <!-- Scenario details will be loaded here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="launchScenarioBtn">Launch Scenario</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .hero-section {
+        background: linear-gradient(135deg, #f6f9fc 0%, #e9f4f9 100%);
+        padding: 100px 0 80px 0;
+        position: relative;
+        min-height: 500px;
+        display: flex;
+        align-items: center;
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    .demo-card {
+        border-radius: 16px;
+        transition: all 0.3s ease;
+        background: #ffffff;
+        border: 1px solid rgba(0,0,0,0.08);
+        overflow: hidden;
+        position: relative;
+    }
+
+    .demo-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #006064, #0891B2);
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
+    }
+
+    .demo-card:hover::before {
+        transform: scaleX(1);
+    }
+
+    .shadow-hover {
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    .demo-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    .demo-icon-large {
+        width: 72px;
+        height: 72px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 16px;
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(8, 145, 178, 0.05));
+        margin: 0 auto;
+        position: relative;
+        border: 1px solid rgba(6, 182, 212, 0.1);
+    }
+
+    .feature-badge {
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        border: 1px solid transparent;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    /* Improved feature badge colors */
+    .bg-danger-subtle { background-color: rgba(239, 68, 68, 0.15) !important; }
+    .text-danger { color: #DC2626 !important; }
+    .bg-warning-subtle { background-color: rgba(245, 158, 11, 0.15) !important; }
+    .text-warning { color: #D97706 !important; }
+    .bg-info-subtle { background-color: rgba(59, 130, 246, 0.15) !important; }
+    .text-info { color: #2563EB !important; }
+    .bg-success-subtle { background-color: rgba(34, 197, 94, 0.15) !important; }
+    .text-success { color: #16A34A !important; }
+    .bg-primary-subtle { background-color: rgba(99, 102, 241, 0.15) !important; }
+    .text-primary { color: #4F46E5 !important; }
+
+    /* Custom color classes - Improved cohesive palette */
+    .bg-purple { background-color: #8B5DFF !important; }
+    .text-purple { color: #8B5DFF !important; }
+    .bg-purple-subtle { background-color: rgba(139, 93, 255, 0.1) !important; }
+    .btn-purple { background-color: #8B5DFF; border-color: #8B5DFF; color: white; }
+    .btn-purple:hover { background-color: #7C3AED; border-color: #7C3AED; }
+
+    .bg-teal { background-color: #0891B2 !important; }
+    .text-teal { color: #0891B2 !important; }
+    .bg-teal-subtle { background-color: rgba(8, 145, 178, 0.1) !important; }
+    .btn-teal { background-color: #0891B2; border-color: #0891B2; color: white; }
+    .btn-teal:hover { background-color: #0E7490; border-color: #0E7490; }
+
+    .bg-red { background-color: #EF4444 !important; }
+    .text-red { color: #EF4444 !important; }
+    .bg-red-subtle { background-color: rgba(239, 68, 68, 0.1) !important; }
+    .btn-red { background-color: #EF4444; border-color: #EF4444; color: white; }
+    .btn-red:hover { background-color: #DC2626; border-color: #DC2626; }
+
+    .bg-indigo { background-color: #6366F1 !important; }
+    .text-indigo { color: #6366F1 !important; }
+    .bg-indigo-subtle { background-color: rgba(99, 102, 241, 0.1) !important; }
+    .btn-indigo { background-color: #6366F1; border-color: #6366F1; color: white; }
+    .btn-indigo:hover { background-color: #4F46E5; border-color: #4F46E5; }
+
+    /* Animation classes */
+    .animate-fade-in {
+        animation: fadeIn 1s ease-out;
+    }
+
+    .animate-slide-up {
+        animation: slideUp 1s ease-out 0.2s both;
+    }
+
+    .animate-slide-up-delay {
+        animation: slideUp 1s ease-out 0.4s both;
+    }
+
+    .animate-slide-up-delay-2 {
+        animation: slideUp 1s ease-out 0.6s both;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .btn-lg {
+        padding: 12px 24px;
+        font-size: 1rem;
+        font-weight: 600;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    }
+</style>
+
+<script>
+function launchScenario(scenarioId) {
+    // Redirect directly to the scenario page
+    window.location.href = `/demo4/scenario${scenarioId}`;
+}
+</script>
+{% endblock %}

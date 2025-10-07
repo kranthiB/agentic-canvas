@@ -5,6 +5,8 @@ T3 Cognitive Autonomous Agent routes
 from flask import Blueprint, render_template, jsonify, request
 from flask_login import login_required
 import random
+import os
+import re
 from datetime import datetime
 
 from app import db
@@ -25,6 +27,72 @@ network_agent = NetworkOptimizationAgent()
 def dashboard():
     """Main dashboard - interactive map view"""
     return render_template('demo4/dashboard.html')
+
+
+@demo4_bp.route('/scenarios')
+@login_required
+def scenarios():
+    """Scenarios showcase page"""
+    return render_template('demo4/scenarios.html')
+
+
+@demo4_bp.route('/api/scenario_detail/<scenario_id>')
+@login_required
+def api_scenario_detail(scenario_id):
+    """Get specific scenario details from UI plan file"""
+    scenarios_dir = os.path.join(
+        os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
+        'docs', 'demo4', 'ui-plans'
+    )
+    
+    filename = f'demo4-scenario{scenario_id}-ui-plan.md'
+    file_path = os.path.join(scenarios_dir, filename)
+    
+    if not os.path.exists(file_path):
+        return jsonify({
+            'success': False,
+            'error': 'Scenario not found'
+        }), 404
+    
+    try:
+        with open(file_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+        
+        # Extract title
+        title_match = re.search(r'# Steps to Demonstrate (.+?) from Dashboard', content)
+        title = title_match.group(1) if title_match else f"Scenario {scenario_id}"
+        
+        # Extract phases
+        phases = []
+        phase_matches = re.findall(r'## \*\*(.+?)\*\*', content)
+        for phase in phase_matches:
+            phases.append(phase)
+        
+        # Extract steps 
+        steps = []
+        step_matches = re.findall(r'### Step \d+: (.+?)\n', content)
+        for step in step_matches:
+            steps.append(step)
+        
+        scenario = {
+            'id': int(scenario_id),  
+            'title': title,
+            'phases': phases,
+            'steps': steps,
+            'full_content': content[:1000] + '...' if len(content) > 1000 else content,
+            'status': 'available'
+        }
+        
+        return jsonify({
+            'success': True,
+            'scenario': scenario
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': f'Error reading scenario: {str(e)}'
+        }), 500
 
 
 
@@ -348,32 +416,53 @@ def api_site_detailed(site_id):
 @demo4_bp.route('/api/scenarios')
 @login_required
 def api_scenarios():
-    """Get all available scenarios"""
-    from app.data.demo4_scenarios import get_all_scenarios
-    scenarios = get_all_scenarios()
+    """Get all available scenarios from UI plans"""
+    scenarios_dir = os.path.join(
+        os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
+        'docs', 'demo4', 'ui-plans'
+    )
+    
+    scenarios = []
+    
+    if os.path.exists(scenarios_dir):
+        for filename in os.listdir(scenarios_dir):
+            if filename.startswith('demo4-scenario') and filename.endswith('.md'):
+                # Extract scenario number from filename
+                match = re.search(r'scenario(\d+)', filename)
+                if match:
+                    scenario_num = int(match.group(1))
+                    
+                    # Read the file to extract title and description
+                    file_path = os.path.join(scenarios_dir, filename)
+                    try:
+                        with open(file_path, 'r', encoding='utf-8') as f:
+                            content = f.read()
+                            
+                        # Extract title from the first heading
+                        title_match = re.search(r'# Steps to Demonstrate (.+?) from Dashboard', content)
+                        title = title_match.group(1) if title_match else f"Scenario {scenario_num}"
+                        
+                        # Extract description from first paragraph after title
+                        desc_match = re.search(r'## \*\*(.+?)\*\*\n\n### (.+?)\n- (.+?)$', content, re.MULTILINE)
+                        description = desc_match.group(3) if desc_match else "Interactive scenario demonstration"
+                        
+                        scenarios.append({
+                            'id': scenario_num,
+                            'title': title,
+                            'description': description,
+                            'filename': filename,
+                            'status': 'available'
+                        })
+                    except Exception as e:
+                        print(f"Error reading {filename}: {e}")
+                        continue
+    
+    # Sort by scenario number
+    scenarios.sort(key=lambda x: x['id'])
     
     return jsonify({
         'success': True,
         'scenarios': scenarios
-    })
-
-
-@demo4_bp.route('/api/scenarios/<scenario_id>')
-@login_required
-def api_scenario_detail(scenario_id):
-    """Get specific scenario details"""
-    from app.data.demo4_scenarios import get_scenario_by_id
-    scenario = get_scenario_by_id(scenario_id)
-    
-    if not scenario:
-        return jsonify({
-            'success': False,
-            'error': 'Scenario not found'
-        }), 404
-    
-    return jsonify({
-        'success': True,
-        'scenario': scenario
     })
 
 
