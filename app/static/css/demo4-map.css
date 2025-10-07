@@ -164,19 +164,24 @@
 /* Statistics - Demo5 Metric Card Style */
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 8px;
+    align-items: stretch;
 }
 
 .stat-item {
     text-align: center;
-    padding: 1rem;
+    padding: 0.75rem 0.5rem;
     background: var(--bg-card);
     border-radius: 12px;
     border: 1px solid var(--border-color);
     border-left: 4px solid;
     box-shadow: var(--shadow-sm);
     transition: all 0.3s ease;
+    min-height: 85px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .stat-item:nth-child(1) {
@@ -201,18 +206,22 @@
 }
 
 .stat-label {
-    font-size: 11px;
+    font-size: 10px;
     color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
     font-weight: 600;
+    line-height: 1.2;
+    word-wrap: break-word;
+    hyphens: auto;
 }
 
 .stat-value {
-    font-size: 28px;
+    font-size: 22px;
     font-weight: 700;
     color: var(--text-primary);
+    line-height: 1.1;
 }
 
 .stat-value.text-success {
@@ -295,6 +304,7 @@
     border-radius: 3px;
     outline: none;
     -webkit-appearance: none;
+    appearance: none;
     margin: 10px 0;
 }
 

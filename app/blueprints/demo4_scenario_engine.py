@@ -253,33 +253,34 @@ def api_optimize_network():
         }), 500
 
 
-@demo4_scenario_bp.route('/api/scenario1/mumbai-sites', methods=['GET'])
+@demo4_scenario_bp.route('/api/scenario1/mumbai-cng-sites', methods=['GET'])
 @login_required
-def api_scenario1_mumbai_sites():
-    """Get Mumbai crisis scenario data"""
-    mumbai_sites = [
-        {'id': 'MUM-001', 'name': 'Nariman Point', 'lat': 18.9254, 'lng': 72.8243, 'investment': 2.2, 'daysDelayed': 92},
-        {'id': 'MUM-002', 'name': 'Andheri SEEPZ', 'lat': 19.1136, 'lng': 72.8697, 'investment': 1.8, 'daysDelayed': 95},
-        {'id': 'MUM-003', 'name': 'Bandra West', 'lat': 19.0596, 'lng': 72.8295, 'investment': 2.0, 'daysDelayed': 88},
-        {'id': 'MUM-004', 'name': 'Powai Tech Park', 'lat': 19.1197, 'lng': 72.9059, 'investment': 1.9, 'daysDelayed': 91},
-        {'id': 'MUM-005', 'name': 'BKC Business District', 'lat': 19.0608, 'lng': 72.8683, 'investment': 2.5, 'daysDelayed': 96},
-        {'id': 'MUM-006', 'name': 'Malad Industrial', 'lat': 19.1865, 'lng': 72.8486, 'investment': 1.7, 'daysDelayed': 89},
-        {'id': 'MUM-007', 'name': 'Goregaon East', 'lat': 19.1653, 'lng': 72.8526, 'investment': 1.6, 'daysDelayed': 87},
-        {'id': 'MUM-008', 'name': 'Vikhroli', 'lat': 19.1076, 'lng': 72.9248, 'investment': 1.5, 'daysDelayed': 93},
-        {'id': 'MUM-009', 'name': 'Thane West', 'lat': 19.2183, 'lng': 72.9781, 'investment': 1.8, 'daysDelayed': 90},
-        {'id': 'MUM-010', 'name': 'Navi Mumbai', 'lat': 19.0330, 'lng': 73.0297, 'investment': 2.1, 'daysDelayed': 94},
-        {'id': 'MUM-011', 'name': 'Lower Parel', 'lat': 18.9968, 'lng': 72.8288, 'investment': 2.3, 'daysDelayed': 97},
-        {'id': 'MUM-012', 'name': 'Worli', 'lat': 19.0176, 'lng': 72.8169, 'investment': 2.4, 'daysDelayed': 91},
-        {'id': 'MUM-013', 'name': 'Kurla Complex', 'lat': 19.0728, 'lng': 72.8826, 'investment': 1.9, 'daysDelayed': 88},
-        {'id': 'MUM-014', 'name': 'Mulund', 'lat': 19.1722, 'lng': 72.9577, 'investment': 1.6, 'daysDelayed': 92},
-        {'id': 'MUM-015', 'name': 'Borivali', 'lat': 19.2307, 'lng': 72.8567, 'investment': 1.7, 'daysDelayed': 89}
+def api_scenario1_mumbai_cng_sites():
+    """Get Mumbai CNG crisis scenario data"""
+    mumbai_cng_sites = [
+        {'id': 'CNG-001', 'name': 'Nariman Point CNG Station', 'lat': 18.9254, 'lng': 72.8243, 'investment': 3.5, 'daysDelayed': 105},
+        {'id': 'CNG-002', 'name': 'Andheri SEEPZ CNG Hub', 'lat': 19.1136, 'lng': 72.8697, 'investment': 3.2, 'daysDelayed': 108},
+        {'id': 'CNG-003', 'name': 'Bandra West CNG Center', 'lat': 19.0596, 'lng': 72.8295, 'investment': 3.8, 'daysDelayed': 102},
+        {'id': 'CNG-004', 'name': 'Powai Tech Park CNG Station', 'lat': 19.1197, 'lng': 72.9059, 'investment': 3.4, 'daysDelayed': 106},
+        {'id': 'CNG-005', 'name': 'BKC CNG Refueling Center', 'lat': 19.0608, 'lng': 72.8683, 'investment': 4.2, 'daysDelayed': 110},
+        {'id': 'CNG-006', 'name': 'Malad Industrial CNG Hub', 'lat': 19.1865, 'lng': 72.8486, 'investment': 3.1, 'daysDelayed': 103},
+        {'id': 'CNG-007', 'name': 'Goregaon East CNG Station', 'lat': 19.1653, 'lng': 72.8526, 'investment': 3.0, 'daysDelayed': 101},
+        {'id': 'CNG-008', 'name': 'Vikhroli CNG Center', 'lat': 19.1076, 'lng': 72.9248, 'investment': 2.9, 'daysDelayed': 107},
+        {'id': 'CNG-009', 'name': 'Thane West CNG Hub', 'lat': 19.2183, 'lng': 72.9781, 'investment': 3.3, 'daysDelayed': 104},
+        {'id': 'CNG-010', 'name': 'Navi Mumbai CNG Station', 'lat': 19.0330, 'lng': 73.0297, 'investment': 3.7, 'daysDelayed': 109},
+        {'id': 'CNG-011', 'name': 'Lower Parel CNG Center', 'lat': 18.9968, 'lng': 72.8288, 'investment': 4.0, 'daysDelayed': 111},
+        {'id': 'CNG-012', 'name': 'Worli CNG Refueling Station', 'lat': 19.0176, 'lng': 72.8169, 'investment': 4.1, 'daysDelayed': 105},
+        {'id': 'CNG-013', 'name': 'Kurla Complex CNG Hub', 'lat': 19.0728, 'lng': 72.8826, 'investment': 3.4, 'daysDelayed': 102},
+        {'id': 'CNG-014', 'name': 'Mulund CNG Station', 'lat': 19.1722, 'lng': 72.9577, 'investment': 3.0, 'daysDelayed': 106},
+        {'id': 'CNG-015', 'name': 'Borivali CNG Center', 'lat': 19.2307, 'lng': 72.8567, 'investment': 3.1, 'daysDelayed': 103}
     ]
     
     return jsonify({
         'success': True,
-        'sites': mumbai_sites,
-        'total_investment': sum(s['investment'] for s in mumbai_sites),
-        'avg_delay': sum(s['daysDelayed'] for s in mumbai_sites) / len(mumbai_sites)
+        'cng_sites': mumbai_cng_sites,
+        'total_investment': sum(s['investment'] for s in mumbai_cng_sites),
+        'avg_delay': sum(s['daysDelayed'] for s in mumbai_cng_sites) / len(mumbai_cng_sites),
+        'infrastructure_type': 'CNG_REFUELING'
     })
 
 

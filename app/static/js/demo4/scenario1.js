@@ -1,125 +1,129 @@
 // Scenario 1: Mumbai Permit Crisis - Interactive Implementation
 
-// Mock data for Mumbai sites
-const mumbaiSites = [
-    { id: 'MUM-001', name: 'Nariman Point', lat: 18.9254, lng: 72.8243, investment: 2.2, daysDelayed: 92 },
-    { id: 'MUM-002', name: 'Andheri SEEPZ', lat: 19.1136, lng: 72.8697, investment: 1.8, daysDelayed: 95 },
-    { id: 'MUM-003', name: 'Bandra West', lat: 19.0596, lng: 72.8295, investment: 2.0, daysDelayed: 88 },
-    { id: 'MUM-004', name: 'Powai Tech Park', lat: 19.1197, lng: 72.9059, investment: 1.9, daysDelayed: 91 },
-    { id: 'MUM-005', name: 'BKC Business District', lat: 19.0608, lng: 72.8683, investment: 2.5, daysDelayed: 96 },
-    { id: 'MUM-006', name: 'Malad Industrial', lat: 19.1865, lng: 72.8486, investment: 1.7, daysDelayed: 89 },
-    { id: 'MUM-007', name: 'Goregaon East', lat: 19.1653, lng: 72.8526, investment: 1.6, daysDelayed: 87 },
-    { id: 'MUM-008', name: 'Vikhroli', lat: 19.1076, lng: 72.9248, investment: 1.5, daysDelayed: 93 },
-    { id: 'MUM-009', name: 'Thane West', lat: 19.2183, lng: 72.9781, investment: 1.8, daysDelayed: 90 },
-    { id: 'MUM-010', name: 'Navi Mumbai', lat: 19.0330, lng: 73.0297, investment: 2.1, daysDelayed: 94 },
-    { id: 'MUM-011', name: 'Lower Parel', lat: 18.9968, lng: 72.8288, investment: 2.3, daysDelayed: 97 },
-    { id: 'MUM-012', name: 'Worli', lat: 19.0176, lng: 72.8169, investment: 2.4, daysDelayed: 91 },
-    { id: 'MUM-013', name: 'Kurla Complex', lat: 19.0728, lng: 72.8826, investment: 1.9, daysDelayed: 88 },
-    { id: 'MUM-014', name: 'Mulund', lat: 19.1722, lng: 72.9577, investment: 1.6, daysDelayed: 92 },
-    { id: 'MUM-015', name: 'Borivali', lat: 19.2307, lng: 72.8567, investment: 1.7, daysDelayed: 89 }
+// Mock data for Mumbai CNG stations
+const mumbaiCngSites = [
+    { id: 'CNG-001', name: 'Nariman Point CNG Station', lat: 18.9254, lng: 72.8243, investment: 3.5, daysDelayed: 105 },
+    { id: 'CNG-002', name: 'Andheri SEEPZ CNG Hub', lat: 19.1136, lng: 72.8697, investment: 3.2, daysDelayed: 108 },
+    { id: 'CNG-003', name: 'Bandra West CNG Center', lat: 19.0596, lng: 72.8295, investment: 3.8, daysDelayed: 102 },
+    { id: 'CNG-004', name: 'Powai Tech Park CNG Station', lat: 19.1197, lng: 72.9059, investment: 3.4, daysDelayed: 106 },
+    { id: 'CNG-005', name: 'BKC CNG Refueling Center', lat: 19.0608, lng: 72.8683, investment: 4.2, daysDelayed: 110 },
+    { id: 'CNG-006', name: 'Malad Industrial CNG Hub', lat: 19.1865, lng: 72.8486, investment: 3.1, daysDelayed: 103 },
+    { id: 'CNG-007', name: 'Goregaon East CNG Station', lat: 19.1653, lng: 72.8526, investment: 3.0, daysDelayed: 101 },
+    { id: 'CNG-008', name: 'Vikhroli CNG Center', lat: 19.1076, lng: 72.9248, investment: 2.9, daysDelayed: 107 },
+    { id: 'CNG-009', name: 'Thane West CNG Hub', lat: 19.2183, lng: 72.9781, investment: 3.3, daysDelayed: 104 },
+    { id: 'CNG-010', name: 'Navi Mumbai CNG Station', lat: 19.0330, lng: 73.0297, investment: 3.7, daysDelayed: 109 },
+    { id: 'CNG-011', name: 'Lower Parel CNG Center', lat: 18.9968, lng: 72.8288, investment: 4.0, daysDelayed: 111 },
+    { id: 'CNG-012', name: 'Worli CNG Refueling Station', lat: 19.0176, lng: 72.8169, investment: 4.1, daysDelayed: 105 },
+    { id: 'CNG-013', name: 'Kurla Complex CNG Hub', lat: 19.0728, lng: 72.8826, investment: 3.4, daysDelayed: 102 },
+    { id: 'CNG-014', name: 'Mulund CNG Station', lat: 19.1722, lng: 72.9577, investment: 3.0, daysDelayed: 106 },
+    { id: 'CNG-015', name: 'Borivali CNG Center', lat: 19.2307, lng: 72.8567, investment: 3.1, daysDelayed: 103 }
 ];
 
-// Tata Power competitor sites
-const tataPowerSites = [
-    { name: 'Tata Power - Dadar', lat: 19.0176, lng: 72.8461 },
-    { name: 'Tata Power - Churchgate', lat: 18.9322, lng: 72.8264 },
-    { name: 'Tata Power - Andheri', lat: 19.1136, lng: 72.8697 },
-    { name: 'Tata Power - Bandra', lat: 19.0596, lng: 72.8295 },
-    { name: 'Tata Power - BKC', lat: 19.0608, lng: 72.8683 },
-    { name: 'Tata Power - Powai', lat: 19.1197, lng: 72.9059 },
-    { name: 'Tata Power - Thane', lat: 19.2183, lng: 72.9781 },
-    { name: 'Tata Power - Navi Mumbai', lat: 19.0330, lng: 73.0297 }
+// MGL (Mahanagar Gas Limited) competitor sites
+const mglCompetitorSites = [
+    { name: 'MGL - Dadar CNG Station', lat: 19.0176, lng: 72.8461 },
+    { name: 'MGL - Churchgate CNG Hub', lat: 18.9322, lng: 72.8264 },
+    { name: 'MGL - Andheri CNG Center', lat: 19.1136, lng: 72.8697 },
+    { name: 'MGL - Bandra CNG Station', lat: 19.0596, lng: 72.8295 },
+    { name: 'MGL - BKC CNG Hub', lat: 19.0608, lng: 72.8683 },
+    { name: 'MGL - Powai CNG Center', lat: 19.1197, lng: 72.9059 },
+    { name: 'MGL - Thane CNG Station', lat: 19.2183, lng: 72.9781 },
+    { name: 'MGL - Navi Mumbai CNG Hub', lat: 19.0330, lng: 73.0297 },
+    { name: 'MGL - Worli CNG Center', lat: 19.0150, lng: 72.8170 },
+    { name: 'MGL - Malad CNG Station', lat: 19.1850, lng: 72.8480 },
+    { name: 'MGL - Goregaon CNG Hub', lat: 19.1640, lng: 72.8520 },
+    { name: 'MGL - Vikhroli CNG Center', lat: 19.1070, lng: 72.9240 }
 ];
 
-// Action plan items
+// Action plan items for CNG infrastructure
 const actionPlanItems = [
     {
         id: 1,
-        title: 'Escalate to BMC Leadership',
+        title: 'Escalate to PESO & Fire Department',
         priority: 'high',
-        details: 'Direct engagement with BMC Commissioner and Additional Commissioner (Infrastructure)',
-        expectedOutcome: 'Fast-track approval process',
-        timelineImprovement: '30 days',
-        cost: '₹2L'
-    },
-    {
-        id: 2,
-        title: 'Engage Regulatory Consultants',
-        priority: 'high',
-        details: 'Hire specialized Mumbai permit consultants with BMC relationships',
-        expectedOutcome: 'Navigate bureaucracy efficiently',
-        timelineImprovement: '25 days',
-        cost: '₹4L'
-    },
-    {
-        id: 3,
-        title: 'Single Window Clearance',
-        priority: 'medium',
-        details: 'Apply for single-window clearance mechanism for EV infrastructure',
-        expectedOutcome: 'Reduced inter-department delays',
-        timelineImprovement: '15 days',
-        cost: '₹1L'
-    },
-    {
-        id: 4,
-        title: 'Parallel Agency Submissions',
-        priority: 'medium',
-        details: 'Submit applications to all required agencies simultaneously instead of sequentially',
-        expectedOutcome: 'Parallel processing',
-        timelineImprovement: '20 days',
+        details: 'Direct engagement with PESO (Petroleum & Explosives Safety Organisation) and Mumbai Fire Brigade for safety clearances',
+        expectedOutcome: 'Expedited safety approvals for CNG infrastructure',
+        timelineImprovement: '35 days',
         cost: '₹3L'
     },
     {
+        id: 2,
+        title: 'Environmental Clearance Fast-track',
+        priority: 'high',
+        details: 'Accelerate pollution control board clearances for CNG dispensing units',
+        expectedOutcome: 'Environmental compliance certificates',
+        timelineImprovement: '28 days',
+        cost: '₹5L'
+    },
+    {
+        id: 3,
+        title: 'Gas Pipeline Coordination',
+        priority: 'medium',
+        details: 'Coordinate with MGL (Mahanagar Gas Limited) for pipeline connections',
+        expectedOutcome: 'Assured gas supply infrastructure',
+        timelineImprovement: '20 days',
+        cost: '₹4L'
+    },
+    {
+        id: 4,
+        title: 'Safety Compliance Audit',
+        priority: 'medium',
+        details: 'Pre-approval safety audits for all pressure vessel installations',
+        expectedOutcome: 'Safety certification readiness',
+        timelineImprovement: '25 days',
+        cost: '₹6L'
+    },
+    {
         id: 5,
-        title: 'Political Engagement',
+        title: 'Fleet Operator Partnerships',
         priority: 'low',
-        details: 'Engage local MLAs and corporators as EV infrastructure advocates',
-        expectedOutcome: 'Political support for approvals',
-        timelineImprovement: '10 days',
+        details: 'Engage commercial fleet operators as anchor customers',
+        expectedOutcome: 'Guaranteed initial demand',
+        timelineImprovement: '12 days',
         cost: '₹2L'
     }
 ];
 
-// Event flow timeline
+// Event flow timeline for CNG infrastructure crisis
 const eventTimeline = [
-    { timestamp: '09:42:00', agent: 'orchestrator', text: 'Crisis detected: 15 Mumbai sites delayed >90 days' },
-    { timestamp: '09:42:02', agent: 'orchestrator', text: 'Initiating multi-agent crisis response workflow' },
-    { timestamp: '09:42:05', agent: 'permit', text: 'Analyzing BMC permit bottleneck...' },
-    { timestamp: '09:42:15', agent: 'permit', text: 'Root cause identified: Sequential approval process across 4 departments' },
-    { timestamp: '09:42:20', agent: 'permit', text: 'Average delay: 127 days (vs 45 days standard)' },
-    { timestamp: '09:42:30', agent: 'financial', text: 'Calculating revenue impact...' },
-    { timestamp: '09:42:40', agent: 'financial', text: 'At-risk investment: ₹27 Crores across 15 sites' },
-    { timestamp: '09:42:45', agent: 'financial', text: 'Lost revenue projection: ₹8.5 Cr/year if unresolved' },
-    { timestamp: '09:43:00', agent: 'market', text: 'Analyzing competitive landscape...' },
-    { timestamp: '09:43:10', agent: 'market', text: 'Tata Power: 8 operational sites within 2km radius' },
-    { timestamp: '09:43:15', agent: 'market', text: 'Market share risk: Could lose 12% in Mumbai region' },
-    { timestamp: '09:43:30', agent: 'orchestrator', text: 'Generating 5-point action plan...' },
-    { timestamp: '09:43:45', agent: 'orchestrator', text: 'Action plan complete. Estimated timeline reduction: 75 days' },
-    { timestamp: '09:43:50', agent: 'orchestrator', text: 'Total investment required: ₹12 Lakh | ROI: 35x' },
-    { timestamp: '09:44:00', agent: 'orchestrator', text: 'Crisis response strategy ready for CEO approval' }
+    { timestamp: '09:42:00', agent: 'orchestrator', text: 'Crisis detected: 15 Mumbai CNG stations delayed >90 days' },
+    { timestamp: '09:42:02', agent: 'orchestrator', text: 'Initiating multi-agent CNG infrastructure response workflow' },
+    { timestamp: '09:42:05', agent: 'permit', text: 'Analyzing PESO and Fire Department permit bottleneck...' },
+    { timestamp: '09:42:15', agent: 'permit', text: 'Root cause identified: Complex safety clearance process across 6 departments' },
+    { timestamp: '09:42:20', agent: 'permit', text: 'Average delay: 145 days (vs 60 days standard for CNG)' },
+    { timestamp: '09:42:30', agent: 'financial', text: 'Calculating CNG infrastructure investment impact...' },
+    { timestamp: '09:42:40', agent: 'financial', text: 'At-risk investment: ₹42 Crores across 15 CNG stations' },
+    { timestamp: '09:42:45', agent: 'financial', text: 'Lost revenue projection: ₹15.2 Cr/year if unresolved' },
+    { timestamp: '09:43:00', agent: 'market', text: 'Analyzing CNG market competitive landscape...' },
+    { timestamp: '09:43:10', agent: 'market', text: 'MGL: 12 operational CNG stations within 3km radius' },
+    { timestamp: '09:43:15', agent: 'market', text: 'Market share risk: Could lose 18% in Mumbai CNG segment' },
+    { timestamp: '09:43:30', agent: 'orchestrator', text: 'Generating 5-point CNG action plan...' },
+    { timestamp: '09:43:45', agent: 'orchestrator', text: 'Action plan complete. Estimated timeline reduction: 85 days' },
+    { timestamp: '09:43:50', agent: 'orchestrator', text: 'Total investment required: ₹20 Lakh | ROI: 28x' },
+    { timestamp: '09:44:00', agent: 'orchestrator', text: 'CNG crisis response strategy ready for CEO approval' }
 ];
 
-// Execution steps
+// Execution steps for CNG infrastructure
 const executionSteps = [
-    { id: 1, text: 'Budget Release: ₹12 Lakh allocated', delay: 1000 },
-    { id: 2, text: 'Consultant Engagement: 3 firms contracted', delay: 1500 },
-    { id: 3, text: 'BMC Meeting: Scheduled for next Monday', delay: 2000 },
-    { id: 4, text: 'Document Preparation: All permits compiled', delay: 1200 },
-    { id: 5, text: 'Stakeholder Notifications: 15 site managers briefed', delay: 1000 },
-    { id: 6, text: 'Monitoring Dashboard: Tracking system activated', delay: 1500 }
+    { id: 1, text: 'Budget Release: ₹20 Lakh allocated for CNG permits', delay: 1000 },
+    { id: 2, text: 'Safety Consultant Engagement: PESO specialists contracted', delay: 1500 },
+    { id: 3, text: 'PESO Meeting: Scheduled safety review for Monday', delay: 2000 },
+    { id: 4, text: 'Environmental Clearance: PCB applications submitted', delay: 1200 },
+    { id: 5, text: 'MGL Coordination: Pipeline connection agreements signed', delay: 1000 },
+    { id: 6, text: 'Safety Monitoring: CNG compliance tracking activated', delay: 1500 }
 ];
 
 // Global variables
 let map;
-let mumbaiMarkers = [];
-let tataPowerMarkers = [];
+let mumbaiCngMarkers = [];
+let mglCompetitorMarkers = [];
 let eventFlowInterval;
 let currentEventIndex = 0;
 
 // Initialize map on load
 document.addEventListener('DOMContentLoaded', function() {
     initializeMap();
-    populateMumbaiSitesList();
+    populateMumbaiCngSitesList();
     setupEventListeners();
     
     // Don't show quick start guide
@@ -151,8 +155,8 @@ function initializeMap() {
         maxZoom: 18
     }).addTo(map);
 
-    // Add Mumbai sites (blocked - red markers)
-    mumbaiSites.forEach(site => {
+    // Add Mumbai CNG stations (blocked - red markers)
+    mumbaiCngSites.forEach(site => {
         const marker = L.circleMarker([site.lat, site.lng], {
             radius: 10,
             fillColor: '#dc2626',
@@ -174,7 +178,7 @@ function initializeMap() {
                 </div>
                 <div class="popup-info">
                     <div class="info-row">
-                        <span class="info-label">Site ID</span>
+                        <span class="info-label">Station ID</span>
                         <span class="info-value">${site.id}</span>
                     </div>
                     <div class="info-row">
@@ -187,18 +191,18 @@ function initializeMap() {
                     </div>
                     <div class="info-row">
                         <span class="info-label">Bottleneck</span>
-                        <span class="info-value">BMC Permits</span>
+                        <span class="info-value">PESO Safety Permits</span>
                     </div>
                 </div>
             </div>
         `;
 
         marker.bindPopup(popupContent, { maxWidth: 300 });
-        mumbaiMarkers.push(marker);
+        mumbaiCngMarkers.push(marker);
     });
 
-    // Add Tata Power competitor sites (yellow markers)
-    tataPowerSites.forEach(site => {
+    // Add MGL competitor sites (yellow markers)
+    mglCompetitorSites.forEach(site => {
         const marker = L.circleMarker([site.lat, site.lng], {
             radius: 8,
             fillColor: '#f59e0b',
@@ -219,7 +223,7 @@ function initializeMap() {
                 <div class="popup-info">
                     <div class="info-row">
                         <span class="info-label">Operator</span>
-                        <span class="info-value">Tata Power</span>
+                        <span class="info-value">MGL (Mahanagar Gas)</span>
                     </div>
                     <div class="info-row">
                         <span class="info-label">Status</span>
@@ -229,8 +233,8 @@ function initializeMap() {
             </div>
         `;
 
-        marker.bindPopup(popupContent, { maxWidth: 280 });
-        tataPowerMarkers.push(marker);
+        marker.bindPopup(popupContent, { maxWidth: 300 });
+        mglCompetitorMarkers.push(marker);
     });
     
     // Force map to resize and fit container properly
@@ -241,11 +245,11 @@ function initializeMap() {
     }, 100);
 }
 
-// Populate Mumbai sites list in sidebar
-function populateMumbaiSitesList() {
+// Populate Mumbai CNG stations list in sidebar
+function populateMumbaiCngSitesList() {
     const listContainer = document.getElementById('mumbaiSitesList');
     
-    mumbaiSites.forEach(site => {
+    mumbaiCngSites.forEach(site => {
         const siteItem = document.createElement('div');
         siteItem.className = 'detail-item';
         siteItem.style.marginBottom = '10px';
@@ -266,7 +270,7 @@ function populateMumbaiSitesList() {
         siteItem.addEventListener('click', () => {
             map.setView([site.lat, site.lng], 15);
             // Find and open popup
-            mumbaiMarkers.forEach(marker => {
+            mumbaiCngMarkers.forEach(marker => {
                 const markerLatLng = marker.getLatLng();
                 if (markerLatLng.lat === site.lat && markerLatLng.lng === site.lng) {
                     marker.openPopup();
@@ -396,17 +400,22 @@ function setupEventListeners() {
     document.getElementById('btnCloseExecution').addEventListener('click', () => {
         document.getElementById('executionOverlay').style.display = 'none';
         // Show success message
-        alert('Action plan executed successfully! Crisis resolution in progress.');
+        alert('CNG action plan executed successfully! Crisis resolution in progress.');
     });
 }
 
 // Start investigation - show event flow
 function startInvestigation() {
     // Show loading
-    document.getElementById('mapLoadingOverlay').style.display = 'flex';
+    const loadingOverlay = document.getElementById('mapLoadingOverlay');
+    if (loadingOverlay) {
+        loadingOverlay.style.display = 'flex';
+    }
     
     setTimeout(() => {
-        document.getElementById('mapLoadingOverlay').style.display = 'none';
+        if (loadingOverlay) {
+            loadingOverlay.style.display = 'none';
+        }
         
         // Create and show modal overlay for event flow
         showEventFlowModal();
@@ -853,19 +862,19 @@ function showCustomConfirmation() {
                 <div class="confirmation-details">
                     <div class="detail-item">
                         <i class="fas fa-chart-line"></i>
-                        <span>Total Investment: <strong>₹12 Lakh</strong></span>
+                        <span>Total Investment: <strong>₹20 Lakh</strong></span>
                     </div>
                     <div class="detail-item">
                         <i class="fas fa-clock"></i>
-                        <span>Expected Timeline: <strong>75 days</strong></span>
+                        <span>Expected Timeline: <strong>85 days</strong></span>
                     </div>
                     <div class="detail-item">
                         <i class="fas fa-map-marker-alt"></i>
-                        <span>Sites Affected: <strong>15 locations</strong></span>
+                        <span>CNG Stations Affected: <strong>15 locations</strong></span>
                     </div>
                     <div class="detail-item">
                         <i class="fas fa-percentage"></i>
-                        <span>Expected ROI: <strong>35%</strong></span>
+                        <span>Expected ROI: <strong>28%</strong></span>
                     </div>
                 </div>
             </div>
@@ -1086,7 +1095,7 @@ function showApprovalRequestConfirmation() {
                         <strong>Expected Response:</strong> Within 24 hours
                     </div>
                     <div class="approval-detail">
-                        <strong>Total Investment:</strong> ₹12 Lakh
+                        <strong>Total Investment:</strong> ₹20 Lakh
                     </div>
                 </div>
             </div>

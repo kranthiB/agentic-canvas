@@ -394,26 +394,43 @@
     margin-bottom: 0.75rem;
 }
 
+/* Force 2x2 grid for crisis metrics specifically */
+.sidebar-panel:has(.stats-grid) .stats-grid,
+.sidebar-panel .stats-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    grid-template-rows: 1fr 1fr !important;
+    gap: 6px !important;
+    width: 100%;
+    max-width: 100%;
+}
+
 /* Compact KPI cards */
 .stats-grid {
-    gap: 8px;
+    gap: 6px;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
 }
 
 .stat-item {
-    padding: 0.75rem;
+    padding: 0.625rem 0.5rem;
+    min-height: 80px;
 }
 
 .stat-value {
-    font-size: 24px;
+    font-size: 20px;
+    line-height: 1.1;
 }
 
 .stat-label {
-    font-size: 10px;
+    font-size: 9px;
+    line-height: 1.2;
+    margin-bottom: 3px;
 }
 
 .crisis-indicator {
-    font-size: 12px;
-    margin-top: 4px;
+    font-size: 11px;
+    margin-top: 3px;
+    line-height: 1.1;
 }
 
 /* Map wrapper - Full available height with better constraints */
@@ -606,6 +623,40 @@
     background: white;
     border-radius: 12px;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12), 0 6px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Better alignment for narrow sidebars */
+@media (max-width: 320px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 4px;
+    }
+    
+    .stat-item {
+        padding: 0.5rem 0.25rem;
+        min-height: 70px;
+    }
+    
+    .stat-value {
+        font-size: 18px;
+    }
+    
+    .stat-label {
+        font-size: 8px;
+    }
+    
+    .crisis-indicator {
+        font-size: 10px;
+    }
+}
+
+/* For sidebar widths around 280px */
+.map-sidebar[style*="width: 280px"] .stats-grid,
+.map-sidebar {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 6px;
+    }
 }
 
 /* Responsive adjustments */
