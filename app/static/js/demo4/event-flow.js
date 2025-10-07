@@ -192,10 +192,10 @@ class EventFlowVisualizer {
                 // Animate the flow steps
                 await this.animateFlowSteps(data.flow_steps);
                 
-                // Show scenario outcome if available
-                if (data.scenario.outcome) {
-                    this.showScenarioOutcome(data.scenario.outcome);
-                }
+                // Show scenario outcome if available - DISABLED per user request
+                // if (data.scenario.outcome) {
+                //     this.showScenarioOutcome(data.scenario.outcome);
+                // }
                 
                 this.showToast(`Scenario "${data.scenario.name}" completed successfully!`, 'success');
             } else {
