@@ -9,8 +9,8 @@ from datetime import datetime
 
 from app import db
 from app.models.demo4_models import (
-    ChargingSite, SiteEvaluation, NetworkConfiguration,
-    SiteStatus
+    CNGSite, SiteEvaluation, NetworkConfiguration,
+    DemandForecast, CityTier, NetworkPosition, SiteStatus
 )
 from app.agents.demo4_agent import NetworkOptimizationAgent
 
@@ -34,7 +34,7 @@ def dashboard():
 @login_required
 def api_evaluate_site(site_id):
     """Evaluate a site"""
-    site = ChargingSite.query.get_or_404(site_id)
+    site = CNGSite.query.get_or_404(site_id)
     
     # Check if already evaluated
     existing_eval = SiteEvaluation.query.filter_by(site_id=site.id).first()
@@ -57,7 +57,7 @@ def api_evaluate_site(site_id):
             site_id=site.id,
             traffic_score=evaluation_data['scores']['traffic'],
             demographics_score=evaluation_data['scores']['demographics'],
-            grid_infrastructure_score=evaluation_data['scores']['grid_infrastructure'],
+            pipeline_infrastructure_score=evaluation_data['scores']['pipeline_infrastructure'],
             competition_score=evaluation_data['scores']['competition'],
             accessibility_score=evaluation_data['scores']['accessibility'],
             overall_score=evaluation_data['scores']['overall'],
@@ -100,7 +100,7 @@ def api_evaluate_batch():
     results = []
     
     for site_id in site_ids:
-        site = ChargingSite.query.get(site_id)
+        site = CNGSite.query.get(site_id)
         if not site:
             continue
         
@@ -119,7 +119,7 @@ def api_evaluate_batch():
                 site_id=site.id,
                 traffic_score=evaluation_data['scores']['traffic'],
                 demographics_score=evaluation_data['scores']['demographics'],
-                grid_infrastructure_score=evaluation_data['scores']['grid_infrastructure'],
+                pipeline_infrastructure_score=evaluation_data['scores']['pipeline_infrastructure'],
                 competition_score=evaluation_data['scores']['competition'],
                 accessibility_score=evaluation_data['scores']['accessibility'],
                 overall_score=evaluation_data['scores']['overall'],
@@ -166,7 +166,7 @@ def api_optimize_network():
     
     # Get all evaluated sites
     evaluated = db.session.query(
-        ChargingSite, SiteEvaluation
+        CNGSite, SiteEvaluation
     ).join(SiteEvaluation).all()
     
     candidate_sites = [site.to_dict() for site, _ in evaluated]
@@ -181,7 +181,7 @@ def api_optimize_network():
     # Calculate network metrics
     selected_evaluations = SiteEvaluation.query.filter(
         SiteEvaluation.site_id.in_([
-            ChargingSite.query.filter_by(site_id=sid).first().id 
+            CNGSite.query.filter_by(site_id=sid).first().id 
             for sid in result['selected_site_ids']
         ])
     ).all()
@@ -224,10 +224,10 @@ def analytics():
     evaluations = SiteEvaluation.query.all()
     
     tier_stats = db.session.query(
-        ChargingSite.city_tier,
-        db.func.count(ChargingSite.id),
+        CNGSite.city_tier,
+        db.func.count(CNGSite.id),
         db.func.avg(SiteEvaluation.overall_score)
-    ).join(SiteEvaluation).group_by(ChargingSite.city_tier).all()
+    ).join(SiteEvaluation).group_by(CNGSite.city_tier).all()
     
     return render_template(
         'demo4/analytics.html',
@@ -239,8 +239,8 @@ def analytics():
 @demo4_bp.route('/api/sites/map-data')
 @login_required
 def api_sites_map_data():
-    """Get all sites with evaluation data for map visualization"""
-    sites = db.session.query(ChargingSite, SiteEvaluation).outerjoin(SiteEvaluation).all()
+    """Get all CNG sites with evaluation data for map visualization"""
+    sites = db.session.query(CNGSite, SiteEvaluation).outerjoin(SiteEvaluation).all()
     
     map_data = []
     for site, evaluation in sites:
@@ -254,7 +254,7 @@ def api_sites_map_data():
             'network_position': site.network_position.value,
             'status': site.status.value,
             'daily_traffic': site.daily_traffic_count,
-            'estimated_sessions': site.estimated_daily_sessions
+            'estimated_refuels': site.estimated_daily_refuels
         }
         
         if evaluation:
@@ -288,16 +288,16 @@ def api_sites_statistics():
     
     # By tier
     tier_stats = db.session.query(
-        ChargingSite.city_tier,
-        db.func.count(ChargingSite.id).label('count'),
+        CNGSite.city_tier,
+        db.func.count(CNGSite.id).label('count'),
         db.func.avg(SiteEvaluation.overall_score).label('avg_score')
-    ).outerjoin(SiteEvaluation).group_by(ChargingSite.city_tier).all()
+    ).outerjoin(SiteEvaluation).group_by(CNGSite.city_tier).all()
     
     # By status
     status_stats = db.session.query(
-        ChargingSite.status,
-        db.func.count(ChargingSite.id).label('count')
-    ).group_by(ChargingSite.status).all()
+        CNGSite.status,
+        db.func.count(CNGSite.id).label('count')
+    ).group_by(CNGSite.status).all()
     
     # By recommendation
     recommendation_stats = db.session.query(
@@ -307,11 +307,11 @@ def api_sites_statistics():
     
     # Top cities
     city_stats = db.session.query(
-        ChargingSite.city,
-        db.func.count(ChargingSite.id).label('count'),
+        CNGSite.city,
+        db.func.count(CNGSite.id).label('count'),
         db.func.avg(SiteEvaluation.overall_score).label('avg_score')
-    ).outerjoin(SiteEvaluation).group_by(ChargingSite.city).order_by(
-        db.func.count(ChargingSite.id).desc()
+    ).outerjoin(SiteEvaluation).group_by(CNGSite.city).order_by(
+        db.func.count(CNGSite.id).desc()
     ).limit(10).all()
     
     return jsonify({
@@ -328,8 +328,8 @@ def api_sites_statistics():
 @demo4_bp.route('/api/sites/<site_id>/detailed')
 @login_required
 def api_site_detailed(site_id):
-    """Get detailed site information including evaluation and permits"""
-    site = ChargingSite.query.filter_by(site_id=site_id).first_or_404()
+    """Get detailed CNG site information including evaluation and permits"""
+    site = CNGSite.query.filter_by(site_id=site_id).first_or_404()
     evaluation = SiteEvaluation.query.filter_by(site_id=site.id).first()
     
     # Get permits for this site

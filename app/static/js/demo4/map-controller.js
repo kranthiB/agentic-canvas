@@ -3,7 +3,7 @@
  * Manages Leaflet.js map, markers, layers, and user interactions
  */
 
-class EVNetworkMapController {
+class CNGNetworkMapController {
     constructor() {
         this.map = null;
         this.markers = new Map();
@@ -40,11 +40,10 @@ class EVNetworkMapController {
             maxZoom: 18
         });
         
-        // Add tile layer (light theme)
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-            attribution: '© OpenStreetMap © CartoDB',
-            subdomains: 'abcd',
-            maxZoom: 19
+        // Add tile layer (OpenStreetMap theme - matching scenario1)
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors',
+            maxZoom: 18
         }).addTo(this.map);
         
         // Initialize marker cluster group
@@ -141,7 +140,7 @@ class EVNetworkMapController {
     createCustomIcon(site, color) {
         const iconHtml = `
             <div class="marker-icon" style="background-color: ${color};">
-                <i class="fas fa-charging-station"></i>
+                <i class="fas fa-gas-pump"></i>
             </div>
         `;
         
@@ -326,9 +325,9 @@ class EVNetworkMapController {
                             </div>
                             <div class="score-item">
                                 <div class="score-bar">
-                                    <div class="score-fill" style="width: ${evaluation.scores.grid_infrastructure}%; background: #f59e0b;"></div>
+                                    <div class="score-fill" style="width: ${evaluation.scores.pipeline_infrastructure}%; background: #f59e0b;"></div>
                                 </div>
-                                <span class="score-label">Infrastructure: ${evaluation.scores.grid_infrastructure}/100</span>
+                                <span class="score-label">Pipeline Infrastructure: ${evaluation.scores.pipeline_infrastructure}/100</span>
                             </div>
                             <div class="score-item">
                                 <div class="score-bar">
@@ -802,6 +801,6 @@ class EVNetworkMapController {
 
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
-    window.mapController = new EVNetworkMapController();
+    window.mapController = new CNGNetworkMapController();
     console.log('Map controller initialized');
 });

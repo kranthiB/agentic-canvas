@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 import logging
 
 from app import db
-from app.models.demo4_models import ChargingSite, CityTier
+from app.models.demo4_models import CNGSite, CityTier
 from app.models.demo4_extended_models import (
     TEEventTrace, TEAgentActivity
 )
@@ -183,7 +183,7 @@ def api_evaluate_site_comprehensive():
     if not site_id:
         return jsonify({'success': False, 'error': 'site_id required'}), 400
     
-    site = ChargingSite.query.filter_by(site_id=site_id).first()
+    site = CNGSite.query.filter_by(site_id=site_id).first()
     if not site:
         return jsonify({'success': False, 'error': 'Site not found'}), 404
     
@@ -218,7 +218,7 @@ def api_optimize_network():
     tier_filter = data.get('tier')
     
     # Get candidate sites
-    query = ChargingSite.query
+    query = CNGSite.query
     
     if city_filter:
         query = query.filter_by(city=city_filter)

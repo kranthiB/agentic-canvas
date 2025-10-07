@@ -1,6 +1,6 @@
 """
 Demo 4: Mobility Maestro Models
-T3 Cognitive Autonomous Agent for EV charging network optimization
+T3 Cognitive Autonomous Agent for CNG refueling network optimization
 """
 from datetime import datetime
 from sqlalchemy import Enum as SQLEnum
@@ -32,9 +32,9 @@ class SiteStatus(enum.Enum):
     REJECTED = "rejected"
 
 
-class ChargingSite(BaseModel, TimestampMixin):
-    """Candidate EV charging station sites"""
-    __tablename__ = 'charging_sites'
+class CNGSite(BaseModel, TimestampMixin):
+    """Candidate CNG refueling station sites"""
+    __tablename__ = 'cng_sites'
     
     # Location
     site_id = db.Column(db.String(50), unique=True, nullable=False, index=True)
@@ -50,21 +50,21 @@ class ChargingSite(BaseModel, TimestampMixin):
     # Site characteristics
     land_area_sqm = db.Column(db.Float)
     land_cost_inr = db.Column(db.Float)
-    grid_connection_available = db.Column(db.Boolean, default=True)
-    grid_capacity_kw = db.Column(db.Float)
+    gas_pipeline_available = db.Column(db.Boolean, default=True)
+    pipeline_capacity_scm = db.Column(db.Float)  # Standard Cubic Meters
     
     # Demographics
     population_density = db.Column(db.Float)  # per km²
     avg_household_income = db.Column(db.Float)
-    ev_penetration_rate = db.Column(db.Float)  # Percentage
+    cng_vehicle_penetration_rate = db.Column(db.Float)  # Percentage
     
     # Traffic & Demand
     daily_traffic_count = db.Column(db.Integer)
-    estimated_daily_sessions = db.Column(db.Integer)
+    estimated_daily_refuels = db.Column(db.Integer)
     peak_hour_demand = db.Column(db.Float)
     
     # Competition
-    existing_chargers_within_5km = db.Column(db.Integer, default=0)
+    existing_cng_stations_within_5km = db.Column(db.Integer, default=0)
     nearest_competitor_distance_km = db.Column(db.Float)
     
     # Status
@@ -87,7 +87,7 @@ class ChargingSite(BaseModel, TimestampMixin):
             'city_tier': self.city_tier.value,
             'network_position': self.network_position.value,
             'daily_traffic_count': self.daily_traffic_count,
-            'estimated_daily_sessions': self.estimated_daily_sessions,
+            'estimated_daily_refuels': self.estimated_daily_refuels,
             'status': self.status.value,
             'created_at': self.created_at.isoformat()
         }
@@ -97,12 +97,12 @@ class SiteEvaluation(BaseModel, TimestampMixin):
     """AI-powered site evaluation results"""
     __tablename__ = 'site_evaluations'
     
-    site_id = db.Column(db.Integer, db.ForeignKey('charging_sites.id'), nullable=False)
+    site_id = db.Column(db.Integer, db.ForeignKey('cng_sites.id'), nullable=False)
     
     # Evaluation scores (0-100)
     traffic_score = db.Column(db.Float, nullable=False)
     demographics_score = db.Column(db.Float, nullable=False)
-    grid_infrastructure_score = db.Column(db.Float, nullable=False)
+    pipeline_infrastructure_score = db.Column(db.Float, nullable=False)
     competition_score = db.Column(db.Float, nullable=False)
     accessibility_score = db.Column(db.Float, nullable=False)
     
@@ -141,7 +141,7 @@ class SiteEvaluation(BaseModel, TimestampMixin):
             'scores': {
                 'traffic': round(self.traffic_score, 1),
                 'demographics': round(self.demographics_score, 1),
-                'grid_infrastructure': round(self.grid_infrastructure_score, 1),
+                'pipeline_infrastructure': round(self.pipeline_infrastructure_score, 1),
                 'competition': round(self.competition_score, 1),
                 'accessibility': round(self.accessibility_score, 1),
                 'overall': round(self.overall_score, 1)
@@ -215,23 +215,23 @@ class NetworkConfiguration(BaseModel, TimestampMixin):
 
 
 class DemandForecast(BaseModel, TimestampMixin):
-    """EV charging demand forecasts"""
+    """CNG refueling demand forecasts"""
     __tablename__ = 'demand_forecasts'
     
     # Location
-    site_id = db.Column(db.Integer, db.ForeignKey('charging_sites.id'), nullable=False)
+    site_id = db.Column(db.Integer, db.ForeignKey('cng_sites.id'), nullable=False)
     
     # Forecast period
     forecast_date = db.Column(db.Date, nullable=False)
     hour = db.Column(db.Integer)  # 0-23 for hourly forecasts
     
     # Demand
-    forecasted_sessions = db.Column(db.Integer)
-    forecasted_energy_kwh = db.Column(db.Float)
+    forecasted_refuels = db.Column(db.Integer)
+    forecasted_volume_scm = db.Column(db.Float)  # Standard Cubic Meters
     forecasted_revenue_inr = db.Column(db.Float)
     
     # Price
-    dynamic_price_inr_kwh = db.Column(db.Float)
+    dynamic_price_inr_scm = db.Column(db.Float)  # Per Standard Cubic Meter
     price_adjustment = db.Column(db.Float)  # Percentage
     
     # Confidence
@@ -247,8 +247,8 @@ class DemandForecast(BaseModel, TimestampMixin):
             'site_id': self.site_id,
             'forecast_date': self.forecast_date.isoformat(),
             'hour': self.hour,
-            'forecasted_sessions': self.forecasted_sessions,
-            'forecasted_energy_kwh': self.forecasted_energy_kwh,
+            'forecasted_refuels': self.forecasted_refuels,
+            'forecasted_volume_scm': self.forecasted_volume_scm,
             'forecasted_revenue_inr': self.forecasted_revenue_inr,
-            'dynamic_price_inr_kwh': self.dynamic_price_inr_kwh
+            'dynamic_price_inr_scm': self.dynamic_price_inr_scm
         }
