@@ -471,7 +471,7 @@
     border-radius: 8px;
     padding: 1.5rem;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    border-left: 4px solid #10b981;
+    border-left: 4px solid #1e3c72;
     transition: transform 0.2s ease;
 }
 
@@ -488,7 +488,7 @@
 .report-value {
     font-size: 24px;
     font-weight: 700;
-    color: #10b981;
+    color: #1e3c72;
     margin: 0.5rem 0;
 }
 
@@ -530,6 +530,154 @@
     }
 }
 
+/* Action Buttons - Light translucent blue style for both buttons */
+.network-optimize-button,
+.back-dashboard-button {
+    background: rgba(30, 60, 114, 0.15);
+    backdrop-filter: blur(15px);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 1rem 2rem;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 12px rgba(30, 60, 114, 0.2);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 280px;
+    justify-content: center;
+    text-decoration: none;
+}
+
+.network-optimize-button:hover,
+.back-dashboard-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(30, 60, 114, 0.3);
+    background: rgba(30, 60, 114, 0.25);
+    border-color: rgba(255, 255, 255, 0.4);
+    color: white;
+    text-decoration: none;
+}
+
+/* Analysis Modal Styles */
+.analysis-header {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    border-left: 4px solid #1e3c72;
+}
+
+.analysis-header h4 {
+    margin: 0 0 0.5rem 0;
+    color: #1e293b;
+    font-size: 18px;
+}
+
+.analysis-status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #64748b;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.agent-activity-stream {
+    background: #1f2937;
+    color: white;
+    border-radius: 8px;
+    max-height: 400px;
+    overflow-y: auto;
+    margin-bottom: 1.5rem;
+}
+
+.agent-activity-item {
+    padding: 1rem;
+    border-bottom: 1px solid #374151;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.agent-activity-item:last-child {
+    border-bottom: none;
+}
+
+.agent-timestamp {
+    color: #10b981;
+    font-weight: 600;
+}
+
+.agent-name {
+    color: #60a5fa;
+    font-weight: 600;
+}
+
+.agent-action {
+    color: #e5e7eb;
+    margin-top: 0.25rem;
+}
+
+.agent-details {
+    color: #9ca3af;
+    font-style: italic;
+    margin-top: 0.25rem;
+    font-size: 12px;
+}
+
+.agent-success {
+    color: #10b981 !important;
+    font-weight: 600;
+}
+
+.agent-processing {
+    color: #e5e7eb;
+}
+
+.analysis-actions {
+    text-align: center;
+    padding: 1rem 0;
+}
+
+.view-results-button {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 16px rgba(30, 60, 114, 0.3);
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.view-results-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(30, 60, 114, 0.4);
+}
+
+/* Results Modal Styles */
+.results-section {
+    margin-bottom: 2rem;
+}
+
+.results-section h3 {
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.results-section h4 {
+    font-weight: 600;
+}
+
 /* Loading States */
 .loading {
     display: flex;
@@ -543,8 +691,8 @@
     border: 2px solid #f3f4f6;
     border-top: 2px solid #1e3c72;
     border-radius: 50%;
-    width: 20px;
-    height: 20px;
+    width: 16px;
+    height: 16px;
     animation: spin 1s linear infinite;
     margin-right: 0.5rem;
 }
@@ -677,6 +825,16 @@
                         <p class="status-value" id="solarGeneration">850 kW (Normal)</p>
                     </div>
                 </div>
+                
+                <!-- Action Buttons -->
+                <div style="display: flex; justify-content: center; align-items: center; gap: 2rem; margin-top: 2rem; flex-wrap: wrap;">
+                    <button class="network-optimize-button" id="networkOptimizeButton">
+                        <i class="fas fa-brain"></i> Run Network Optimization Analysis
+                    </button>
+                    <a href="/demo4/dashboard" class="back-dashboard-button">
+                        <i class="fas fa-arrow-left"></i> Back to Dashboard
+                    </a>
+                </div>
             </div>
         </div>
 
@@ -714,7 +872,7 @@
             </div>
             <div class="phase-content">
                 <div class="alerts-panel" id="alertsPanel">
-                    <div class="alerts-header">ML Platform Predictions</div>
+                    <div class="alerts-header">Smart Operations Platform Predictions</div>
                     <div id="alertsList">
                         <!-- Alerts will be populated here -->
                     </div>
@@ -722,16 +880,7 @@
             </div>
         </div>
 
-        <!-- Time Controls -->
-        <div class="time-controls">
-            <div class="time-display" id="timeDisplay">06:00 AM</div>
-            <div class="time-scrubber" id="timeScrubber">
-                <div class="time-progress" id="timeProgress" style="width: 0%;"></div>
-            </div>
-            <button class="play-button" id="playButton">
-                <i class="fas fa-play"></i> Start Demo
-            </button>
-        </div>
+
 
         <!-- Event Stream & Agentic Canvas -->
         <div class="phase-section" id="agenticCanvasSection" style="display: none;">
@@ -774,8 +923,8 @@
                     <!-- AI optimizations will be populated here -->
                 </div>
 
-                <div style="text-align: center; margin-top: 2rem; padding: 2rem; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border-radius: 8px;">
-                    <h3 style="margin: 0;">TOTAL DAILY VALUE CREATED BY AGENTIC CANVAS: <span id="totalDailyValue">₹70,320</span></h3>
+                <div style="text-align: center; margin-top: 2rem; padding: 2rem; background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white; border-radius: 8px;">
+                    <h3 style="margin: 0;">TOTAL DAILY VALUE CREATED BY SMART OPERATIONS PLATFORM: <span id="totalDailyValue">₹70,320</span></h3>
                 </div>
             </div>
         </div>
@@ -807,11 +956,119 @@
 
                 <div style="text-align: center; margin-top: 2rem; padding: 2rem; background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white; border-radius: 8px;">
                     <h3 style="margin: 0 0 1rem 0;">TOTAL ANNUAL BENEFIT: <span id="totalAnnualBenefit">₹11.2 Crore</span></h3>
-                    <p style="margin: 0; font-size: 18px;">ROI ON AGENTIC CANVAS: <span id="roiPercentage">850%</span> (Payback period: &lt; 2 months)</p>
+                    <p style="margin: 0; font-size: 18px;">ROI ON SMART OPERATIONS PLATFORM: <span id="roiPercentage">180%</span> (Payback period: 8 months)</p>
                 </div>
             </div>
         </div>
 
+    </div>
+</div>
+
+<!-- Network Analysis Modal -->
+<div id="analysisModal" class="modal">
+    <div class="modal-content" style="max-width: 1000px;">
+        <div class="modal-header">
+            <h3 id="analysisModalTitle">
+                <i class="fas fa-brain"></i> Multi-Agent Network Optimization Analysis
+            </h3>
+            <button class="modal-close" id="analysisModalClose">&times;</button>
+        </div>
+        <div class="modal-body" id="analysisModalBody">
+            <div id="analysisContent">
+                <!-- Analysis content will be populated here -->
+                <div class="analysis-header">
+                    <h4>Live Agent Activity</h4>
+                    <div class="analysis-status" id="analysisStatus">
+                        <span class="spinner"></span> Analysis in progress...
+                    </div>
+                </div>
+                
+                <div class="agent-activity-stream" id="agentActivityStream">
+                    <!-- Agent activities will be populated here -->
+                </div>
+                
+                <div class="analysis-actions" id="analysisActions" style="display: none;">
+                    <button class="view-results-button" id="viewResultsButton">
+                        <i class="fas fa-chart-bar"></i> View Optimization Results
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Results Modal -->
+<div id="resultsModal" class="modal">
+    <div class="modal-content" style="max-width: 1200px;">
+        <div class="modal-header">
+            <h3 id="resultsModalTitle">
+                <i class="fas fa-chart-bar"></i> Network Optimization Results
+            </h3>
+            <button class="modal-close" id="resultsModalClose">&times;</button>
+        </div>
+        <div class="modal-body" id="resultsModalBody">
+            <!-- Results content will be populated here -->
+            <div id="resultsContent">
+                <!-- Daily Operations Report Content -->
+                <div class="results-section">
+                    <h3 style="color: #1e293b; margin: 0 0 1.5rem 0; display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-chart-pie" style="color: #10b981;"></i>
+                        Bangalore Network - Daily Operations Report
+                    </h3>
+                    
+                    <div style="text-align: center; margin-bottom: 2rem; padding: 1.5rem; background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-radius: 12px; border-left: 4px solid #1e3c72;">
+                        <h4 style="margin: 0; color: #374151; font-size: 18px;">Daily Score: <span style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: 600; font-size: 14px;" id="resultsModalDailyScore">96.2/100</span> (EXCELLENT)</h4>
+                    </div>
+                    
+                    <div class="report-grid" id="resultsModalPerformanceMetrics">
+                        <!-- Performance metrics will be populated here -->
+                    </div>
+
+                    <h4 style="margin: 2rem 0 1rem 0; color: #374151; font-size: 18px; display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-robot" style="color: #1e3c72;"></i>
+                        AI-Driven Optimizations (Today's Value Delivered)
+                    </h4>
+                    <div class="report-grid" id="resultsModalAiOptimizations">
+                        <!-- AI optimizations will be populated here -->
+                    </div>
+
+                    <div style="text-align: center; margin: 2rem 0; padding: 2rem; background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white; border-radius: 12px; box-shadow: 0 4px 16px rgba(30, 60, 114, 0.3);">
+                        <h3 style="margin: 0; font-size: 20px;">TOTAL DAILY VALUE CREATED BY SMART OPERATIONS PLATFORM: <span id="resultsModalTotalDailyValue">₹70,320</span></h3>
+                    </div>
+                </div>
+
+                <!-- Annual Impact Section -->
+                <div class="results-section" style="margin-top: 3rem; padding-top: 2rem; border-top: 2px solid #e5e7eb;">
+                    <h3 style="color: #1e293b; margin: 0 0 1.5rem 0; display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-calculator" style="color: #1e3c72;"></i>
+                        Annual Impact Projection
+                    </h3>
+                    
+                    <h4 style="text-align: center; margin-bottom: 2rem; color: #374151;">Bangalore Network - 18 Sites</h4>
+                    
+                    <div style="overflow-x: auto; margin-bottom: 2rem;">
+                        <table style="width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                            <thead>
+                                <tr style="background: #f8fafc;">
+                                    <th style="padding: 1rem; text-align: left; border-bottom: 1px solid #e5e7eb; font-weight: 600;">Metric</th>
+                                    <th style="padding: 1rem; text-align: center; border-bottom: 1px solid #e5e7eb; font-weight: 600;">Without AI (Manual Ops)</th>
+                                    <th style="padding: 1rem; text-align: center; border-bottom: 1px solid #e5e7eb; font-weight: 600;">With Smart Operations Platform</th>
+                                    <th style="padding: 1rem; text-align: center; border-bottom: 1px solid #e5e7eb; font-weight: 600;">Improvement</th>
+                                </tr>
+                            </thead>
+                            <tbody id="resultsModalAnnualComparisonTable">
+                                <!-- Table rows will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div style="text-align: center; padding: 2rem; background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white; border-radius: 12px; box-shadow: 0 4px 16px rgba(30, 60, 114, 0.3);">
+                        <h3 style="margin: 0 0 1rem 0; font-size: 24px;">TOTAL ANNUAL BENEFIT: <span id="resultsModalTotalAnnualBenefit">₹12.2 Crore</span></h3>
+                        <p style="margin: 0; font-size: 18px; opacity: 0.9;">ROI ON SMART OPERATIONS PLATFORM: <span id="resultsModalRoiPercentage" style="font-weight: 700;">180%</span> (Payback period: 8 months)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 

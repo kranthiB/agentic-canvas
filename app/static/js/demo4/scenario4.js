@@ -477,22 +477,44 @@ class Scenario4Controller {
     }
 
     bindEvents() {
-        // Play button
-        document.getElementById('playButton')?.addEventListener('click', () => {
-            this.toggleDemo();
+        // Network Optimization button
+        document.getElementById('networkOptimizeButton')?.addEventListener('click', () => {
+            this.runNetworkOptimization();
         });
 
-        // Time scrubber
-        document.getElementById('timeScrubber')?.addEventListener('click', (e) => {
-            this.handleTimeScrubberClick(e);
+        // Analysis modal close
+        document.getElementById('analysisModalClose')?.addEventListener('click', () => {
+            this.hideAnalysisModal();
         });
 
-        // Modal close
+        // View results button
+        document.getElementById('viewResultsButton')?.addEventListener('click', () => {
+            this.showOptimizationResults();
+        });
+
+        // Results modal close
+        document.getElementById('resultsModalClose')?.addEventListener('click', () => {
+            this.hideResultsModal();
+        });
+
+        // Dispenser modal close
         document.getElementById('dispenserModalClose')?.addEventListener('click', () => {
             this.hideDispenserModal();
         });
 
-        // Close modal on outside click
+        // Close modals on outside click
+        document.getElementById('analysisModal')?.addEventListener('click', (e) => {
+            if (e.target.id === 'analysisModal') {
+                this.hideAnalysisModal();
+            }
+        });
+
+        document.getElementById('resultsModal')?.addEventListener('click', (e) => {
+            if (e.target.id === 'resultsModal') {
+                this.hideResultsModal();
+            }
+        });
+
         document.getElementById('dispenserModal')?.addEventListener('click', (e) => {
             if (e.target.id === 'dispenserModal') {
                 this.hideDispenserModal();
@@ -965,6 +987,309 @@ class Scenario4Controller {
 
     hideDispenserModal() {
         document.getElementById('dispenserModal').style.display = 'none';
+    }
+
+    async runNetworkOptimization() {
+        console.log('Starting network optimization analysis...');
+        
+        // Show the analysis modal
+        this.showAnalysisModal();
+        
+        // Start the agent activity simulation
+        await this.simulateOptimizationAnalysis();
+    }
+
+    showAnalysisModal() {
+        const modal = document.getElementById('analysisModal');
+        modal.style.display = 'block';
+        
+        // Reset modal content
+        const stream = document.getElementById('agentActivityStream');
+        stream.innerHTML = '';
+        
+        const actions = document.getElementById('analysisActions');
+        actions.style.display = 'none';
+        
+        const status = document.getElementById('analysisStatus');
+        status.innerHTML = '<span class="spinner"></span> Analysis in progress...';
+    }
+
+    hideAnalysisModal() {
+        document.getElementById('analysisModal').style.display = 'none';
+    }
+
+    async simulateOptimizationAnalysis() {
+        const analysisEvents = [
+            {
+                time: 0,
+                agent: 'Orchestrator',
+                action: 'Network optimization workflow initiated. Deploying 4 specialized agents.',
+                details: 'Analyzing 18 CNG stations across Bangalore network for optimization opportunities.'
+            },
+            {
+                time: 3000,
+                agent: 'Operations Agent',
+                action: 'Querying real-time telemetry from all network dispensers...',
+                details: 'Collecting pressure, flow rate, and utilization data from Grid Monitor.'
+            },
+            {
+                time: 6000,
+                agent: 'Predictive Agent',
+                action: 'Running ML models on historical demand patterns...',
+                details: 'Using Reasoning Engine to forecast peak demand windows and capacity requirements.'
+            },
+            {
+                time: 9000,
+                agent: 'Financial Agent',
+                action: 'Calculating cost optimization opportunities...',
+                details: 'Querying Finance ERP for energy costs, maintenance schedules, and revenue data.'
+            },
+            {
+                time: 12000,
+                agent: 'Network Agent',
+                action: 'Modeling load balancing and pressure optimization scenarios...',
+                details: 'Using RAG Engine on Vector DB of network topology and engineering specifications.'
+            },
+            {
+                time: 15000,
+                agent: 'Operations Agent',
+                action: '✅ Telemetry analysis complete. 3 dispensers showing efficiency degradation.',
+                details: 'BLR-002-DC-01, BLR-003-DC-02, BLR-005-DC-01 require attention.'
+            },
+            {
+                time: 18000,
+                agent: 'Predictive Agent',
+                action: '✅ Demand forecasting complete. Peak shift potential identified.',
+                details: 'Morning peak can be reduced by 15% through dynamic pricing incentives.'
+            },
+            {
+                time: 21000,
+                agent: 'Financial Agent',
+                action: '✅ Cost analysis complete. ₹2.8L annual savings opportunity found.',
+                details: 'Energy optimization: ₹1.6L, Maintenance scheduling: ₹1.2L'
+            },
+            {
+                time: 24000,
+                agent: 'Network Agent',
+                action: '✅ Load balancing optimization complete. 18% efficiency improvement possible.',
+                details: 'Pressure cascade optimization can reduce compressor load by 180kW average.'
+            },
+            {
+                time: 27000,
+                agent: 'Orchestrator',
+                action: 'Synthesizing multi-agent recommendations using Prompt Manager...',
+                details: 'Applying Guardrails for safety constraints and operational continuity.'
+            },
+            {
+                time: 30000,
+                agent: 'Orchestrator',
+                action: '✅ NETWORK OPTIMIZATION ANALYSIS COMPLETE',
+                details: 'Comprehensive recommendations ready for review and implementation.'
+            }
+        ];
+
+        // Display events progressively
+        for (const event of analysisEvents) {
+            await new Promise(resolve => setTimeout(resolve, event.time === 0 ? 0 : 3000));
+            this.addAgentActivity(event);
+            
+            // Show results button after last event
+            if (event === analysisEvents[analysisEvents.length - 1]) {
+                document.getElementById('analysisStatus').innerHTML = 
+                    '<i class="fas fa-check-circle" style="color: #10b981;"></i> Analysis complete';
+                document.getElementById('analysisActions').style.display = 'block';
+            }
+        }
+    }
+
+    addAgentActivity(event) {
+        const stream = document.getElementById('agentActivityStream');
+        const now = new Date();
+        const timestamp = now.toLocaleTimeString('en-US', { 
+            hour12: false,
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+        });
+
+        const activityItem = document.createElement('div');
+        activityItem.className = 'agent-activity-item';
+        
+        const isComplete = event.action.includes('✅');
+        const agentClass = isComplete ? 'agent-success' : 'agent-processing';
+        
+        activityItem.innerHTML = `
+            <div>
+                <span class="agent-timestamp">[${timestamp}]</span>
+                <span class="agent-name">${event.agent}:</span>
+            </div>
+            <div class="agent-action ${agentClass}">${event.action}</div>
+            ${event.details ? `<div class="agent-details">${event.details}</div>` : ''}
+        `;
+        
+        stream.appendChild(activityItem);
+        stream.scrollTop = stream.scrollHeight;
+    }
+
+    showOptimizationResults() {
+        // Hide the analysis modal
+        this.hideAnalysisModal();
+        
+        // Show the results modal
+        this.showResultsModal();
+    }
+
+    showResultsModal() {
+        const modal = document.getElementById('resultsModal');
+        modal.style.display = 'block';
+        
+        // Populate the results content
+        this.populateResultsModal();
+    }
+
+    hideResultsModal() {
+        document.getElementById('resultsModal').style.display = 'none';
+    }
+
+    populateResultsModal() {
+        // Update the daily score and metrics in the modal
+        document.getElementById('resultsModalDailyScore').textContent = '96.2/100';
+        
+        // Populate performance metrics in modal
+        const metricsContainer = document.getElementById('resultsModalPerformanceMetrics');
+        metricsContainer.innerHTML = `
+            <div class="report-card">
+                <h4>Network Efficiency</h4>
+                <div class="report-value">94.7%</div>
+                <p class="report-description">+18% improvement potential identified</p>
+            </div>
+            <div class="report-card">
+                <h4>Energy Optimization</h4>
+                <div class="report-value">₹1.6L</div>
+                <p class="report-description">Annual savings through load balancing</p>
+            </div>
+            <div class="report-card">
+                <h4>Maintenance Scheduling</h4>
+                <div class="report-value">₹1.2L</div>
+                <p class="report-description">Predictive maintenance savings</p>
+            </div>
+        `;
+        
+        // Populate AI optimizations in modal
+        const optimizationsContainer = document.getElementById('resultsModalAiOptimizations');
+        optimizationsContainer.innerHTML = `
+            <div class="report-card">
+                <h4>✅ Pressure Cascade Optimization</h4>
+                <div class="report-value">₹28,340</div>
+                <p class="report-description">180kW compressor load reduction</p>
+            </div>
+            <div class="report-card">
+                <h4>✅ Dynamic Load Balancing</h4>
+                <div class="report-value">₹15,200</div>
+                <p class="report-description">Peak demand distribution optimization</p>
+            </div>
+            <div class="report-card">
+                <h4>✅ Predictive Maintenance</h4>
+                <div class="report-value">₹17,400</div>
+                <p class="report-description">3 dispensers scheduled for optimization</p>
+            </div>
+            <div class="report-card">
+                <h4>✅ Energy Cost Management</h4>
+                <div class="report-value">₹9,380</div>
+                <p class="report-description">Off-peak energy utilization</p>
+            </div>
+        `;
+        
+        document.getElementById('resultsModalTotalDailyValue').textContent = '₹70,320';
+        
+        // Populate annual impact data in modal
+        this.populateAnnualImpactInModal();
+    }
+
+    populateAnnualImpactInModal() {
+        const tableBody = document.getElementById('resultsModalAnnualComparisonTable');
+        
+        tableBody.innerHTML = `
+            <tr>
+                <td style="padding: 1rem; border-bottom: 1px solid #f3f4f6; font-weight: 500;">Network Efficiency</td>
+                <td style="padding: 1rem; text-align: center; border-bottom: 1px solid #f3f4f6;">76.5%</td>
+                <td style="padding: 1rem; text-align: center; border-bottom: 1px solid #f3f4f6;">94.7%</td>
+                <td style="padding: 1rem; text-align: center; border-bottom: 1px solid #f3f4f6; color: #10b981; font-weight: 600;">+18.2%</td>
+            </tr>
+            <tr>
+                <td style="padding: 1rem; border-bottom: 1px solid #f3f4f6; font-weight: 500;">Annual Energy Costs</td>
+                <td style="padding: 1rem; text-align: center; border-bottom: 1px solid #f3f4f6;">₹37.6 Cr</td>
+                <td style="padding: 1rem; text-align: center; border-bottom: 1px solid #f3f4f6;">₹27.1 Cr</td>
+                <td style="padding: 1rem; text-align: center; border-bottom: 1px solid #f3f4f6; color: #10b981; font-weight: 600;">₹10.5 Cr saved</td>
+            </tr>
+            <tr>
+                <td style="padding: 1rem; border-bottom: 1px solid #f3f4f6; font-weight: 500;">Annual Maintenance Costs</td>
+                <td style="padding: 1rem; text-align: center; border-bottom: 1px solid #f3f4f6;">₹4.2 Cr</td>
+                <td style="padding: 1rem; text-align: center; border-bottom: 1px solid #f3f4f6;">₹2.5 Cr</td>
+                <td style="padding: 1rem; text-align: center; border-bottom: 1px solid #f3f4f6; color: #10b981; font-weight: 600;">₹1.7 Cr saved</td>
+            </tr>
+            <tr>
+                <td style="padding: 1rem; border-bottom: 1px solid #f3f4f6; font-weight: 500;">Network Uptime</td>
+                <td style="padding: 1rem; text-align: center; border-bottom: 1px solid #f3f4f6;">92.0%</td>
+                <td style="padding: 1rem; text-align: center; border-bottom: 1px solid #f3f4f6;">97.9%</td>
+                <td style="padding: 1rem; text-align: center; border-bottom: 1px solid #f3f4f6; color: #10b981; font-weight: 600;">+5.9%</td>
+            </tr>
+            <tr>
+                <td style="padding: 1rem; font-weight: 500;">Customer Satisfaction</td>
+                <td style="padding: 1rem; text-align: center;">68 NPS</td>
+                <td style="padding: 1rem; text-align: center;">79 NPS</td>
+                <td style="padding: 1rem; text-align: center; color: #10b981; font-weight: 600;">+11 points</td>
+            </tr>
+        `;
+        
+        document.getElementById('resultsModalTotalAnnualBenefit').textContent = '₹12.2 Crore';
+        document.getElementById('resultsModalRoiPercentage').textContent = '180%';
+    }
+
+    // This method is kept for backwards compatibility but not used in the modal flow
+    async showAnnualImpact() {
+        const section = document.getElementById('annualImpactSection');
+        section.style.display = 'block';
+        
+        const tableBody = document.getElementById('annualComparisonTable');
+        
+        tableBody.innerHTML = `
+            <tr>
+                <td style="padding: 1rem; border-bottom: 1px solid #f3f4f6;">Network Efficiency</td>
+                <td style="padding: 1rem; text-align: center; border-bottom: 1px solid #f3f4f6;">76.5%</td>
+                <td style="padding: 1rem; text-align: center; border-bottom: 1px solid #f3f4f6;">94.7%</td>
+                <td style="padding: 1rem; text-align: center; border-bottom: 1px solid #f3f4f6; color: #10b981; font-weight: 600;">+18.2%</td>
+            </tr>
+            <tr>
+                <td style="padding: 1rem; border-bottom: 1px solid #f3f4f6;">Annual Energy Costs</td>
+                <td style="padding: 1rem; text-align: center; border-bottom: 1px solid #f3f4f6;">₹37.6 Cr</td>
+                <td style="padding: 1rem; text-align: center; border-bottom: 1px solid #f3f4f6;">₹27.1 Cr</td>
+                <td style="padding: 1rem; text-align: center; border-bottom: 1px solid #f3f4f6; color: #10b981; font-weight: 600;">₹10.5 Cr saved</td>
+            </tr>
+            <tr>
+                <td style="padding: 1rem; border-bottom: 1px solid #f3f4f6;">Annual Maintenance Costs</td>
+                <td style="padding: 1rem; text-align: center; border-bottom: 1px solid #f3f4f6;">₹4.2 Cr</td>
+                <td style="padding: 1rem; text-align: center; border-bottom: 1px solid #f3f4f6;">₹2.5 Cr</td>
+                <td style="padding: 1rem; text-align: center; border-bottom: 1px solid #f3f4f6; color: #10b981; font-weight: 600;">₹1.7 Cr saved</td>
+            </tr>
+            <tr>
+                <td style="padding: 1rem; border-bottom: 1px solid #f3f4f6;">Network Uptime</td>
+                <td style="padding: 1rem; text-align: center; border-bottom: 1px solid #f3f4f6;">92.0%</td>
+                <td style="padding: 1rem; text-align: center; border-bottom: 1px solid #f3f4f6;">97.9%</td>
+                <td style="padding: 1rem; text-align: center; border-bottom: 1px solid #f3f4f6; color: #10b981; font-weight: 600;">+5.9%</td>
+            </tr>
+            <tr>
+                <td style="padding: 1rem;">Customer Satisfaction</td>
+                <td style="padding: 1rem; text-align: center;">68 NPS</td>
+                <td style="padding: 1rem; text-align: center;">79 NPS</td>
+                <td style="padding: 1rem; text-align: center; color: #10b981; font-weight: 600;">+11 points</td>
+            </tr>
+        `;
+        
+        document.getElementById('totalAnnualBenefit').textContent = '₹12.2 Crore';
+        document.getElementById('roiPercentage').textContent = '180%';
+        
+        section.scrollIntoView({ behavior: 'smooth' });
     }
 
     triggerMaintenanceAlert(dispenserId) {
