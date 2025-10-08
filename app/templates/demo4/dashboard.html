@@ -44,7 +44,7 @@
                     <i class="fas fa-chart-bar"></i>
                     Network Statistics
                 </h3>
-                <div class="stats-grid">
+                <div class="stats-grid-2x2">
                     <div class="stat-item">
                         <div class="stat-label">Total Sites</div>
                         <div class="stat-value" id="totalSites">0</div>
@@ -108,107 +108,8 @@
                         </button>
                     </div>
                 </div>
-
-                <!-- Score Range Filter -->
-                <div class="filter-group">
-                    <label class="filter-label">
-                        Score Range: <span id="scoreRangeValue">0-100</span>
-                    </label>
-                    <input type="range" class="form-range" id="scoreRange" min="0" max="100" value="0">
-                </div>
             </div>
 
-            <!-- Layers Panel -->
-            <div class="sidebar-panel">
-                <h3 class="panel-title">
-                    <i class="fas fa-layers"></i>
-                    Map Layers
-                </h3>
-                
-                <div class="layer-toggle">
-                    <label class="layer-label">
-                        <input type="checkbox" id="layerSites" checked>
-                        <i class="fas fa-gas-pump"></i>
-                        CNG Stations
-                    </label>
-                </div>
-                
-                <div class="layer-toggle">
-                    <label class="layer-label">
-                        <input type="checkbox" id="layerClusters" checked>
-                        <i class="fas fa-object-group"></i>
-                        Cluster Markers
-                    </label>
-                </div>
-                
-                <div class="layer-toggle">
-                    <label class="layer-label">
-                        <input type="checkbox" id="layerHeatmap">
-                        <i class="fas fa-fire"></i>
-                        Traffic Heatmap
-                    </label>
-                </div>
-                
-                <div class="layer-toggle">
-                    <label class="layer-label">
-                        <input type="checkbox" id="layerCityLabels" checked>
-                        <i class="fas fa-tags"></i>
-                        City Labels
-                    </label>
-                </div>
-            </div>
-
-            <!-- Scenario Panel -->
-            <div class="sidebar-panel">
-                <h3 class="panel-title">
-                    <i class="fas fa-play-circle"></i>
-                    Quick Scenarios
-                </h3>
-                
-                <div class="d-grid gap-2">
-                    <button class="btn btn-scenario btn-success" id="scenarioExpansion">
-                        <i class="fas fa-expand-arrows-alt"></i>
-                        Mumbai Expansion
-                    </button>
-                    <button class="btn btn-scenario btn-info" id="scenarioOptimization">
-                        <i class="fas fa-chart-line"></i>
-                        Network Optimization
-                    </button>
-                    <button class="btn btn-scenario btn-warning" id="scenarioCrisis">
-                        <i class="fas fa-exclamation-triangle"></i>
-                        Crisis Response
-                    </button>
-                </div>
-            </div>
-
-            <!-- Legend -->
-            <div class="sidebar-panel">
-                <h3 class="panel-title">
-                    <i class="fas fa-info-circle"></i>
-                    Legend
-                </h3>
-                
-                <div class="legend-item">
-                    <div class="legend-marker marker-excellent"></div>
-                    <div class="legend-text">Excellent (80-100)</div>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-marker marker-good"></div>
-                    <div class="legend-text">Good (65-79)</div>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-marker marker-fair"></div>
-                    <div class="legend-text">Fair (50-64)</div>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-marker marker-poor"></div>
-                    <div class="legend-text">Poor (&lt;50)</div>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-marker marker-unevaluated"></div>
-                    <div class="legend-text">Not Evaluated</div>
-                </div>
-            </div>
         </div>
 
         <!-- Map Container -->

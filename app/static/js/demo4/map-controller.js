@@ -594,32 +594,25 @@ class CNGNetworkMapController {
             });
         });
         
-        // Score range slider
-        const scoreRange = document.getElementById('scoreRange');
-        const scoreRangeValue = document.getElementById('scoreRangeValue');
+        // Score range slider (removed - no longer in UI)
+        // const scoreRange = document.getElementById('scoreRange');
+        // const scoreRangeValue = document.getElementById('scoreRangeValue');
         
-        scoreRange.addEventListener('input', (e) => {
-            const value = parseInt(e.target.value);
-            this.filters.minScore = value;
-            scoreRangeValue.textContent = `${value}-100`;
-            this.applyFilters();
-        });
+        // Layer toggles (removed from UI - keeping defaults)
+        // document.getElementById('layerSites').addEventListener('change', (e) => {
+        //     this.layers.sites = e.target.checked;
+        //     this.renderMarkers();
+        // });
         
-        // Layer toggles
-        document.getElementById('layerSites').addEventListener('change', (e) => {
-            this.layers.sites = e.target.checked;
-            this.renderMarkers();
-        });
+        // document.getElementById('layerClusters').addEventListener('change', (e) => {
+        //     this.layers.clusters = e.target.checked;
+        //     this.renderMarkers();
+        // });
         
-        document.getElementById('layerClusters').addEventListener('change', (e) => {
-            this.layers.clusters = e.target.checked;
-            this.renderMarkers();
-        });
-        
-        document.getElementById('layerHeatmap').addEventListener('change', (e) => {
-            this.layers.heatmap = e.target.checked;
-            this.toggleHeatmap(e.target.checked);
-        });
+        // document.getElementById('layerHeatmap').addEventListener('change', (e) => {
+        //     this.layers.heatmap = e.target.checked;
+        //     this.toggleHeatmap(e.target.checked);
+        // });
         
         // Map controls
         document.getElementById('btnZoomIn').addEventListener('click', () => {

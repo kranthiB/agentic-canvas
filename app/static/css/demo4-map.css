@@ -169,6 +169,14 @@
     align-items: stretch;
 }
 
+.stats-grid-2x2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 8px;
+    align-items: stretch;
+}
+
 .stat-item {
     text-align: center;
     padding: 0.75rem 0.5rem;
