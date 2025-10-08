@@ -42,6 +42,13 @@ def scenario1():
     return render_template('demo4/scenario1.html')
 
 
+@demo4_scenario_bp.route('/scenario4')
+@login_required
+def scenario4():
+    """Scenario 4: Real-Time Operations & Continuous Optimization"""
+    return render_template('demo4/scenario4.html')
+
+
 @demo4_scenario_bp.route('/scenario7')
 @login_required
 def scenario7():
@@ -576,4 +583,376 @@ def api_scenario7_analysis_events(correlation_id):
         'total_events': len(current_events),
         'analysis_complete': len(current_events) >= len(all_events)
     })
+
+
+# =============================================================================
+# SCENARIO 4: REAL-TIME OPERATIONS & CONTINUOUS OPTIMIZATION
+# =============================================================================
+
+@demo4_scenario_bp.route('/api/scenario4/noc-dashboard', methods=['GET'])
+@login_required
+def get_noc_dashboard():
+    """Get Network Operations Center dashboard data"""
+    try:
+        # Simulate NOC dashboard data for Bangalore network
+        dashboard_data = {
+            'network_status': 'operational',
+            'uptime_24h': 99.8,
+            'active_sessions': 2,
+            'available_dispensers': '70/72',
+            'supply_pressure_bar': 45,
+            'compressor_load_kw': 850,
+            'current_time': '2025-10-04T06:00:00',
+            'sites': [
+                {
+                    'id': 'BLR-001',
+                    'name': 'Whitefield Tech Park',
+                    'status': 'online',
+                    'dispensers': 4,
+                    'utilization': 0.25,
+                    'location': [12.9698, 77.7500],
+                    'current_pressure_bar': 45
+                },
+                {
+                    'id': 'BLR-002',
+                    'name': 'Electronic City Hub',
+                    'status': 'online',
+                    'dispensers': 4,
+                    'utilization': 0.15,
+                    'location': [12.8456, 77.6603],
+                    'current_pressure_bar': 46
+                },
+                {
+                    'id': 'BLR-003',
+                    'name': 'Koramangala Junction',
+                    'status': 'online',
+                    'dispensers': 3,
+                    'utilization': 0.33,
+                    'location': [12.9279, 77.6271],
+                    'current_pressure_bar': 44
+                },
+                {
+                    'id': 'BLR-004',
+                    'name': 'Indiranagar Metro',
+                    'status': 'online',
+                    'dispensers': 4,
+                    'utilization': 0.0,
+                    'location': [12.9716, 77.6412],
+                    'current_pressure_bar': 43
+                },
+                {
+                    'id': 'BLR-005',
+                    'name': 'Brigade Road',
+                    'status': 'maintenance',
+                    'dispensers': 2,
+                    'utilization': 0.0,
+                    'location': [12.9716, 77.6103],
+                    'current_pressure_bar': 41
+                }
+            ],
+            'load_chart_data': {
+                'labels': ['00:00', '02:00', '04:00', '06:00', '08:00', '10:00',
+                          '12:00', '14:00', '16:00', '18:00', '20:00', '22:00'],
+                'supply_pressure': [44, 43, 42, 45, 46, 45, 47, 46, 46, 48, 47, 45],
+                'compressor_load': [450, 320, 280, 850, 1200, 980, 1380, 1240,
+                                   1160, 1450, 1280, 680],
+                'pressure_threshold': [40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40]
+            },
+            'alerts': [
+                {
+                    'level': 'medium',
+                    'icon': 'warning',
+                    'message': 'BLR-003-DC-02 Connector wear >85%. Maintenance scheduled.',
+                    'timestamp': '2025-10-04T05:45:00'
+                },
+                {
+                    'level': 'medium', 
+                    'icon': 'thermometer',
+                    'message': 'BLR-008-DC-01 Temperature variance. Inspection recommended.',
+                    'timestamp': '2025-10-04T05:30:00'
+                }
+            ]
+        }
+        
+        return jsonify({
+            'success': True,
+            'data': dashboard_data
+        })
+        
+    except Exception as e:
+        logger.error(f"Error in get_noc_dashboard: {str(e)}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@demo4_scenario_bp.route('/api/scenario4/trigger-event', methods=['POST'])
+@login_required  
+def trigger_operational_event():
+    """Trigger a specific operational event for demo"""
+    try:
+        data = request.get_json()
+        event_type = data.get('event_type')
+        timestamp = data.get('timestamp', '08:15:00')
+        
+        # Generate correlation ID for this event
+        correlation_id = f"ops_{event_type}_{int(datetime.now().timestamp())}"
+        
+        # Define event scenarios
+        event_scenarios = {
+            'morning_peak': {
+                'title': 'Morning Peak Load Management',
+                'description': 'Smart load balancing to avoid demand charge penalties',
+                'severity': 'high',
+                'estimated_savings': 9000
+            },
+            'anomaly_detection': {
+                'title': 'Charger Anomaly Detection', 
+                'description': 'Graceful shutdown prevents dispenser failure',
+                'severity': 'critical',
+                'estimated_savings': 14800
+            },
+            'lunch_surge': {
+                'title': 'Lunch Hour Revenue Optimization',
+                'description': 'Dynamic pricing during demand surge',
+                'severity': 'medium',
+                'estimated_revenue': 780
+            },
+            'predictive_maintenance': {
+                'title': 'Predictive Maintenance Alert',
+                'description': 'ML model predicts component failure',
+                'severity': 'predictive',
+                'estimated_savings': 17400
+            }
+        }
+        
+        scenario = event_scenarios.get(event_type, {})
+        
+        return jsonify({
+            'success': True,
+            'correlation_id': correlation_id,
+            'event_type': event_type,
+            'timestamp': timestamp,
+            'scenario': scenario
+        })
+        
+    except Exception as e:
+        logger.error(f"Error in trigger_operational_event: {str(e)}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@demo4_scenario_bp.route('/api/scenario4/live-stream/<correlation_id>', methods=['GET'])
+@login_required
+def get_operational_live_stream(correlation_id):
+    """Get live event stream for operational scenarios"""
+    try:
+        # Extract event type from correlation_id
+        event_type = correlation_id.split('_')[1] if '_' in correlation_id else 'unknown'
+        
+        # Define event streams for different scenarios
+        event_streams = {
+            'morning_peak': [
+                {'time': 0, 'agent': 'Operations Agent', 'action': 'Peak load detected. Querying Grid Monitor for capacity status.', 'components': ['Grid Monitor']},
+                {'time': 7, 'agent': 'Orchestrator', 'action': 'Threshold breach likely. Invoking Energy Optimization Agent.', 'components': ['CNG Orchestrator', 'Network Optimizer']},
+                {'time': 12, 'agent': 'Energy Optimization Agent', 'action': 'Strategy: Smart Load Balancing. Using Reasoning Engine for optimal throttling.', 'components': ['Reasoning Engine']},
+                {'time': 17, 'agent': 'Energy Optimization Agent', 'action': 'Querying CRM to find customers near low-usage sites.', 'components': ['CRM']},
+                {'time': 25, 'agent': 'Operations Agent', 'action': 'EXECUTING. Command sent to BLR-001 chargers (throttle 50kW→35kW).', 'components': ['Alerts']},  
+                {'time': 35, 'agent': 'Operations Agent', 'action': '✅ MITIGATION SUCCESSFUL. Demand charge penalty avoided: ₹9,000', 'components': []}
+            ],
+            'anomaly_detection': [
+                {'time': 0, 'agent': 'Observability', 'action': 'High pressure alert from BLR-004-DC-03 dispenser.', 'components': ['Observability']},
+                {'time': 2, 'agent': 'Operations Agent', 'action': 'Anomaly detected. Initiating diagnosis.', 'components': ['Operations Agent']},
+                {'time': 18, 'agent': 'Operations Agent', 'action': 'Using RAG Engine on Vector DB (maintenance logs & manuals).', 'components': ['RAG Engine', 'Vector DB']},
+                {'time': 30, 'agent': 'Reasoning Engine', 'action': 'Diagnosis: Valve wear. Recommendation: Graceful shutdown.', 'components': ['Reasoning Engine']},
+                {'time': 35, 'agent': 'Operations Agent', 'action': 'EXECUTING. Command: "Finish current refueling, no new starts."', 'components': ['Alerts', 'CRM']},
+                {'time': 45, 'agent': 'Operations Agent', 'action': '✅ GRACEFUL SHUTDOWN COMPLETE. Dispenser failure prevented.', 'components': []}
+            ]
+        }
+        
+        events = event_streams.get(event_type, [])
+        
+        # Convert to proper format with timestamps
+        formatted_events = []
+        for event in events:
+            event_time = datetime.now() + timedelta(seconds=event['time'])
+            formatted_events.append({
+                'timestamp': event_time.strftime('%H:%M:%S'),
+                'agent': event['agent'],
+                'action': event['action'],
+                'components_activated': event['components'],
+                'correlation_id': correlation_id
+            })
+        
+        return jsonify({
+            'success': True,
+            'correlation_id': correlation_id,
+            'events': formatted_events,
+            'total_events': len(formatted_events)
+        })
+        
+    except Exception as e:
+        logger.error(f"Error in get_operational_live_stream: {str(e)}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@demo4_scenario_bp.route('/api/scenario4/dispenser-health/<dispenser_id>', methods=['GET'])
+@login_required
+def get_dispenser_health(dispenser_id):
+    """Get detailed CNG dispenser health telemetry"""
+    try:
+        # Simulate CNG dispenser telemetry data
+        health_data = {
+            'dispenser_id': dispenser_id,
+            'status': 'critical' if 'DC-03' in dispenser_id else 'normal',
+            'temperature': {
+                'current': 78 if 'DC-03' in dispenser_id else 45,
+                'max_safe': 65,
+                'history': [42, 44, 46, 52, 58, 65, 72, 78] if 'DC-03' in dispenser_id else [42, 43, 44, 45, 44, 45, 45, 45]
+            },
+            'valve_pressure': {
+                'current': 285 if 'DC-03' in dispenser_id else 250,
+                'max_safe': 275,
+                'history': [250, 255, 260, 268, 275, 280, 285, 290] if 'DC-03' in dispenser_id else [248, 250, 251, 250, 249, 250, 250, 250]
+            },
+            'flow_rate': {
+                'current': 35 if 'DC-03' in dispenser_id else 50,
+                'rated': 50,
+                'efficiency': 70 if 'DC-03' in dispenser_id else 96
+            },
+            'session_count': 1247,
+            'last_maintenance': '2025-09-15T10:00:00',
+            'last_update': '2025-01-21T14:30:00',
+            'predicted_failure': '3-7 days' if 'DC-03' in dispenser_id else None,
+            'confidence': 87 if 'DC-03' in dispenser_id else None,
+            'recent_alerts': [
+                {
+                    'level': 'critical',
+                    'message': 'Temperature exceeding safe limits',
+                    'timestamp': '2025-01-21T14:15:00'
+                },
+                {
+                    'level': 'warning',
+                    'message': 'Valve pressure approaching maximum',
+                    'timestamp': '2025-01-21T13:45:00'
+                }
+            ] if 'DC-03' in dispenser_id else [
+                {
+                    'level': 'info',
+                    'message': 'Routine maintenance completed',
+                    'timestamp': '2025-01-20T10:00:00'
+                }
+            ]
+        }
+        
+        return jsonify({
+            'success': True,
+            'data': health_data
+        })
+        
+    except Exception as e:
+        logger.error(f"Error in get_charger_health: {str(e)}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@demo4_scenario_bp.route('/api/scenario4/end-of-day-report', methods=['GET'])
+@login_required
+def get_end_of_day_report():
+    """Get end of day operational report"""
+    try:
+        report_data = {
+            'date': '2025-10-04',
+            'network': 'Bangalore Network - 18 Sites',
+            'daily_score': 96.2,
+            'performance_metrics': {
+                'network_uptime': 97.8,
+                'revenue_beat_target': 3.9,
+                'revenue_beat_amount': 12180,
+                'avg_wait_time': 4.2
+            },
+            'ai_optimizations': [
+                {
+                    'title': 'Morning Peak Load Management',
+                    'value': 9000,
+                    'type': 'cost_avoidance',
+                    'description': 'Demand charge penalty avoided'
+                },
+                {
+                    'title': 'Anomaly Detection & Graceful Shutdown', 
+                    'value': 14800,
+                    'type': 'cost_avoidance',
+                    'description': 'Catastrophic failure cost avoided'
+                },
+                {
+                    'title': 'Lunch Hour Revenue Optimization',
+                    'value': 780,
+                    'type': 'revenue_uplift',
+                    'description': 'Dynamic pricing uplift'
+                },
+                {
+                    'title': 'Predictive Maintenance Alert',
+                    'value': 17400, 
+                    'type': 'cost_avoidance',
+                    'description': 'Proactive repair savings'
+                },
+                {
+                    'title': 'Evening Load Shifting',
+                    'value': 28340,
+                    'type': 'cost_avoidance', 
+                    'description': 'Grid cost savings'
+                }
+            ],
+            'total_daily_value': 70320
+        }
+        
+        return jsonify({
+            'success': True,
+            'data': report_data
+        })
+        
+    except Exception as e:
+        logger.error(f"Error in get_end_of_day_report: {str(e)}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@demo4_scenario_bp.route('/api/scenario4/annual-impact', methods=['GET'])
+@login_required
+def get_annual_impact():
+    """Get annual impact projection"""
+    try:
+        impact_data = {
+            'network': 'Bangalore Network - 18 Sites',
+            'comparison': {
+                'without_ai': {
+                    'network_uptime': 92.0,
+                    'annual_revenue': 11.4,
+                    'annual_energy_costs': 37.6,
+                    'annual_maint_costs': 4.2,
+                    'customer_nps': 68
+                },
+                'with_agentic_canvas': {
+                    'network_uptime': 97.9,
+                    'annual_revenue': 11.9,
+                    'annual_energy_costs': 27.1,
+                    'annual_maint_costs': 2.5,
+                    'customer_nps': 79
+                },
+                'improvements': {
+                    'network_uptime': 6.4,
+                    'annual_revenue': 0.5,
+                    'annual_energy_costs': -10.5,
+                    'annual_maint_costs': -1.7,
+                    'customer_nps': 11
+                }
+            },
+            'total_annual_benefit': 11.2,
+            'roi_percentage': 850,
+            'payback_period_months': 2
+        }
+        
+        return jsonify({
+            'success': True,
+            'data': impact_data
+        })
+        
+    except Exception as e:
+        logger.error(f"Error in get_annual_impact: {str(e)}")
+        return jsonify({'success': False, 'error': str(e)}), 500
 

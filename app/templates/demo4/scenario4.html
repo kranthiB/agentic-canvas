@@ -1,0 +1,854 @@
+{% extends "base.html" %}
+
+{% block title %}Real-Time Operations & Continuous Optimization - Scenario 4{% endblock %}
+
+{% block extra_css %}
+<!-- Font Awesome for Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- Custom Map CSS -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/demo4-map.css') }}">
+<!-- Scenario 4 Custom CSS -->
+<style>
+/* Override map container constraints for Scenario 4 */
+.map-container {
+    height: auto !important;
+    min-height: 100vh !important;
+    overflow: visible !important;
+}
+
+.map-content {
+    overflow: visible !important;
+    flex-direction: column !important;
+}
+
+/* NOC Dashboard Header */
+.noc-header {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    color: white;
+    padding: 1.5rem;
+    margin: 1rem 0.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(30, 60, 114, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.noc-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 30% 20%, rgba(30, 60, 114, 0.2) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+.noc-title {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 1rem;
+    position: relative;
+    z-index: 1;
+}
+
+.noc-title h1 {
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.noc-title .timestamp {
+    font-size: 14px;
+    opacity: 0.8;
+    margin-left: auto;
+}
+
+.noc-status-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 1rem;
+    position: relative;
+    z-index: 1;
+}
+
+.status-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.status-card h3 {
+    font-size: 14px;
+    margin: 0 0 0.5rem 0;
+    opacity: 0.9;
+}
+
+.status-value {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.status-online {
+    color: #10b981;
+}
+
+.status-warning {
+    color: #f59e0b;
+}
+
+/* Phase Sections */
+.phase-section {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    margin: 1rem 0.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.phase-header {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    color: white;
+    padding: 1rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 2px 8px rgba(30, 60, 114, 0.3);
+}
+
+.phase-header h2 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.phase-content {
+    padding: 1.5rem;
+}
+
+/* Network Map Styles */
+.network-map-container {
+    height: 500px;
+    width: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    position: relative;
+    background: #f8fafc;
+}
+
+#networkMap {
+    height: 100%;
+    width: 100%;
+    z-index: 100;
+}
+
+.leaflet-container {
+    height: 100%;
+    width: 100%;
+    background: #f8fafc;
+}
+
+/* Load Chart Styles */
+.load-chart-container {
+    height: 300px;
+    padding: 1rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Alerts Panel */
+.alerts-panel {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+}
+
+.alerts-header {
+    background: #f8fafc;
+    padding: 1rem;
+    border-bottom: 1px solid #e5e7eb;
+    font-weight: 600;
+    color: #374151;
+}
+
+.alert-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 1rem;
+    border-bottom: 1px solid #f3f4f6;
+    transition: background-color 0.2s ease;
+}
+
+.alert-item:hover {
+    background-color: #f9fafb;
+}
+
+.alert-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    color: white;
+}
+
+.alert-medium {
+    background-color: #f59e0b;
+}
+
+.alert-content {
+    flex: 1;
+}
+
+.alert-message {
+    font-size: 14px;
+    color: #374151;
+    margin: 0 0 4px 0;
+}
+
+.alert-timestamp {
+    font-size: 12px;
+    color: #6b7280;
+    margin: 0;
+}
+
+/* Time Controls */
+.time-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(30, 60, 114, 0.1);
+    margin-bottom: 1rem;
+    border: 1px solid rgba(30, 60, 114, 0.1);
+}
+
+.time-display {
+    font-size: 18px;
+    font-weight: 600;
+    color: #374151;
+    min-width: 120px;
+}
+
+.time-scrubber {
+    flex: 1;
+    height: 6px;
+    background: #e5e7eb;
+    border-radius: 3px;
+    position: relative;
+    cursor: pointer;
+}
+
+.time-progress {
+    height: 100%;
+    background: linear-gradient(90deg, #1e3c72 0%, #2a5298 100%);
+    border-radius: 3px;
+    transition: width 0.3s ease;
+    box-shadow: 0 1px 3px rgba(30, 60, 114, 0.3);
+}
+
+.play-button {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(30, 60, 114, 0.3);
+}
+
+.play-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(30, 60, 114, 0.4);
+}
+
+/* Event Stream */
+.event-stream {
+    background: #1f2937;
+    color: white;
+    border-radius: 8px;
+    max-height: 400px;
+    overflow-y: auto;
+    margin-top: 1rem;
+}
+
+.event-stream-header {
+    background: #374151;
+    padding: 1rem;
+    font-weight: 600;
+    border-bottom: 1px solid #4b5563;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.event-item {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #374151;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.event-timestamp {
+    color: #10b981;
+    font-weight: 600;
+}
+
+.event-agent {
+    color: #1e3c72;
+    font-weight: 600;
+}
+
+.event-action {
+    color: #e5e7eb;
+}
+
+.event-success {
+    color: #10b981;
+}
+
+/* Agentic Canvas Animation */
+.agentic-canvas {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    margin-top: 1rem;
+}
+
+.canvas-components {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.canvas-component {
+    text-align: center;
+    padding: 1rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.canvas-component.active {
+    border-color: #1e3c72;
+    background-color: #eff6ff;
+    transform: scale(1.05);
+}
+
+.canvas-component.active::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    border: 2px solid #1e3c72;
+    border-radius: 8px;
+    animation: pulse-border 2s infinite;
+}
+
+@keyframes pulse-border {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.component-icon {
+    font-size: 24px;
+    color: #6b7280;
+    margin-bottom: 0.5rem;
+}
+
+.component-name {
+    font-size: 12px;
+    font-weight: 500;
+    color: #374151;
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+}
+
+.modal-content {
+    background-color: white;
+    margin: 5% auto;
+    padding: 0;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 800px;
+    max-height: 80vh;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    color: white;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.modal-close:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.modal-body {
+    padding: 2rem;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+/* Report Cards */
+.report-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.report-card {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    border-left: 4px solid #10b981;
+    transition: transform 0.2s ease;
+}
+
+.report-card:hover {
+    transform: translateY(-2px);
+}
+
+.report-card h4 {
+    margin: 0 0 0.5rem 0;
+    font-size: 16px;
+    color: #374151;
+}
+
+.report-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: #10b981;
+    margin: 0.5rem 0;
+}
+
+.report-description {
+    font-size: 14px;
+    color: #6b7280;
+    margin: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .noc-status-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .noc-status-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .noc-status-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .time-controls {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .time-display {
+        min-width: auto;
+    }
+    
+    .report-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Loading States */
+.loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    color: #6b7280;
+}
+
+.spinner {
+    border: 2px solid #f3f4f6;
+    border-top: 2px solid #1e3c72;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    animation: spin 1s linear infinite;
+    margin-right: 0.5rem;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Success States */
+.success-indicator {
+    color: #10b981;
+    font-weight: 600;
+}
+
+.value-highlight {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+/* Notification animations */
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOutRight {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+/* Custom Leaflet popup styling to match the attached design */
+.leaflet-popup-content-wrapper {
+    background: white !important;
+    border-radius: 12px !important;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.12) !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+}
+
+.leaflet-popup-content {
+    margin: 0 !important;
+    padding: 0 !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+}
+
+.leaflet-popup-tip {
+    background: white !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+}
+
+.leaflet-popup-close-button {
+    position: absolute !important;
+    top: 12px !important;
+    right: 12px !important;
+    background: rgba(255,255,255,0.9) !important;
+    color: #64748b !important;
+    border-radius: 20px !important;
+    width: 24px !important;
+    height: 24px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 18px !important;
+    font-weight: bold !important;
+    z-index: 1000 !important;
+    transition: all 0.2s ease !important;
+}
+
+.leaflet-popup-close-button:hover {
+    background: rgba(239, 68, 68, 0.1) !important;
+    color: #ef4444 !important;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="map-container">
+    <div class="map-content">
+        
+        <!-- Phase 1: NOC Dashboard - The Normal State -->
+        <div class="phase-section" id="nocDashboard">
+            <div class="noc-header">
+                <div class="noc-title">
+                    <i class="fas fa-desktop"></i>
+                    <div>
+                        <h1>TOTALENERGIES - NETWORK OPERATIONS CENTER</h1>
+                        <div class="timestamp" id="currentTimestamp">Friday, October 4, 2025 | 06:00 AM IST</div>
+                    </div>
+                </div>
+                <div class="noc-status-grid" id="nocStatusGrid">
+                    <div class="status-card">
+                        <h3>Network Status</h3>
+                        <p class="status-value status-online" id="networkStatus">🟢 OPERATIONAL</p>
+                    </div>
+                    <div class="status-card">
+                        <h3>Uptime (24h)</h3>
+                        <p class="status-value" id="uptime24h">99.8%</p>
+                    </div>
+                    <div class="status-card">
+                        <h3>Active Sessions</h3>
+                        <p class="status-value" id="activeSessions">2</p>
+                    </div>
+                    <div class="status-card">
+                        <h3>Dispensers Available</h3>
+                        <p class="status-value" id="chargersAvailable">70/72</p>
+                    </div>
+                    <div class="status-card">
+                        <h3>Supply Pressure</h3>
+                        <p class="status-value" id="gridLoad">45 bar (Stable)</p>
+                    </div>
+                    <div class="status-card">
+                        <h3>Compressor Load</h3>
+                        <p class="status-value" id="solarGeneration">850 kW (Normal)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Live Network Map -->
+        <div class="phase-section">
+            <div class="phase-header">
+                <i class="fas fa-map-marked-alt"></i>
+                <h2>LIVE NETWORK MAP (BANGALORE)</h2>
+            </div>
+            <div class="phase-content">
+                <div style="height: 500px; width: 100%; position: relative; background: #f0f0f0; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden;">
+                    <div id="networkMap" style="height: 100%; width: 100%; position: absolute; top: 0; left: 0; z-index: 1;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Network Load Chart -->
+        <div class="phase-section">
+            <div class="phase-header">
+                <i class="fas fa-chart-line"></i>
+                <h2>24-HOUR CNG OPERATIONS (PRESSURE & COMPRESSOR LOAD)</h2>
+            </div>
+            <div class="phase-content">
+                <div class="load-chart-container">
+                    <canvas id="loadChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Predictive Alerts Panel -->
+        <div class="phase-section">
+            <div class="phase-header">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h2>PREDICTIVE ALERTS & EVENTS</h2>
+            </div>
+            <div class="phase-content">
+                <div class="alerts-panel" id="alertsPanel">
+                    <div class="alerts-header">ML Platform Predictions</div>
+                    <div id="alertsList">
+                        <!-- Alerts will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Time Controls -->
+        <div class="time-controls">
+            <div class="time-display" id="timeDisplay">06:00 AM</div>
+            <div class="time-scrubber" id="timeScrubber">
+                <div class="time-progress" id="timeProgress" style="width: 0%;"></div>
+            </div>
+            <button class="play-button" id="playButton">
+                <i class="fas fa-play"></i> Start Demo
+            </button>
+        </div>
+
+        <!-- Event Stream & Agentic Canvas -->
+        <div class="phase-section" id="agenticCanvasSection" style="display: none;">
+            <div class="phase-header">
+                <i class="fas fa-cogs"></i>
+                <h2>AGENTIC CANVAS - LIVE EVENT STREAM</h2>
+            </div>
+            <div class="phase-content">
+                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1rem;">
+                    <div class="event-stream" id="eventStream">
+                        <div class="event-stream-header">
+                            <span id="eventStreamTitle">NETWORK OPERATIONS - REAL-TIME EVENTS</span>
+                        </div>
+                        <div id="eventsList">
+                            <!-- Events will be populated here -->
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- End of Day Report -->
+        <div class="phase-section" id="endOfDaySection" style="display: none;">
+            <div class="phase-header">
+                <i class="fas fa-chart-pie"></i>
+                <h2>BANGALORE NETWORK - DAILY OPERATIONS REPORT</h2>
+            </div>
+            <div class="phase-content">
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <h3 style="margin: 0; color: #374151;">Daily Score: <span class="value-highlight" id="dailyScore">96.2/100</span> (EXCELLENT)</h3>
+                </div>
+                
+                <div class="report-grid" id="performanceMetrics">
+                    <!-- Performance metrics will be populated here -->
+                </div>
+
+                <h4 style="margin: 2rem 0 1rem 0; color: #374151;">AI-DRIVEN OPTIMIZATIONS (TODAY'S VALUE DELIVERED)</h4>
+                <div class="report-grid" id="aiOptimizations">
+                    <!-- AI optimizations will be populated here -->
+                </div>
+
+                <div style="text-align: center; margin-top: 2rem; padding: 2rem; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border-radius: 8px;">
+                    <h3 style="margin: 0;">TOTAL DAILY VALUE CREATED BY AGENTIC CANVAS: <span id="totalDailyValue">₹70,320</span></h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Annual Impact -->
+        <div class="phase-section" id="annualImpactSection" style="display: none;">
+            <div class="phase-header">
+                <i class="fas fa-calculator"></i>
+                <h2>ANNUAL IMPACT PROJECTION</h2>
+            </div>
+            <div class="phase-content">
+                <h4 style="text-align: center; margin-bottom: 2rem; color: #374151;">Bangalore Network - 18 Sites</h4>
+                
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                        <thead>
+                            <tr style="background: #f8fafc;">
+                                <th style="padding: 1rem; text-align: left; border-bottom: 1px solid #e5e7eb;">Metric</th>
+                                <th style="padding: 1rem; text-align: center; border-bottom: 1px solid #e5e7eb;">Without AI (Manual Ops)</th>
+                                <th style="padding: 1rem; text-align: center; border-bottom: 1px solid #e5e7eb;">With Agentic Canvas</th>
+                                <th style="padding: 1rem; text-align: center; border-bottom: 1px solid #e5e7eb;">Improvement</th>
+                            </tr>
+                        </thead>
+                        <tbody id="annualComparisonTable">
+                            <!-- Table rows will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div style="text-align: center; margin-top: 2rem; padding: 2rem; background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white; border-radius: 8px;">
+                    <h3 style="margin: 0 0 1rem 0;">TOTAL ANNUAL BENEFIT: <span id="totalAnnualBenefit">₹11.2 Crore</span></h3>
+                    <p style="margin: 0; font-size: 18px;">ROI ON AGENTIC CANVAS: <span id="roiPercentage">850%</span> (Payback period: &lt; 2 months)</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Dispenser Health Modal -->
+<div id="dispenserModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="dispenserModalTitle">CNG Dispenser Health Details</h3>
+            <button class="modal-close" id="dispenserModalClose">&times;</button>
+        </div>
+        <div class="modal-body" id="dispenserModalBody">
+            <!-- Dispenser details will be populated here -->
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+
+<!-- Scenario 4 Controller -->
+<script src="{{ url_for('static', filename='js/demo4/scenario4.js') }}"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Scenario 4: Real-Time Operations & Continuous Optimization - Loading...');
+    
+    // Initialize the scenario controller
+    // Clean up existing controller if present
+    if (window.scenario4Controller) {
+        window.scenario4Controller.cleanup();
+    }
+    
+    window.scenario4Controller = new Scenario4Controller();
+});
+</script>
+{% endblock %}

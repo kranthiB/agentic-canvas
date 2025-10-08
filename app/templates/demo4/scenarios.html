@@ -2,6 +2,32 @@
 
 {% block title %}Scenarios - Mobility Maestro{% endblock %}
 
+{% block extra_css %}
+<style>
+/* Back to Dashboard Button Hover Effect */
+.btn-outline-primary.dashboard-back-btn {
+    border-color: #1e3c72 !important;
+    color: #1e3c72 !important;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-primary.dashboard-back-btn:hover {
+    background-color: #1e3c72 !important;
+    border-color: #1e3c72 !important;
+    color: white !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(30, 60, 114, 0.3);
+}
+
+.btn-outline-primary.dashboard-back-btn:focus {
+    background-color: #1e3c72 !important;
+    border-color: #1e3c72 !important;
+    color: white !important;
+    box-shadow: 0 0 0 0.25rem rgba(30, 60, 114, 0.25);
+}
+</style>
+{% endblock %}
+
 {% block content %}
 <!-- Scenarios Header Section -->
 <div class="container mt-4 mb-4" id="scenarios">
@@ -11,7 +37,7 @@
             <p class="text-muted mb-0">Interactive demonstrations of autonomous network planning and crisis management</p>
         </div>
         <div>
-            <a href="{{ url_for('demo4.dashboard') }}" class="btn btn-outline-primary">
+            <a href="{{ url_for('demo4.dashboard') }}" class="btn btn-outline-primary dashboard-back-btn">
                 <i class="bi bi-arrow-left me-2"></i> Back to Dashboard
             </a>
         </div>
@@ -25,12 +51,12 @@
                     <div class="demo-header mb-4">
                         <div class="demo-icon-large mb-3">
                             <div class="scenario-icon">
-                                <i class="bi bi-exclamation-triangle-fill" style="font-size: 2.5rem; color: #DC3545;"></i>
+                                <i class="bi bi-exclamation-triangle-fill" style="font-size: 2.5rem; color: #1e3c72;"></i>
                             </div>
                         </div>
                         <h3 class="card-title mb-2">Mumbai Permit Crisis</h3>
                         <div class="d-flex align-items-center gap-2 mb-2">
-                            <span class="badge bg-danger">Critical</span>
+                            <span class="badge bg-primary">Critical</span>
                             <span class="badge bg-secondary">Scenario 1</span>
                         </div>
                     </div>
@@ -67,13 +93,69 @@
                         </div>
                     </div>
                     
-                    <button class="btn btn-danger w-100 btn-lg" onclick="launchScenario(1)">
+                    <button class="btn btn-primary w-100 btn-lg" onclick="launchScenario(1)">
                         Launch Crisis Demo <i class="bi bi-arrow-right ms-2"></i>
                     </button>
                 </div>
             </div>
         </div>
         
+        <!-- Scenario 4: Real-Time Operations & Continuous Optimization -->
+        <div class="col-lg-4 col-md-6">
+            <div class="demo-card card h-100 shadow-hover border-0">
+                <div class="card-body p-4">
+                    <div class="demo-header mb-4">
+                        <div class="demo-icon-large mb-3">
+                            <div class="scenario-icon">
+                                <i class="bi bi-speedometer2" style="font-size: 2.5rem; color: #2a5298;"></i>
+                            </div>
+                        </div>
+                        <h3 class="card-title mb-2">Real-Time Operations & Continuous Optimization</h3>
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <span class="badge bg-primary">24/7 Operations</span>
+                            <span class="badge bg-secondary">Scenario 4</span>
+                        </div>
+                    </div>
+                    
+                    <p class="card-text text-muted mb-4">
+                        Network Operations Center (NOC) demonstration showcasing 24/7 AI-managed network operations. 
+                        Experience a day in the life of the AI system with real-time optimizations and value creation.
+                    </p>
+                    
+                    <div class="mb-4">
+                        <p class="small fw-semibold text-uppercase text-muted mb-2">Key Features</p>
+                        <div class="d-flex flex-wrap gap-2">
+                            <span class="feature-badge bg-primary-subtle text-primary">NOC Dashboard</span>
+                            <span class="feature-badge bg-success-subtle text-success">Load Balancing</span>
+                            <span class="feature-badge bg-warning-subtle text-warning">Anomaly Detection</span>
+                            <span class="feature-badge bg-info-subtle text-info">Predictive Maintenance</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <div class="row text-center">
+                            <div class="col-4">
+                                <div class="small text-muted">Daily Value</div>
+                                <div class="fw-bold text-success">₹70K</div>
+                            </div>
+                            <div class="col-4">
+                                <div class="small text-muted">Network Uptime</div>
+                                <div class="fw-bold text-success">97.9%</div>
+                            </div>
+                            <div class="col-4">
+                                <div class="small text-muted">ROI</div>
+                                <div class="fw-bold text-success">850%</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-primary w-100 btn-lg" onclick="launchScenario('4')">
+                        Launch NOC Demo <i class="bi bi-arrow-right ms-2"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <!-- Scenario 7: Dynamic Pricing & Revenue Optimization -->
         <div class="col-lg-4 col-md-6">
             <div class="demo-card card h-100 shadow-hover border-0">
@@ -81,12 +163,12 @@
                     <div class="demo-header mb-4">
                         <div class="demo-icon-large mb-3">
                             <div class="scenario-icon">
-                                <i class="bi bi-graph-up-arrow" style="font-size: 2.5rem; color: #EF4444;"></i>
+                                <i class="bi bi-graph-up-arrow" style="font-size: 2.5rem; color: #1e3c72;"></i>
                             </div>
                         </div>
                         <h3 class="card-title mb-2">Dynamic Pricing & Revenue Optimization</h3>
                         <div class="d-flex align-items-center gap-2 mb-2">
-                            <span class="badge bg-red">Revenue</span>
+                            <span class="badge bg-primary">Revenue</span>
                             <span class="badge bg-secondary">Scenario 7</span>
                         </div>
                     </div>
@@ -99,10 +181,10 @@
                     <div class="mb-4">
                         <p class="small fw-semibold text-uppercase text-muted mb-2">Key Features</p>
                         <div class="d-flex flex-wrap gap-2">
-                            <span class="feature-badge bg-red-subtle text-red">Dynamic Pricing</span>
-                            <span class="feature-badge bg-primary-subtle text-primary">Revenue Analytics</span>
-                            <span class="feature-badge bg-success-subtle text-success">Demand Forecasting</span>
-                            <span class="feature-badge bg-warning-subtle text-warning">Competitor Analysis</span>
+                            <span class="feature-badge bg-primary-subtle text-primary">Dynamic Pricing</span>
+                            <span class="feature-badge bg-info-subtle text-info">Revenue Analytics</span>
+                            <span class="feature-badge bg-primary-subtle text-primary">Demand Forecasting</span>
+                            <span class="feature-badge bg-info-subtle text-info">Competitor Analysis</span>
                         </div>
                     </div>
                     
@@ -110,7 +192,7 @@
                         <div class="row text-center">
                             <div class="col-4">
                                 <div class="small text-muted">Stations</div>
-                                <div class="fw-bold text-red">150</div>
+                                <div class="fw-bold text-primary">150</div>
                             </div>
                             <div class="col-4">
                                 <div class="small text-muted">Revenue Lift</div>
@@ -123,68 +205,13 @@
                         </div>
                     </div>
                     
-                    <button class="btn btn-red w-100 btn-lg" onclick="launchScenario(7)">
+                    <button class="btn btn-primary w-100 btn-lg" onclick="launchScenario(7)">
                         Launch Pricing Demo <i class="bi bi-arrow-right ms-2"></i>
                     </button>
                 </div>
             </div>
         </div>
-        
-        <!-- Scenario 4: Real-Time Operations (Bangalore Network Live Monitoring) -->
-        <div class="col-lg-4 col-md-6">
-            <div class="demo-card card h-100 shadow-hover border-0">
-                <div class="card-body p-4">
-                    <div class="demo-header mb-4">
-                        <div class="demo-icon-large mb-3">
-                            <div class="scenario-icon">
-                                <i class="bi bi-activity" style="font-size: 2.5rem; color: #198754;"></i>
-                            </div>
-                        </div>
-                        <h3 class="card-title mb-2">Real-Time Operations</h3>
-                        <div class="d-flex align-items-center gap-2 mb-2">
-                            <span class="badge bg-success">Live Monitoring</span>
-                            <span class="badge bg-secondary">Scenario 4</span>
-                        </div>
-                    </div>
-                    
-                    <p class="card-text text-muted mb-4">
-                        Live monitoring of Bangalore network with 25 active stations. Real-time IoT telemetry, 
-                        predictive maintenance alerts, and automated incident response systems.
-                    </p>
-                    
-                    <div class="mb-4">
-                        <p class="small fw-semibold text-uppercase text-muted mb-2">Key Features</p>
-                        <div class="d-flex flex-wrap gap-2">
-                            <span class="feature-badge bg-success-subtle text-success">Live Monitoring</span>
-                            <span class="feature-badge bg-info-subtle text-info">IoT Telemetry</span>
-                            <span class="feature-badge bg-primary-subtle text-primary">Predictive AI</span>
-                            <span class="feature-badge bg-warning-subtle text-warning">Auto Response</span>
-                        </div>
-                    </div>
-                    
-                    <div class="mb-4">
-                        <div class="row text-center">
-                            <div class="col-4">
-                                <div class="small text-muted">Stations</div>
-                                <div class="fw-bold text-success">25</div>
-                            </div>
-                            <div class="col-4">
-                                <div class="small text-muted">Uptime</div>
-                                <div class="fw-bold text-success">99.2%</div>
-                            </div>
-                            <div class="col-4">
-                                <div class="small text-muted">MTTR</div>
-                                <div class="fw-bold text-success">12 mins</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <button class="btn btn-success w-100 btn-lg" onclick="launchScenario(4)">
-                        Launch Operations Demo <i class="bi bi-arrow-right ms-2"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
+
         
         <!-- Scenario 6: Competitive Acquisition (Acquire Statiq Network) -->
         <div class="col-lg-4 col-md-6">
@@ -193,12 +220,12 @@
                     <div class="demo-header mb-4">
                         <div class="demo-icon-large mb-3">
                             <div class="scenario-icon">
-                                <i class="bi bi-buildings" style="font-size: 2.5rem; color: #0891B2;"></i>
+                                <i class="bi bi-buildings" style="font-size: 2.5rem; color: #2a5298;"></i>
                             </div>
                         </div>
                         <h3 class="card-title mb-2">Competitive Acquisition</h3>
                         <div class="d-flex align-items-center gap-2 mb-2">
-                            <span class="badge bg-teal">Acquisition</span>
+                            <span class="badge bg-primary">Acquisition</span>
                             <span class="badge bg-secondary">Scenario 6</span>
                         </div>
                     </div>
@@ -211,10 +238,10 @@
                     <div class="mb-4">
                         <p class="small fw-semibold text-uppercase text-muted mb-2">Key Features</p>
                         <div class="d-flex flex-wrap gap-2">
-                            <span class="feature-badge bg-teal-subtle text-teal">Due Diligence</span>
-                            <span class="feature-badge bg-warning-subtle text-warning">Valuation</span>
-                            <span class="feature-badge bg-info-subtle text-info">Synergy Analysis</span>
-                            <span class="feature-badge bg-success-subtle text-success">Integration</span>
+                            <span class="feature-badge bg-primary-subtle text-primary">Due Diligence</span>
+                            <span class="feature-badge bg-info-subtle text-info">Valuation</span>
+                            <span class="feature-badge bg-primary-subtle text-primary">Synergy Analysis</span>
+                            <span class="feature-badge bg-info-subtle text-info">Integration</span>
                         </div>
                     </div>
                     
@@ -222,7 +249,7 @@
                         <div class="row text-center">
                             <div class="col-4">
                                 <div class="small text-muted">Stations</div>
-                                <div class="fw-bold text-teal">85</div>
+                                <div class="fw-bold text-primary">85</div>
                             </div>
                             <div class="col-4">
                                 <div class="small text-muted">Value</div>
@@ -235,7 +262,7 @@
                         </div>
                     </div>
                     
-                    <button class="btn btn-teal w-100 btn-lg" onclick="launchScenario(6)">
+                    <button class="btn btn-primary w-100 btn-lg" onclick="launchScenario(6)">
                         Launch Acquisition Demo <i class="bi bi-arrow-right ms-2"></i>
                     </button>
                 </div>
@@ -249,12 +276,12 @@
                     <div class="demo-header mb-4">
                         <div class="demo-icon-large mb-3">
                             <div class="scenario-icon">
-                                <i class="bi bi-signpost-fill" style="font-size: 2.5rem; color: #8B5DFF;"></i>
+                                <i class="bi bi-signpost-fill" style="font-size: 2.5rem; color: #1e3c72;"></i>
                             </div>
                         </div>
                         <h3 class="card-title mb-2">Highway Corridor Expansion</h3>
                         <div class="d-flex align-items-center gap-2 mb-2">
-                            <span class="badge bg-purple">Expansion</span>
+                            <span class="badge bg-primary">Expansion</span>
                             <span class="badge bg-secondary">Scenario 5</span>
                         </div>
                     </div>
@@ -267,10 +294,10 @@
                     <div class="mb-4">
                         <p class="small fw-semibold text-uppercase text-muted mb-2">Key Features</p>
                         <div class="d-flex flex-wrap gap-2">
-                            <span class="feature-badge bg-purple-subtle text-purple">Corridor Planning</span>
+                            <span class="feature-badge bg-primary-subtle text-primary">Corridor Planning</span>
                             <span class="feature-badge bg-info-subtle text-info">Traffic Analysis</span>
                             <span class="feature-badge bg-primary-subtle text-primary">Route Optimization</span>
-                            <span class="feature-badge bg-warning-subtle text-warning">Logistics Hub</span>
+                            <span class="feature-badge bg-info-subtle text-info">Logistics Hub</span>
                         </div>
                     </div>
                     
@@ -278,7 +305,7 @@
                         <div class="row text-center">
                             <div class="col-4">
                                 <div class="small text-muted">Corridors</div>
-                                <div class="fw-bold text-purple">4</div>
+                                <div class="fw-bold text-primary">4</div>
                             </div>
                             <div class="col-4">
                                 <div class="small text-muted">Stations</div>
@@ -291,7 +318,7 @@
                         </div>
                     </div>
                     
-                    <button class="btn btn-purple w-100 btn-lg" onclick="launchScenario(5)">
+                    <button class="btn btn-primary w-100 btn-lg" onclick="launchScenario(5)">
                         Launch Highway Demo <i class="bi bi-arrow-right ms-2"></i>
                     </button>
                 </div>
@@ -305,12 +332,12 @@
                     <div class="demo-header mb-4">
                         <div class="demo-icon-large mb-3">
                             <div class="scenario-icon">
-                                <i class="bi bi-calculator" style="font-size: 2.5rem; color: #198754;"></i>
+                                <i class="bi bi-calculator" style="font-size: 2.5rem; color: #2a5298;"></i>
                             </div>
                         </div>
                         <h3 class="card-title mb-2">Budget Optimization</h3>
                         <div class="d-flex align-items-center gap-2 mb-2">
-                            <span class="badge bg-success">Cost Control</span>
+                            <span class="badge bg-primary">Cost Control</span>
                             <span class="badge bg-secondary">Scenario 2</span>
                         </div>
                     </div>
@@ -347,7 +374,7 @@
                         </div>
                     </div>
                     
-                    <button class="btn btn-success w-100 btn-lg" onclick="launchScenario(2)">
+                    <button class="btn btn-primary w-100 btn-lg" onclick="launchScenario(2)">
                         Launch Budget Demo <i class="bi bi-arrow-right ms-2"></i>
                     </button>
                 </div>
@@ -361,12 +388,12 @@
                     <div class="demo-header mb-4">
                         <div class="demo-icon-large mb-3">
                             <div class="scenario-icon">
-                                <i class="bi bi-lightning-charge-fill" style="font-size: 2.5rem; color: #FD7E14;"></i>
+                                <i class="bi bi-lightning-charge-fill" style="font-size: 2.5rem; color: #1e3c72;"></i>
                             </div>
                         </div>
                         <h3 class="card-title mb-2">Pricing War</h3>
                         <div class="d-flex align-items-center gap-2 mb-2">
-                            <span class="badge bg-warning">Competitive</span>
+                            <span class="badge bg-primary">Competitive</span>
                             <span class="badge bg-secondary">Scenario 3</span>
                         </div>
                     </div>
@@ -403,7 +430,7 @@
                         </div>
                     </div>
                     
-                    <button class="btn btn-warning w-100 btn-lg" onclick="launchScenario(3)">
+                    <button class="btn btn-primary w-100 btn-lg" onclick="launchScenario(3)">
                         Launch Pricing Demo <i class="bi bi-arrow-right ms-2"></i>
                     </button>
                 </div>
@@ -421,12 +448,12 @@
                     <div class="demo-header mb-4">
                         <div class="demo-icon-large mb-3">
                             <div class="scenario-icon">
-                                <i class="bi bi-lightning-charge" style="font-size: 2.5rem; color: #DC3545;"></i>
+                                <i class="bi bi-lightning-charge" style="font-size: 2.5rem; color: #2a5298;"></i>
                             </div>
                         </div>
                         <h3 class="card-title mb-2">Grid Failure</h3>
                         <div class="d-flex align-items-center gap-2 mb-2">
-                            <span class="badge bg-danger">Emergency</span>
+                            <span class="badge bg-primary">Emergency</span>
                             <span class="badge bg-secondary">Scenario 9</span>
                         </div>
                     </div>
@@ -463,7 +490,7 @@
                         </div>
                     </div>
                     
-                    <button class="btn btn-danger w-100 btn-lg" onclick="launchScenario(9)">
+                    <button class="btn btn-primary w-100 btn-lg" onclick="launchScenario(9)">
                         Launch Emergency Demo <i class="bi bi-arrow-right ms-2"></i>
                     </button>
                 </div>
@@ -522,7 +549,7 @@
         left: 0;
         right: 0;
         height: 3px;
-        background: linear-gradient(90deg, #006064, #0891B2);
+        background: linear-gradient(90deg, #1e3c72, #2a5298);
         transform: scaleX(0);
         transition: transform 0.3s ease;
     }
@@ -547,10 +574,10 @@
         align-items: center;
         justify-content: center;
         border-radius: 16px;
-        background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(8, 145, 178, 0.05));
+        background: linear-gradient(135deg, rgba(30, 60, 114, 0.1), rgba(42, 82, 152, 0.05));
         margin: 0 auto;
         position: relative;
-        border: 1px solid rgba(6, 182, 212, 0.1);
+        border: 1px solid rgba(30, 60, 114, 0.1);
     }
 
     .feature-badge {
@@ -563,42 +590,26 @@
         letter-spacing: 0.5px;
     }
     
-    /* Improved feature badge colors */
-    .bg-danger-subtle { background-color: rgba(239, 68, 68, 0.15) !important; }
-    .text-danger { color: #DC2626 !important; }
-    .bg-warning-subtle { background-color: rgba(245, 158, 11, 0.15) !important; }
-    .text-warning { color: #D97706 !important; }
-    .bg-info-subtle { background-color: rgba(59, 130, 246, 0.15) !important; }
-    .text-info { color: #2563EB !important; }
-    .bg-success-subtle { background-color: rgba(34, 197, 94, 0.15) !important; }
-    .text-success { color: #16A34A !important; }
-    .bg-primary-subtle { background-color: rgba(99, 102, 241, 0.15) !important; }
-    .text-primary { color: #4F46E5 !important; }
+    /* Dashboard blue feature badge colors */
+    .bg-primary-subtle { background-color: rgba(30, 60, 114, 0.15) !important; }
+    .text-primary { color: #1e3c72 !important; }
+    .bg-info-subtle { background-color: rgba(42, 82, 152, 0.15) !important; }
+    .text-info { color: #2a5298 !important; }
+    .bg-success-subtle { background-color: rgba(30, 60, 114, 0.1) !important; }
+    .text-success { color: #1e3c72 !important; }
+    .bg-warning-subtle { background-color: rgba(42, 82, 152, 0.1) !important; }
+    .text-warning { color: #2a5298 !important; }
+    .bg-danger-subtle { background-color: rgba(30, 60, 114, 0.2) !important; }
+    .text-danger { color: #1e3c72 !important; }
+    
+    /* Badge styling */
+    .badge {
+        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%) !important;
+        color: white !important;
+        border: none !important;
+    }
 
-    /* Custom color classes - Improved cohesive palette */
-    .bg-purple { background-color: #8B5DFF !important; }
-    .text-purple { color: #8B5DFF !important; }
-    .bg-purple-subtle { background-color: rgba(139, 93, 255, 0.1) !important; }
-    .btn-purple { background-color: #8B5DFF; border-color: #8B5DFF; color: white; }
-    .btn-purple:hover { background-color: #7C3AED; border-color: #7C3AED; }
-
-    .bg-teal { background-color: #0891B2 !important; }
-    .text-teal { color: #0891B2 !important; }
-    .bg-teal-subtle { background-color: rgba(8, 145, 178, 0.1) !important; }
-    .btn-teal { background-color: #0891B2; border-color: #0891B2; color: white; }
-    .btn-teal:hover { background-color: #0E7490; border-color: #0E7490; }
-
-    .bg-red { background-color: #EF4444 !important; }
-    .text-red { color: #EF4444 !important; }
-    .bg-red-subtle { background-color: rgba(239, 68, 68, 0.1) !important; }
-    .btn-red { background-color: #EF4444; border-color: #EF4444; color: white; }
-    .btn-red:hover { background-color: #DC2626; border-color: #DC2626; }
-
-    .bg-indigo { background-color: #6366F1 !important; }
-    .text-indigo { color: #6366F1 !important; }
-    .bg-indigo-subtle { background-color: rgba(99, 102, 241, 0.1) !important; }
-    .btn-indigo { background-color: #6366F1; border-color: #6366F1; color: white; }
-    .btn-indigo:hover { background-color: #4F46E5; border-color: #4F46E5; }
+    /* Dashboard blue unified color palette */
 
     /* Animation classes */
     .animate-fade-in {
@@ -639,6 +650,19 @@
         font-weight: 600;
         border-radius: 12px;
         transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        border-color: #1e3c72;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #1a3461 0%, #245085 100%);
+        border-color: #1a3461;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 16px rgba(30, 60, 114, 0.3);
     }
 
     .btn:hover {
