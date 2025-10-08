@@ -36,11 +36,11 @@
 
 /* Main Container */
 .map-container {
-    height: 100vh;
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
     background: var(--bg-gradient);
-    overflow: hidden;
+    overflow: visible;
 }
 
 /* Header - Matching Demo5 Style */
@@ -114,7 +114,7 @@
 .map-content {
     display: flex;
     flex: 1;
-    overflow: hidden;
+    overflow: visible;
     padding: 0 1rem 1rem 1rem;
     gap: 1rem;
 }

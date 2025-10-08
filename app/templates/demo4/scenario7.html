@@ -1,0 +1,1150 @@
+{% extends "base.html" %}
+
+{% block title %}Dynamic Pricing & Revenue Optimization - Scenario 7{% endblock %}
+
+{% block extra_css %}
+<!-- Font Awesome for Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- Custom Map CSS -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/demo4-map.css') }}">
+<!-- Scenario 7 Custom CSS -->
+<style>
+/* Override map container constraints for Scenario 7 */
+.map-container {
+    height: auto !important;
+    min-height: 100vh !important;
+    overflow: visible !important;
+}
+
+.map-content {
+    overflow: visible !important;
+    flex-direction: column !important;
+}
+
+/* Revenue Opportunity Section */
+.revenue-opportunity-banner {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    color: #374151;
+    padding: 1.25rem;
+    margin: 1rem 0.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(102, 126, 234, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    animation: slideDown 0.6s ease;
+    position: relative;
+    overflow: visible;
+    width: calc(100% - 1rem);
+    box-sizing: border-box;
+    min-height: auto;
+    transition: all 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.revenue-opportunity-banner:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.15);
+    background: rgba(255, 255, 255, 1);
+}
+
+.opportunity-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 0.8rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid rgba(102, 126, 234, 0.15);
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.opportunity-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+    color: #374151;
+}
+
+.opportunity-subtitle {
+    font-size: 14px;
+    color: #6b7280;
+    margin: 4px 0 0 0;
+}
+
+.opportunity-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    color: white;
+    flex-shrink: 0;
+}
+
+.opportunity-content {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    box-sizing: border-box;
+}
+}
+
+/* Remove glow animation - not needed for card theme */
+
+.opportunity-body {
+    position: relative;
+    z-index: 1;
+}
+
+.current-model-info {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    margin-bottom: 1.5rem;
+}
+
+.opportunity-content {
+    position: relative;
+    z-index: 1;
+}
+
+.opportunity-summary {
+    background: rgba(102, 126, 234, 0.1);
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 1rem 0;
+    border-left: 4px solid #667eea;
+}
+
+.inefficiencies-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0.8rem;
+    margin: 1rem 0;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.inefficiency-item {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid rgba(102, 126, 234, 0.2);
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 100px;
+}
+
+.inefficiency-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.2);
+    background: rgba(255, 255, 255, 1);
+    border-color: rgba(102, 126, 234, 0.3);
+}
+
+.inefficiency-icon {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    color: white;
+    margin-bottom: 8px;
+}
+
+.inefficiency-title {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #374151;
+}
+
+.inefficiency-impact {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: #f5576c;
+}
+
+.inefficiency-details {
+    font-size: 12px;
+    color: #6b7280;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+    .inefficiencies-grid {
+        grid-template-columns: 1fr;
+        gap: 0.6rem;
+    }
+    
+    .revenue-opportunity-banner {
+        padding: 1.2rem;
+        margin: 0.3rem;
+    }
+    
+    .pricing-viz-container {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+}
+
+@media (min-width: 1025px) {
+    .inefficiencies-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .opportunity-title {
+        font-size: 16px;
+    }
+    
+    .analysis-content {
+        min-height: 300px;
+    }
+    
+    .event-stream-container {
+        padding: 1rem;
+    }
+}
+
+/* Pricing Visualization Cards */
+.pricing-viz-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin: 1rem 0.5rem;
+}
+
+.pricing-viz-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    padding: 1.25rem;
+    box-shadow: 0 4px 16px rgba(102, 126, 234, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    transition: all 0.3s ease;
+}
+
+.pricing-viz-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.15);
+    background: rgba(255, 255, 255, 1);
+}
+
+.viz-card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 0.8rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid rgba(102, 126, 234, 0.15);
+}
+
+.viz-card-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: white;
+}
+
+.static-pricing-icon {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+}
+
+.utilization-icon {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+}
+
+.viz-card-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0;
+}
+
+.viz-card-subtitle {
+    font-size: 13px;
+    color: #6b7280;
+    margin: 0;
+}
+
+/* Chart containers */
+.chart-container {
+    position: relative;
+    height: 220px;
+    margin-top: 0.8rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.chart-container canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* Agentic Canvas Live View */
+.agentic-canvas-container {
+    display: none;
+    background: white;
+    border-radius: 16px;
+    margin: 1rem;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.canvas-header {
+    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+    color: white;
+    padding: 1.5rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.canvas-title {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.analysis-content {
+    display: flex;
+    flex-direction: column;
+    min-height: 400px;
+}
+
+.event-stream-container {
+    padding: 1.5rem;
+    flex: 1;
+    background: #f8fafc;
+    border-right: 1px solid #e5e7eb;
+}
+
+.canvas-diagram-pane {
+    padding: 1.5rem;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.event-stream-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.analysis-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: #667eea;
+    font-weight: 500;
+}
+
+.analysis-status i {
+    font-size: 14px;
+}
+
+.analysis-complete {
+    background: rgba(16, 185, 129, 0.05);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-top: 1rem;
+    text-align: center;
+}
+
+.completion-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #10b981;
+    margin-bottom: 0.5rem;
+}
+
+.completion-indicator i {
+    font-size: 20px;
+}
+
+.event-stream-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0;
+}
+
+.event-stream {
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 8px;
+}
+
+.event-item {
+    background: white;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 10px;
+    border-left: 4px solid;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    animation: slideInLeft 0.3s ease;
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.event-item.agent-orchestrator { border-left-color: #8b5cf6; }
+.event-item.agent-financial { border-left-color: #10b981; }
+.event-item.agent-geographic { border-left-color: #f59e0b; }
+.event-item.agent-market { border-left-color: #3b82f6; }
+.event-item.agent-network { border-left-color: #ef4444; }
+
+.event-timestamp {
+    font-size: 11px;
+    color: #6b7280;
+    font-weight: 600;
+}
+
+.event-agent {
+    font-weight: 700;
+    font-size: 13px;
+    color: #1f2937;
+    margin-bottom: 4px;
+}
+
+.event-details {
+    font-size: 12px;
+    color: #6b7280;
+    line-height: 1.4;
+}
+
+/* Canvas Diagram */
+.canvas-diagram {
+    width: 280px;
+    height: 320px;
+    position: relative;
+}
+
+.diagram-component {
+    position: absolute;
+    background: #f3f4f6;
+    border: 2px solid #d1d5db;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-align: center;
+    color: #374151;
+    transition: all 0.3s ease;
+}
+
+.diagram-component.active {
+    background: #dbeafe;
+    border-color: #3b82f6;
+    color: #1e40af;
+    box-shadow: 0 0 12px rgba(59, 130, 246, 0.3);
+}
+
+.user-interface { top: 10px; left: 100px; width: 80px; }
+.orchestrator { top: 60px; left: 90px; width: 100px; }
+.agent-fin { top: 120px; left: 20px; width: 60px; }
+.agent-geo { top: 120px; left: 90px; width: 60px; }
+.agent-mkt { top: 120px; left: 160px; width: 60px; }
+.agent-net { top: 120px; left: 230px; width: 60px; }
+.tool-registry { top: 180px; left: 50px; width: 80px; }
+.data-sources { top: 180px; left: 150px; width: 80px; }
+
+/* Price Simulator */
+.price-simulator-container {
+    display: none;
+    background: white;
+    border-radius: 16px;
+    margin: 1rem;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.simulator-header {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    color: white;
+    padding: 1.5rem 2rem;
+    text-align: center;
+}
+
+.simulator-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    padding: 2rem;
+}
+
+.simulator-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.control-group {
+    background: #f8fafc;
+    padding: 1.2rem;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+}
+
+.control-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.control-slider {
+    width: 100%;
+    margin: 8px 0;
+}
+
+.control-select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background: white;
+}
+
+.price-display {
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    border: 2px solid #0ea5e9;
+}
+
+.calculated-price {
+    font-size: 48px;
+    font-weight: 700;
+    color: #0c4a6e;
+    margin-bottom: 1rem;
+}
+
+.price-breakdown {
+    background: white;
+    border-radius: 8px;
+    padding: 1.2rem;
+    margin-top: 1rem;
+    text-align: left;
+}
+
+.breakdown-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.breakdown-item:last-child {
+    border-bottom: none;
+    font-weight: 700;
+    border-top: 2px solid #e2e8f0;
+    padding-top: 12px;
+    margin-top: 8px;
+}
+
+/* Customer App Mockup */
+.customer-app-mockup {
+    background: #1f2937;
+    border-radius: 16px;
+    padding: 1rem;
+    color: white;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.phone-frame {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem 1rem;
+    color: #1f2937;
+    min-height: 300px;
+}
+
+.app-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.location-pin {
+    color: #ef4444;
+    font-size: 16px;
+}
+
+.station-name {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.current-price-display {
+    text-align: center;
+    margin: 1.5rem 0;
+}
+
+.price-large {
+    font-size: 36px;
+    font-weight: 700;
+    color: #059669;
+    margin-bottom: 4px;
+}
+
+.demand-indicator {
+    background: #fef3c7;
+    color: #92400e;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.price-forecast {
+    background: #f8fafc;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 1rem;
+}
+
+.forecast-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #6b7280;
+    margin-bottom: 8px;
+}
+
+.forecast-times {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+}
+
+/* Action buttons */
+.btn-activate-analysis {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 1rem auto 1.5rem auto;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    position: relative;
+    z-index: 10;
+}
+
+.btn-activate-analysis:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+}
+
+.btn-show-simulator {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 1rem auto;
+}
+
+.btn-show-simulator:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(5, 150, 105, 0.3);
+}
+
+.btn-close-canvas {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.btn-close-canvas:hover {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+/* Revenue Metrics */
+.revenue-metrics {
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1rem;
+    border: 1px solid #0ea5e9;
+}
+
+.metrics-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.metrics-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #0c4a6e;
+    margin-bottom: 8px;
+}
+
+.metrics-subtitle {
+    font-size: 14px;
+    color: #0369a1;
+}
+
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+}
+
+.metric-item {
+    background: white;
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: center;
+    border: 1px solid #bae6fd;
+}
+
+.metric-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: #0c4a6e;
+    margin-bottom: 4px;
+}
+
+.metric-label {
+    font-size: 12px;
+    color: #0369a1;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .pricing-viz-container {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .canvas-content {
+        grid-template-columns: 1fr;
+    }
+    
+    .canvas-diagram-pane {
+        display: none;
+    }
+    
+    .simulator-content {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="map-container">
+    <!-- Header -->
+    <div class="map-header">
+        <div class="header-left">
+            <h2 class="map-title">
+                <i class="fas fa-chart-line"></i>
+                Scenario 7: Dynamic Pricing & Revenue Optimization
+            </h2>
+            <p class="map-subtitle">AI-driven pricing strategy for maximum revenue optimization across CNG network</p>
+        </div>
+        <div class="header-right">
+            <a href="{{ url_for('demo4_scenario.dashboard') }}" class="btn btn-primary">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+    </div>
+
+    <!-- Phase 1: Revenue Opportunity Detection -->
+    <div class="revenue-opportunity-banner" id="opportunityBanner">
+        <div class="opportunity-header">
+            <div class="opportunity-icon">
+                <i class="fas fa-lightbulb"></i>
+            </div>
+            <div>
+                <h4 class="opportunity-title">Revenue Optimization Opportunity</h4>
+                <p class="opportunity-subtitle">AI Analysis suggests a potential +18% revenue uplift through dynamic pricing optimization</p>
+            </div>
+        </div>
+        <div class="opportunity-content">
+            
+            <div class="opportunity-summary">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem;">
+                    <div>
+                        <div style="font-size: 12px; color: #6b7280; margin-bottom: 4px;">Current Model</div>
+                        <div style="font-size: 16px; font-weight: 600; color: #374151;">Static Pricing</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 12px; color: #6b7280; margin-bottom: 4px;">Revenue Efficiency Score</div>
+                        <div style="font-size: 16px; font-weight: 600; color: #374151;">67/100 <span style="font-size: 12px; color: #f59e0b;">(Moderate)</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="font-size: 13px; font-weight: 600; margin-bottom: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; color: #374151;">
+                Key Inefficiencies Identified:
+            </div>
+            
+            <div class="inefficiencies-grid">
+                <div class="inefficiency-item">
+                    <i class="fas fa-map-marker-alt inefficiency-icon"></i>
+                    <div class="inefficiency-title">Premium Locations Underpriced</div>
+                    <div class="inefficiency-impact">₹8.4 Cr/year loss</div>
+                    <div class="inefficiency-details">45 high-value locations not optimized</div>
+                </div>
+                <div class="inefficiency-item">
+                    <i class="fas fa-moon inefficiency-icon"></i>
+                    <div class="inefficiency-title">Off-Peak Capacity Waste</div>
+                    <div class="inefficiency-impact">42% idle capacity</div>
+                    <div class="inefficiency-details">11 PM - 6 AM underutilized</div>
+                </div>
+                <div class="inefficiency-item">
+                    <i class="fas fa-clock inefficiency-icon"></i>
+                    <div class="inefficiency-title">Peak Hour Congestion</div>
+                    <div class="inefficiency-impact">>10 min wait time</div>
+                    <div class="inefficiency-details">18% of peak sessions affected</div>
+                </div>
+            </div>
+
+            <div style="background: rgba(102, 126, 234, 0.1); padding: 1rem; border-radius: 6px; margin-top: 1rem; border-left: 3px solid #667eea;">
+                <div style="font-size: 13px; font-weight: 600; margin-bottom: 6px; color: #374151;">AI-POWERED SOLUTION:</div>
+                <div style="font-size: 12px; line-height: 1.4; color: #6b7280;">
+                    A multi-factor dynamic pricing model can optimize revenue, smooth demand patterns, and improve customer experience across the entire network.
+                </div>
+            </div>
+
+            <button class="btn-activate-analysis" id="btnActivateAnalysis">
+                <i class="fas fa-rocket"></i>
+                Activate Multi-Agent Pricing Analysis
+            </button>
+        </div>
+    </div>
+
+    <!-- Phase 1: Problem Visualization -->
+    <div class="pricing-viz-container" id="problemVisualization">
+        <div class="pricing-viz-card">
+            <div class="viz-card-header">
+                <div class="viz-card-icon static-pricing-icon">
+                    <i class="fas fa-equals"></i>
+                </div>
+                <div>
+                    <h4 class="viz-card-title">Static Pricing Model</h4>
+                    <p class="viz-card-subtitle">Uniform ₹16.00/kWh across all 311 stations</p>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="staticPricingChart"></canvas>
+            </div>
+        </div>
+
+        <div class="pricing-viz-card">
+            <div class="viz-card-header">
+                <div class="viz-card-icon utilization-icon">
+                    <i class="fas fa-chart-area"></i>
+                </div>
+                <div>
+                    <h4 class="viz-card-title">24-Hour Utilization Pattern</h4>
+                    <p class="viz-card-subtitle">Peak congestion vs wasted capacity</p>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="utilizationChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Phase 2: Multi-Agent Analysis View -->
+    <div class="agentic-canvas-container" id="agenticCanvasView">
+        <div class="canvas-header">
+            <h3 class="canvas-title">
+                <i class="fas fa-cogs"></i>
+                Multi-Agent Pricing Analysis
+            </h3>
+            <button class="btn-close-canvas" id="btnCloseCanvas">
+                <i class="fas fa-times"></i> Close
+            </button>
+        </div>
+        <div class="analysis-content">
+            <div class="event-stream-container">
+                <div class="event-stream-header">
+                    <h4 class="event-stream-title">Live Agent Activity</h4>
+                    <div class="analysis-status" id="analysisStatus">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <span>Analysis in progress...</span>
+                    </div>
+                </div>
+                <div class="event-stream" id="eventStream">
+                    <!-- Events will be populated by JavaScript -->
+                </div>
+                
+                <!-- Analysis Complete Section -->
+                <div class="analysis-complete" id="analysisComplete" style="display: none;">
+                    <div class="completion-indicator">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Analysis Complete</span>
+                    </div>
+                    <p style="font-size: 14px; color: #6b7280; margin: 1rem 0;">
+                        Dynamic pricing model has been generated with optimal price points for all 311 stations.
+                    </p>
+                    <button class="btn-show-simulator" id="btnShowSimulator">
+                        <i class="fas fa-calculator"></i>
+                        View AI-Generated Model
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Phase 3: Price Simulator -->
+    <div class="price-simulator-container" id="priceSimulator">
+        <div class="simulator-header">
+            <h3 style="margin: 0; font-size: 24px; font-weight: 700;">
+                <i class="fas fa-calculator"></i>
+                AI-Generated Dynamic Pricing Model & Simulator
+            </h3>
+            <p style="margin: 8px 0 0 0; opacity: 0.9;">Interactive demonstration of the multi-factor pricing algorithm</p>
+        </div>
+        <div class="simulator-content">
+            <div class="simulator-controls">
+                <div class="control-group">
+                    <label class="control-label">
+                        <i class="fas fa-map-marker-alt"></i> Station Location
+                    </label>
+                    <select class="control-select" id="stationSelect">
+                        <option value="CNG-002">Select Citywalk Mall, Delhi (Premium)</option>
+                        <option value="CNG-004">Andheri SEEPZ Hub, Mumbai (High Traffic)</option>
+                        <option value="CNG-007">Malad Industrial Hub (Standard)</option>
+                        <option value="CNG-010">Thane West Hub (Economy)</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label">
+                        <i class="fas fa-clock"></i> Time of Day: <span id="timeValue">19:00</span>
+                    </label>
+                    <input type="range" class="control-slider" id="timeSlider" min="0" max="23" value="19">
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label">
+                        <i class="fas fa-users"></i> Demand Level
+                    </label>
+                    <select class="control-select" id="demandSelect">
+                        <option value="low">Low Demand</option>
+                        <option value="medium">Medium Demand</option>
+                        <option value="high" selected>High Demand</option>
+                        <option value="very_high">Very High Demand</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label">
+                        <i class="fas fa-cloud-sun"></i> Weather Conditions
+                    </label>
+                    <select class="control-select" id="weatherSelect">
+                        <option value="sunny" selected>☀️ Sunny</option>
+                        <option value="cloudy">☁️ Cloudy</option>
+                        <option value="rain">🌧️ Rain</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label">
+                        <i class="fas fa-crown"></i> Customer Tier
+                    </label>
+                    <select class="control-select" id="customerTierSelect">
+                        <option value="bronze">🥉 Bronze</option>
+                        <option value="silver">🥈 Silver</option>
+                        <option value="gold">🥇 Gold</option>
+                        <option value="diamond" selected>💎 Diamond</option>
+                    </select>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                <div class="price-display">
+                    <div style="font-size: 16px; color: #0369a1; margin-bottom: 8px;">CALCULATED PRICE</div>
+                    <div class="calculated-price" id="calculatedPrice">₹23.60</div>
+                    <div style="font-size: 14px; color: #0369a1;">per kWh</div>
+                    
+                    <button style="background: none; border: 1px solid #0ea5e9; color: #0369a1; padding: 8px 16px; border-radius: 6px; font-size: 12px; cursor: pointer; margin-top: 1rem;" id="btnShowBreakdown">
+                        <i class="fas fa-info-circle"></i> Why this price?
+                    </button>
+
+                    <div class="price-breakdown" id="priceBreakdown" style="display: none;">
+                        <div class="breakdown-item">
+                            <span>Base Price:</span>
+                            <span id="basePrice">₹16.00</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span>Location Premium:</span>
+                            <span id="locationPremium">+₹4.80</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span>Peak Hour:</span>
+                            <span id="peakAdjustment">+₹2.40</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span>High Demand:</span>
+                            <span id="demandAdjustment">+₹1.60</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span>Loyalty Discount:</span>
+                            <span id="loyaltyDiscount">-₹1.20</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span><strong>Final Price:</strong></span>
+                            <span id="finalPrice"><strong>₹23.60</strong></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="customer-app-mockup">
+                    <div style="text-align: center; margin-bottom: 1rem;">
+                        <i class="fas fa-mobile-alt" style="font-size: 20px; margin-right: 8px;"></i>
+                        <strong>Customer App View</strong>
+                    </div>
+                    <div class="phone-frame">
+                        <div class="app-header">
+                            <i class="fas fa-map-marker-alt location-pin"></i>
+                            <span class="station-name" id="customerStationName">Select Citywalk Mall</span>
+                        </div>
+                        <div class="current-price-display">
+                            <div style="font-size: 12px; color: #6b7280; margin-bottom: 4px;">Current Price:</div>
+                            <div class="price-large" id="customerPrice">₹23.60/kWh</div>
+                            <div class="demand-indicator" id="customerDemandIndicator">⚡ HIGH DEMAND PERIOD</div>
+                        </div>
+                        <div class="price-forecast">
+                            <div class="forecast-title">Price Forecast:</div>
+                            <div class="forecast-times">
+                                <div>9 PM: <strong id="forecast9pm">₹19.00</strong></div>
+                                <div>11 PM: <strong id="forecast11pm">₹14.50</strong></div>
+                            </div>
+                            <div style="margin-top: 8px; font-size: 11px; color: #059669;">
+                                <i class="fas fa-bell"></i> Notify me of price drops
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Revenue Metrics Summary -->
+    <div class="revenue-metrics" id="revenueMetrics" style="display: none;">
+        <div class="metrics-header">
+            <h3 class="metrics-title">Projected Revenue Impact</h3>
+            <p class="metrics-subtitle">Network-wide optimization potential</p>
+        </div>
+        <div class="metrics-grid">
+            <div class="metric-item">
+                <div class="metric-value">+18%</div>
+                <div class="metric-label">Revenue Uplift</div>
+            </div>
+            <div class="metric-item">
+                <div class="metric-value">₹20.6 Cr</div>
+                <div class="metric-label">Additional Annual Revenue</div>
+            </div>
+            <div class="metric-item">
+                <div class="metric-value">311</div>
+                <div class="metric-label">Stations Optimized</div>
+            </div>
+            <div class="metric-item">
+                <div class="metric-value">90 days</div>
+                <div class="metric-label">Implementation Timeline</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="{{ url_for('static', filename='js/demo4/scenario7.js') }}"></script>
+{% endblock %}
