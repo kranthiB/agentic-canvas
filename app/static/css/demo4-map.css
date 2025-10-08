@@ -115,13 +115,13 @@
     display: flex;
     flex: 1;
     overflow: visible;
-    padding: 0 1rem 1rem 1rem;
-    gap: 1rem;
+    padding: 0 0.75rem 0.75rem 0.75rem;
+    gap: 0.75rem;
 }
 
-/* Sidebar - Demo5 Card Style */
+/* Sidebar - Demo5 Card Style with reduced width for scenario1 */
 .map-sidebar {
-    width: 320px;
+    width: 280px;
     background: transparent;
     overflow-y: auto;
     padding: 0;

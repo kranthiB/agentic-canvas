@@ -15,6 +15,86 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/demo4-scenario1-enhanced.css') }}">
 <!-- Scenario 1 Custom CSS -->
 <style>
+/* Scenario 1 - Maximum Map Space Layout */
+.map-content {
+    gap: 0.5rem !important;
+    padding: 0 0.5rem 0.5rem 0.5rem !important;
+}
+
+.map-sidebar {
+    width: 220px !important;
+    max-width: 220px !important;
+    min-width: 220px !important;
+}
+
+.map-wrapper {
+    flex: 1 !important;
+    min-height: 80vh !important;
+}
+
+#networkMap {
+    min-height: 80vh !important;
+    width: 100% !important;
+}
+
+/* Ultra-compact sidebar panels */
+.sidebar-panel {
+    padding: 0.75rem !important;
+    margin-bottom: 0.5rem !important;
+}
+
+/* Compact map header for more space */
+.map-header {
+    padding: 1rem !important;
+    margin: 0.5rem !important;
+}
+
+.panel-title {
+    font-size: 11px !important;
+    margin-bottom: 0.5rem !important;
+    font-weight: 600 !important;
+}
+
+.stats-grid {
+    gap: 0.5rem !important;
+    grid-template-columns: 1fr 1fr !important;
+}
+
+.stat-item {
+    padding: 0.5rem !important;
+}
+
+.stat-label {
+    font-size: 10px !important;
+    margin-bottom: 0.25rem !important;
+}
+
+.stat-value {
+    font-size: 16px !important;
+}
+
+.crisis-indicator {
+    font-size: 9px !important;
+    margin-top: 2px !important;
+}
+
+.sites-container {
+    max-height: 250px !important;
+    overflow-y: auto !important;
+}
+
+/* Compact site items */
+.site-item {
+    padding: 0.5rem !important;
+    margin-bottom: 0.25rem !important;
+    font-size: 11px !important;
+}
+
+.legend-item {
+    padding: 0.25rem 0 !important;
+    font-size: 11px !important;
+}
+
 /* Crisis Alert Banner */
 .crisis-alert-banner {
     background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
