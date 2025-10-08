@@ -388,27 +388,44 @@ def api_scenario7_simulate_price():
     weather = data.get('weather', 'sunny')
     customer_tier = data.get('customer_tier', 'diamond')
     
-    # Base pricing logic (simplified)
+    # Base pricing logic (aligned with Indian CNG market - ~₹70-85/kg converted to kWh equivalent)
     base_price = 16.00
-    location_premium = 4.80 if station_id in ['CNG-001', 'CNG-002', 'CNG-003'] else 2.40
     
-    # Time-based pricing
-    peak_hours = [7, 8, 9, 18, 19, 20]
-    peak_multiplier = 1.15 if time_of_day in peak_hours else 0.95
+    # Location-based pricing (Indian business districts)
+    location_premiums = {
+        'CNG-002': 5.20,  # Connaught Place, Delhi (CBD)
+        'CNG-004': 4.80,  # BKC, Mumbai (Business District) 
+        'CNG-007': 3.60,  # Gurgaon Cyber City (IT Hub)
+        'CNG-010': 2.40,  # Noida Expressway (Highway)
+        'CNG-015': 3.20,  # Bangalore Electronic City
+        'CNG-020': 2.80   # Pune Hinjewadi
+    }
+    location_premium = location_premiums.get(station_id, 2.00)
     
-    # Demand-based pricing
-    demand_multipliers = {'low': 0.90, 'medium': 1.00, 'high': 1.10, 'very_high': 1.20}
+    # Time-based pricing (Indian peak patterns: morning office rush & evening return)
+    peak_hours = [8, 9, 18, 19, 20]  # 8-9 AM, 6-8 PM
+    super_peak = [8, 19]  # Super peak hours
+    peak_multiplier = 1.20 if time_of_day in super_peak else (1.10 if time_of_day in peak_hours else 0.92)
+    
+    # Demand-based pricing (realistic vehicle flow)
+    demand_multipliers = {'low': 0.88, 'medium': 1.00, 'high': 1.15, 'very_high': 1.35}
     demand_adjustment = base_price * (demand_multipliers.get(demand_level, 1.0) - 1.0)
     
-    # Weather impact (minimal for CNG)
-    weather_adjustment = 0.20 if weather == 'rain' else 0.0
+    # Weather impact (Indian conditions affect CNG demand)
+    weather_adjustments = {
+        'sunny': 0.0, 'cloudy': 0.30, 'rain': 0.80, 'extreme': 0.50, 'winter': 0.20
+    }
+    weather_adjustment = weather_adjustments.get(weather, 0.0)
     
-    # Loyalty discount
-    tier_discounts = {'bronze': 0.5, 'silver': 0.8, 'gold': 1.0, 'diamond': 1.2}
-    loyalty_discount = tier_discounts.get(customer_tier, 0.5)
+    # Customer tier discounts (realistic commercial/corporate rates)
+    tier_adjustments = {
+        'standard': 0.0, 'commercial': -0.80, 'premium': -1.20, 'corporate': -1.50
+    }
+    customer_adjustment = tier_adjustments.get(customer_tier, 0.0)
     
     # Calculate final price
-    calculated_price = (base_price + location_premium) * peak_multiplier + demand_adjustment + weather_adjustment - loyalty_discount
+    calculated_price = ((base_price + location_premium) * peak_multiplier + 
+                       demand_adjustment + weather_adjustment + customer_adjustment)
     calculated_price = round(calculated_price, 2)
     
     # Price breakdown
@@ -418,7 +435,7 @@ def api_scenario7_simulate_price():
         'peak_adjustment': round((base_price * peak_multiplier) - base_price, 2),
         'demand_adjustment': round(demand_adjustment, 2),
         'weather_adjustment': round(weather_adjustment, 2),
-        'loyalty_discount': round(-loyalty_discount, 2)
+        'customer_discount': round(customer_adjustment, 2)
     }
     
     # Future price forecast

@@ -13,7 +13,7 @@ class Scenario7Controller {
             time_of_day: 19,
             demand_level: 'high',
             weather: 'sunny',
-            customer_tier: 'diamond'
+            customer_tier: 'corporate'
         };
         
         this.init();

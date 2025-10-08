@@ -997,18 +997,21 @@
                         <i class="fas fa-map-marker-alt"></i> Station Location
                     </label>
                     <select class="control-select" id="stationSelect">
-                        <option value="CNG-002">Select Citywalk Mall, Delhi (Premium)</option>
-                        <option value="CNG-004">Andheri SEEPZ Hub, Mumbai (High Traffic)</option>
-                        <option value="CNG-007">Malad Industrial Hub (Standard)</option>
-                        <option value="CNG-010">Thane West Hub (Economy)</option>
+                        <option value="CNG-002">Connaught Place, Delhi (CBD Premium)</option>
+                        <option value="CNG-004">Bandra Kurla Complex, Mumbai (Business District)</option>
+                        <option value="CNG-007">Gurgaon Cyber City (IT Hub)</option>
+                        <option value="CNG-010">Noida Expressway (Highway Corridor)</option>
+                        <option value="CNG-015">Bangalore Electronic City (Tech Park)</option>
+                        <option value="CNG-020">Pune Hinjewadi (Industrial Zone)</option>
                     </select>
                 </div>
 
                 <div class="control-group">
                     <label class="control-label">
                         <i class="fas fa-clock"></i> Time of Day: <span id="timeValue">19:00</span>
+                        <small style="display: block; color: #6b7280; font-size: 11px;">Peak: 8-10 AM, 6-9 PM</small>
                     </label>
-                    <input type="range" class="control-slider" id="timeSlider" min="0" max="23" value="19">
+                    <input type="range" class="control-slider" id="timeSlider" min="6" max="22" value="19">
                 </div>
 
                 <div class="control-group">
@@ -1016,10 +1019,10 @@
                         <i class="fas fa-users"></i> Demand Level
                     </label>
                     <select class="control-select" id="demandSelect">
-                        <option value="low">Low Demand</option>
-                        <option value="medium">Medium Demand</option>
-                        <option value="high" selected>High Demand</option>
-                        <option value="very_high">Very High Demand</option>
+                        <option value="low">Normal Flow (< 50 vehicles/hour)</option>
+                        <option value="medium">Busy Period (50-100 vehicles/hour)</option>
+                        <option value="high" selected>Peak Rush (100-150 vehicles/hour)</option>
+                        <option value="very_high">Festival/Strike Day (> 150 vehicles/hour)</option>
                     </select>
                 </div>
 
@@ -1028,9 +1031,11 @@
                         <i class="fas fa-cloud-sun"></i> Weather Conditions
                     </label>
                     <select class="control-select" id="weatherSelect">
-                        <option value="sunny" selected>☀️ Sunny</option>
-                        <option value="cloudy">☁️ Cloudy</option>
-                        <option value="rain">🌧️ Rain</option>
+                        <option value="sunny" selected>☀️ Clear Weather</option>
+                        <option value="cloudy">☁️ Smog/Pollution Alert</option>
+                        <option value="rain">🌧️ Monsoon/Heavy Rain</option>
+                        <option value="extreme">🌡️ Extreme Heat (>40°C)</option>
+                        <option value="winter">❄️ Winter Fog</option>
                     </select>
                 </div>
 
@@ -1039,10 +1044,10 @@
                         <i class="fas fa-crown"></i> Customer Tier
                     </label>
                     <select class="control-select" id="customerTierSelect">
-                        <option value="bronze">🥉 Bronze</option>
-                        <option value="silver">🥈 Silver</option>
-                        <option value="gold">🥇 Gold</option>
-                        <option value="diamond" selected>💎 Diamond</option>
+                        <option value="standard">🚗 Regular Customer</option>
+                        <option value="commercial">🚛 Commercial Fleet</option>
+                        <option value="premium">⭐ Total Energies Plus Member</option>
+                        <option value="corporate" selected>🏢 Corporate Account</option>
                     </select>
                 </div>
             </div>
