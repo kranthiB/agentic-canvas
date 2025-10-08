@@ -151,8 +151,8 @@ class Scenario7Controller {
                     datasets: [{
                         label: 'Current Price (₹/kWh)',
                         data: [16.00, 16.00, 16.00, 16.00],
-                        backgroundColor: '#ef4444',
-                        borderColor: '#dc2626',
+                        backgroundColor: '#1e3c72',
+                        borderColor: '#2a5298',
                         borderWidth: 1
                     }]
                 },
@@ -210,8 +210,8 @@ class Scenario7Controller {
                 datasets: [{
                     label: 'Utilization %',
                     data: utilization,
-                    borderColor: '#3b82f6',
-                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    borderColor: '#1e3c72',
+                    backgroundColor: 'rgba(30, 60, 114, 0.1)',
                     fill: true,
                     tension: 0.4
                 }]
@@ -244,8 +244,8 @@ class Scenario7Controller {
                                 type: 'box',
                                 xMin: 7,
                                 xMax: 9,
-                                backgroundColor: 'rgba(239, 68, 68, 0.2)',
-                                borderColor: '#ef4444',
+                                backgroundColor: 'rgba(30, 60, 114, 0.2)',
+                                borderColor: '#1e3c72',
                                 borderWidth: 1,
                                 label: {
                                     content: 'Peak Congestion',
@@ -257,8 +257,8 @@ class Scenario7Controller {
                                 type: 'box',
                                 xMin: 23,
                                 xMax: 6,
-                                backgroundColor: 'rgba(107, 114, 128, 0.2)',
-                                borderColor: '#6b7280',
+                                backgroundColor: 'rgba(42, 82, 152, 0.2)',
+                                borderColor: '#2a5298',
                                 borderWidth: 1,
                                 label: {
                                     content: 'Wasted Capacity',
