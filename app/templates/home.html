@@ -37,6 +37,86 @@
     </div>
     
     <div class="row g-4">
+
+        <!-- Demo 5: Engineer's Copilot -->
+        <div class="col-lg-4 col-md-6">
+            <div class="demo-card card h-100 shadow-hover border-0">
+                <div class="card-body p-4">
+                    <div class="demo-header mb-4">
+                        <div class="demo-icon-large mb-3">
+                            <div class="copilot-icon">
+                                <i class="bi bi-cpu" style="font-size: 2.5rem; color: #1e3c72; position: relative;"></i>
+                                <i class="bi bi-gear" style="font-size: 1rem; color: #2a5298; position: absolute; margin-left: -0.5rem; margin-top: -0.8rem;"></i>
+                            </div>
+                        </div>
+                        <h3 class="card-title mb-2">Engineer's Copilot</h3>
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <span class="badge" style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white;">Tier 2</span>
+                            <span class="badge" style="background: linear-gradient(135deg, #2a5298 0%, #3d5aa8 100%); color: white;">Procedural Workflow</span>
+                        </div>
+                    </div>
+                    
+                    <p class="card-text text-muted mb-4">
+                        Multi-step workflow system for R&D operations with specialized agents for formulation, supply chain, and regulatory compliance workflows.
+                    </p>
+                    
+                    <div class="mb-4">
+                        <p class="small fw-semibold text-uppercase text-muted mb-2">Core Capabilities</p>
+                        <div class="d-flex flex-wrap gap-2">
+                            <span class="capability-badge cap-pk">PK</span>
+                            <span class="capability-badge cap-cg">CG</span>
+                            <span class="capability-badge cap-ae">AE</span>
+                            <span class="capability-badge cap-ic">IC</span>
+                        </div>
+                    </div>
+                    
+                    <a href="{{ url_for('demo5.dashboard') }}" class="btn btn-copilot w-100 btn-lg">
+                        Launch Demo <i class="bi bi-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Demo 4: Mobility Maestro -->
+        <div class="col-lg-4 col-md-6">
+            <div class="demo-card card h-100 shadow-hover border-0">
+                <div class="card-body p-4">
+                    <div class="demo-header mb-4">
+                        <div class="demo-icon-large mb-3">
+                            <div class="mobility-maestro-icon">
+                                <i class="bi bi-fuel-pump" style="font-size: 2.5rem; color: #1e3c72; position: relative;"></i>
+                                <i class="bi bi-geo-alt" style="font-size: 1rem; color: #2a5298; position: absolute; margin-left: -0.5rem; margin-top: -0.5rem;"></i>
+                            </div>
+                        </div>
+                        <h3 class="card-title mb-2">Mobility Maestro</h3>
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <span class="badge" style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white;">Tier 3</span>
+                            <span class="badge" style="background: linear-gradient(135deg, #2a5298 0%, #3d5aa8 100%); color: white;">Cognitive Autonomous</span>
+                        </div>
+                    </div>
+                    
+                    <p class="card-text text-muted mb-4">
+                        Intelligent CNG refueling network optimization across 28 Indian states. 
+                        Location intelligence with multi-factor analysis for strategic placement.
+                    </p>
+                    
+                    <div class="mb-4">
+                        <p class="small fw-semibold text-uppercase text-muted mb-2">Core Capabilities</p>
+                        <div class="d-flex flex-wrap gap-2">
+                            <span class="capability-badge cap-pk">PK</span>
+                            <span class="capability-badge cap-cg">CG</span>
+                            <span class="capability-badge cap-la">LA</span>
+                            <span class="capability-badge cap-ae">AE</span>
+                        </div>
+                    </div>
+                    
+                    <a href="{{ url_for('demo4.dashboard') }}" class="btn btn-mobility w-100 btn-lg">
+                        Launch Demo <i class="bi bi-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
         <!-- Demo 1: Carbon Compass -->
         <div class="col-lg-4 col-md-6">
             <div class="demo-card card h-100 shadow-hover border-0">
@@ -44,14 +124,14 @@
                     <div class="demo-header mb-4">
                         <div class="demo-icon-large mb-3">
                             <div class="carbon-compass-icon">
-                                <i class="bi bi-compass" style="font-size: 2.5rem; color: #1B5E20; position: relative;"></i>
-                                <i class="bi bi-leaf" style="font-size: 1.2rem; color: #4CAF50; position: absolute; margin-left: -1rem; margin-top: 0.5rem;"></i>
+                                <i class="bi bi-compass" style="font-size: 2.5rem; color: #1e3c72; position: relative;"></i>
+                                <i class="bi bi-leaf" style="font-size: 1.2rem; color: #2a5298; position: absolute; margin-left: -1rem; margin-top: 0.5rem;"></i>
                             </div>
                         </div>
                         <h3 class="card-title mb-2">Carbon Compass</h3>
                         <div class="d-flex align-items-center gap-2 mb-2">
-                            <span class="badge" style="background: var(--gradient-carbon); color: white;">Tier 3</span>
-                            <span class="badge bg-secondary">Cognitive Autonomous</span>
+                            <span class="badge" style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white;">Tier 3</span>
+                            <span class="badge" style="background: linear-gradient(135deg, #2a5298 0%, #3d5aa8 100%); color: white;">Cognitive Autonomous</span>
                         </div>
                     </div>
                     
@@ -84,14 +164,14 @@
                     <div class="demo-header mb-4">
                         <div class="demo-icon-large mb-3">
                             <div class="grid-mind-icon">
-                                <i class="bi bi-diagram-3" style="font-size: 2.5rem; color: #0D47A1; position: relative;"></i>
-                                <i class="bi bi-lightning-charge" style="font-size: 1.2rem; color: #2196F3; position: absolute; margin-left: -0.8rem; margin-top: -0.3rem;"></i>
+                                <i class="bi bi-diagram-3" style="font-size: 2.5rem; color: #1e3c72; position: relative;"></i>
+                                <i class="bi bi-lightning-charge" style="font-size: 1.2rem; color: #2a5298; position: absolute; margin-left: -0.8rem; margin-top: -0.3rem;"></i>
                             </div>
                         </div>
                         <h3 class="card-title mb-2">GridMind AI</h3>
                         <div class="d-flex align-items-center gap-2 mb-2">
-                            <span class="badge" style="background: var(--gradient-grid); color: white;">Tier 4</span>
-                            <span class="badge bg-secondary">Multi-Agent System</span>
+                            <span class="badge" style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white;">Tier 4</span>
+                            <span class="badge" style="background: linear-gradient(135deg, #2a5298 0%, #3d5aa8 100%); color: white;">Multi-Agent System</span>
                         </div>
                     </div>
                     
@@ -125,19 +205,19 @@
                     <div class="demo-header mb-4">
                         <div class="demo-icon-large mb-3">
                             <div class="safety-guardian-icon">
-                                <i class="bi bi-shield-check" style="font-size: 2.5rem; color: #E65100; position: relative;"></i>
-                                <i class="bi bi-eye" style="font-size: 1rem; color: #FF9800; position: absolute; margin-left: -1.2rem; margin-top: 0.3rem;"></i>
+                                <i class="bi bi-shield-check" style="font-size: 2.5rem; color: #1e3c72; position: relative;"></i>
+                                <i class="bi bi-eye" style="font-size: 1rem; color: #2a5298; position: absolute; margin-left: -1.2rem; margin-top: 0.3rem;"></i>
                             </div>
                         </div>
                         <h3 class="card-title mb-2">Safety Guardian</h3>
                         <div class="d-flex align-items-center gap-2 mb-2">
-                            <span class="badge" style="background: var(--gradient-safety); color: white;">Tier 2</span>
-                            <span class="badge bg-secondary">Reasoning Agent</span>
+                            <span class="badge" style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white;">Tier 2</span>
+                            <span class="badge" style="background: linear-gradient(135deg, #2a5298 0%, #3d5aa8 100%); color: white;">Reasoning Agent</span>
                         </div>
                     </div>
                     
                     <p class="card-text text-muted mb-4">
-                        Intelligent work permit analysis using multi-modal reasoning. 
+                        Intelligent work permit analysis using advanced multi-modal reasoning. 
                         Automated risk assessment with supervisor escalation for high-risk scenarios.
                     </p>
                     
@@ -151,85 +231,6 @@
                     </div>
                     
                     <a href="{{ url_for('demo3.dashboard') }}" class="btn btn-safety w-100 btn-lg">
-                        Launch Demo <i class="bi bi-arrow-right ms-2"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Demo 4: Mobility Maestro -->
-        <div class="col-lg-4 col-md-6">
-            <div class="demo-card card h-100 shadow-hover border-0">
-                <div class="card-body p-4">
-                    <div class="demo-header mb-4">
-                        <div class="demo-icon-large mb-3">
-                            <div class="mobility-maestro-icon">
-                                <i class="bi bi-fuel-pump" style="font-size: 2.5rem; color: #006064; position: relative;"></i>
-                                <i class="bi bi-geo-alt" style="font-size: 1rem; color: #00ACC1; position: absolute; margin-left: -0.5rem; margin-top: -0.5rem;"></i>
-                            </div>
-                        </div>
-                        <h3 class="card-title mb-2">Mobility Maestro</h3>
-                        <div class="d-flex align-items-center gap-2 mb-2">
-                            <span class="badge" style="background: var(--gradient-mobility); color: white;">Tier 3</span>
-                            <span class="badge bg-secondary">Cognitive Autonomous</span>
-                        </div>
-                    </div>
-                    
-                    <p class="card-text text-muted mb-4">
-                        Intelligent CNG refueling network optimization across 28 Indian states. 
-                        Location intelligence with multi-factor analysis for strategic placement.
-                    </p>
-                    
-                    <div class="mb-4">
-                        <p class="small fw-semibold text-uppercase text-muted mb-2">Core Capabilities</p>
-                        <div class="d-flex flex-wrap gap-2">
-                            <span class="capability-badge cap-pk">PK</span>
-                            <span class="capability-badge cap-cg">CG</span>
-                            <span class="capability-badge cap-la">LA</span>
-                            <span class="capability-badge cap-ae">AE</span>
-                        </div>
-                    </div>
-                    
-                    <a href="{{ url_for('demo4.dashboard') }}" class="btn btn-mobility w-100 btn-lg">
-                        Launch Demo <i class="bi bi-arrow-right ms-2"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Demo 5: Engineer's Copilot -->
-        <div class="col-lg-4 col-md-6">
-            <div class="demo-card card h-100 shadow-hover border-0">
-                <div class="card-body p-4">
-                    <div class="demo-header mb-4">
-                        <div class="demo-icon-large mb-3">
-                            <div class="copilot-icon">
-                                <i class="bi bi-cpu" style="font-size: 2.5rem; color: #3949AB; position: relative;"></i>
-                                <i class="bi bi-gear" style="font-size: 1rem; color: #7C4DFF; position: absolute; margin-left: -0.5rem; margin-top: -0.8rem;"></i>
-                            </div>
-                        </div>
-                        <h3 class="card-title mb-2">Engineer's Copilot</h3>
-                        <div class="d-flex align-items-center gap-2 mb-2">
-                            <span class="badge" style="background: var(--gradient-copilot); color: white;">Tier 2</span>
-                            <span class="badge bg-secondary">Procedural Workflow</span>
-                        </div>
-                    </div>
-                    
-                    <p class="card-text text-muted mb-4">
-                        Multi-step workflow system for TCAP Mumbai R&D operations with specialized agents for formulation, supply chain, and regulatory compliance workflows.
-                    </p>
-                    
-                    <div class="mb-4">
-                        <p class="small fw-semibold text-uppercase text-muted mb-2">Core Capabilities</p>
-                        <div class="d-flex flex-wrap gap-2">
-                            <span class="capability-badge cap-pk">PK</span>
-                            <span class="capability-badge cap-cg">CG</span>
-                            <span class="capability-badge cap-ae">AE</span>
-                            <span class="capability-badge cap-ic">IC</span>
-                        </div>
-                    </div>
-                    
-                    <a href="{{ url_for('demo5.dashboard') }}" class="btn btn-copilot w-100 btn-lg">
                         Launch Demo <i class="bi bi-arrow-right ms-2"></i>
                     </a>
                 </div>
