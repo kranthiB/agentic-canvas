@@ -862,7 +862,7 @@
 
 .recommended-actions-header {
     padding: 1.5rem;
-    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
     color: white;
     display: flex;
     justify-content: space-between;
@@ -909,9 +909,9 @@
 
 .site-card:hover {
     background: rgba(239, 246, 255, 0.8);
-    border-color: rgba(59, 130, 246, 0.3);
+    border-color: rgba(30, 60, 114, 0.3);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+    box-shadow: 0 4px 12px rgba(30, 60, 114, 0.15);
 }
 
 .site-header {
@@ -996,9 +996,9 @@
 }
 
 .nav-btn:hover:not(:disabled) {
-    background: rgba(59, 130, 246, 0.1);
-    border-color: rgba(59, 130, 246, 0.3);
-    color: #3b82f6;
+    background: rgba(30, 60, 114, 0.1);
+    border-color: rgba(30, 60, 114, 0.3);
+    color: #1e3c72;
 }
 
 .nav-btn:disabled {
@@ -1124,7 +1124,7 @@
 }
 
 .btn-approve-all {
-    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
     color: white;
     border: none;
     padding: 1rem 2rem;
@@ -1136,12 +1136,12 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    box-shadow: 0 4px 16px rgba(5, 150, 105, 0.3);
+    box-shadow: 0 4px 16px rgba(30, 60, 114, 0.3);
 }
 
 .btn-approve-all:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 24px rgba(5, 150, 105, 0.4);
+    box-shadow: 0 6px 24px rgba(30, 60, 114, 0.4);
 }
 
 /* Completion Modal Styles */
@@ -1255,7 +1255,7 @@
 }
 
 .btn-view-recommendations {
-    background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
     color: white;
     border: none;
     padding: 1rem 2rem;
@@ -1267,7 +1267,7 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
+    box-shadow: 0 6px 20px rgba(30, 60, 114, 0.4);
     flex: 1;
     justify-content: center;
     max-width: 250px;
@@ -1275,8 +1275,8 @@
 
 .btn-view-recommendations:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 28px rgba(139, 92, 246, 0.5);
-    background: linear-gradient(135deg, #7c3aed 0%, #9333ea 100%);
+    box-shadow: 0 8px 28px rgba(30, 60, 114, 0.5);
+    background: linear-gradient(135deg, #1a3461 0%, #245085 100%);
 }
 
 .btn-close-completion {
@@ -1374,7 +1374,7 @@
 }
 
 .custom-confirmation-header {
-    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
     color: white;
     padding: 2rem;
     text-align: center;
@@ -1413,14 +1413,14 @@
     align-items: center;
     gap: 0.5rem;
     padding: 0.5rem;
-    background: rgba(59, 130, 246, 0.05);
+    background: rgba(30, 60, 114, 0.05);
     border-radius: 6px;
-    border-left: 3px solid #3b82f6;
+    border-left: 3px solid #1e3c72;
     line-height: 1.2;
 }
 
 .detail-item i {
-    color: #3b82f6;
+    color: #1e3c72;
     font-size: 14px;
     width: 16px;
     flex-shrink: 0;
@@ -1459,7 +1459,7 @@
 }
 
 .btn-confirm-approval {
-    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
     color: white;
     border: none;
     padding: 1rem 1.5rem;
@@ -1471,12 +1471,12 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    box-shadow: 0 4px 16px rgba(5, 150, 105, 0.3);
+    box-shadow: 0 4px 16px rgba(30, 60, 114, 0.3);
 }
 
 .btn-confirm-approval:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 24px rgba(5, 150, 105, 0.4);
+    box-shadow: 0 6px 24px rgba(30, 60, 114, 0.4);
 }
 
 /* Approval Process Modal */
@@ -1514,7 +1514,7 @@
 }
 
 .approval-process-header {
-    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
     color: white;
     padding: 2rem;
     text-align: center;
@@ -1561,9 +1561,9 @@
 }
 
 .process-step.processing {
-    background: rgba(139, 92, 246, 0.1);
-    border-left-color: #8b5cf6;
-    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.15);
+    background: rgba(30, 60, 114, 0.1);
+    border-left-color: #1e3c72;
+    box-shadow: 0 4px 12px rgba(30, 60, 114, 0.15);
 }
 
 .process-step.completed {
@@ -1586,8 +1586,8 @@
 }
 
 .process-step.processing .step-icon {
-    background: rgba(139, 92, 246, 0.2);
-    color: #8b5cf6;
+    background: rgba(30, 60, 114, 0.2);
+    color: #1e3c72;
 }
 
 .process-step.completed .step-icon {
@@ -1625,7 +1625,7 @@
 }
 
 .process-step.processing .step-status i {
-    color: #8b5cf6;
+    color: #1e3c72;
 }
 
 .process-step.completed .step-status i {
@@ -1667,7 +1667,7 @@
 }
 
 .approval-confirmation-header {
-    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
     color: white;
     padding: 2rem;
     text-align: center;
@@ -1681,7 +1681,7 @@
     left: 0;
     right: 0;
     height: 4px;
-    background: linear-gradient(90deg, #10b981, #059669, #047857);
+    background: linear-gradient(90deg, #1e3c72, #2a5298, #3b82f6);
 }
 
 .approval-icon {
@@ -1724,15 +1724,15 @@
 
 .approval-detail {
     padding: 0.75rem 1rem;
-    background: rgba(5, 150, 105, 0.05);
+    background: rgba(30, 60, 114, 0.05);
     border-radius: 8px;
-    border-left: 4px solid #059669;
+    border-left: 4px solid #1e3c72;
     font-size: 14px;
     color: #374151;
 }
 
 .approval-detail strong {
-    color: #059669;
+    color: #1e3c72;
 }
 
 .approval-confirmation-actions {
@@ -1742,7 +1742,7 @@
 }
 
 .btn-close-approval {
-    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
     color: white;
     border: none;
     padding: 1rem 2rem;
@@ -1754,15 +1754,15 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    box-shadow: 0 4px 16px rgba(5, 150, 105, 0.3);
+    box-shadow: 0 4px 16px rgba(30, 60, 114, 0.3);
     min-width: 120px;
     justify-content: center;
 }
 
 .btn-close-approval:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 24px rgba(5, 150, 105, 0.4);
-    background: linear-gradient(135deg, #047857 0%, #065f46 100%);
+    box-shadow: 0 6px 24px rgba(30, 60, 114, 0.4);
+    background: linear-gradient(135deg, #1a3461 0%, #245085 100%);
 }
 
 /* Event Flow Modal Overlay */
@@ -1801,8 +1801,8 @@
     -webkit-backdrop-filter: blur(20px);
     border-radius: 16px;
     padding: 0;
-    border: 1px solid rgba(139, 92, 246, 0.2);
-    box-shadow: 0 20px 60px rgba(139, 92, 246, 0.15), 0 8px 32px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(30, 60, 114, 0.2);
+    box-shadow: 0 20px 60px rgba(30, 60, 114, 0.15), 0 8px 32px rgba(0, 0, 0, 0.1);
     animation: slideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
     height: 500px;
     min-height: 400px;
@@ -1816,8 +1816,8 @@
     justify-content: space-between;
     align-items: center;
     padding: 1.25rem 1.5rem;
-    border-bottom: 1px solid rgba(139, 92, 246, 0.15);
-    background: linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(168, 85, 247, 0.05) 100%);
+    border-bottom: 1px solid rgba(30, 60, 114, 0.15);
+    background: linear-gradient(135deg, rgba(30, 60, 114, 0.08) 0%, rgba(42, 82, 152, 0.05) 100%);
     border-radius: 16px 16px 0 0;
     position: relative;
 }
@@ -1829,7 +1829,7 @@
     left: 0;
     right: 0;
     height: 3px;
-    background: linear-gradient(90deg, #8b5cf6, #a855f7, #c084fc);
+    background: linear-gradient(90deg, #1e3c72, #2a5298, #3b82f6);
     border-radius: 16px 16px 0 0;
 }
 
@@ -1870,14 +1870,14 @@
 
 .progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, #8b5cf6, #a855f7);
+    background: linear-gradient(90deg, #1e3c72, #2a5298);
     border-radius: 2px;
     transition: width 0.3s ease;
     width: 0%;
 }
 
 .event-flow-title i {
-    color: #8b5cf6;
+    color: #1e3c72;
     font-size: 20px;
 }
 
@@ -1934,7 +1934,7 @@
 }
 
 .btn-view-actions {
-    background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
     color: white !important;
     border: none;
     padding: 1rem 2rem;
@@ -1947,15 +1947,15 @@
     align-items: center;
     justify-content: center;
     gap: 10px;
-    box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
+    box-shadow: 0 6px 20px rgba(30, 60, 114, 0.4);
     text-decoration: none;
     min-width: 200px;
 }
 
 .btn-view-actions:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 28px rgba(139, 92, 246, 0.5);
-    background: linear-gradient(135deg, #7c3aed 0%, #9333ea 100%);
+    box-shadow: 0 8px 28px rgba(30, 60, 114, 0.5);
+    background: linear-gradient(135deg, #1a3461 0%, #245085 100%);
 }
 
 .btn-close-flow {
@@ -2000,8 +2000,8 @@
     margin-bottom: 1rem;
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.8) 100%);
     border-radius: 12px;
-    border: 1px solid rgba(139, 92, 246, 0.1);
-    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.08);
+    border: 1px solid rgba(30, 60, 114, 0.1);
+    box-shadow: 0 4px 12px rgba(30, 60, 114, 0.08);
     animation: slideInLeft 0.4s ease-out;
     position: relative;
     transition: all 0.3s ease;
@@ -2014,13 +2014,21 @@
     top: 0;
     bottom: 0;
     width: 4px;
-    background: linear-gradient(180deg, #8b5cf6, #a855f7);
+    background: linear-gradient(180deg, #1e3c72, #2a5298);
     border-radius: 12px 0 0 12px;
 }
 
 .event-item:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(139, 92, 246, 0.15);
+    box-shadow: 0 8px 20px rgba(30, 60, 114, 0.15);
+}
+
+/* Ensure all agent types use the same blue color */
+.event-item.agent-orchestrator::before,
+.event-item.agent-permit::before,
+.event-item.agent-financial::before,
+.event-item.agent-market::before {
+    background: linear-gradient(180deg, #1e3c72, #2a5298);
 }
 
 .event-time {
