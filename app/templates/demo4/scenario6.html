@@ -1,0 +1,1622 @@
+{% extends "base.html" %}
+
+{% block title %}Competitive Acquisition (M&A) - Scenario 6{% endblock %}
+
+{% block extra_css %}
+<!-- Font Awesome for Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- Custom Map CSS -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/demo4-map.css') }}">
+<!-- Scenario 6 Custom CSS -->
+<style>
+/* Override map container constraints for Scenario 6 */
+.map-container {
+    height: auto !important;
+    min-height: 100vh !important;
+    overflow: visible !important;
+}
+
+.map-content {
+    overflow: visible !important;
+    flex-direction: column !important;
+}
+
+/* Confidential M&A Alert Banner */
+.ma-alert-banner {
+    background: white;
+    color: #1e3c72;
+    padding: 1.5rem;
+    margin: 1rem 0.5rem;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    position: relative;
+    overflow: hidden;
+    animation: slideDown 0.8s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.ma-alert-banner::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.1) 0%, transparent 60%);
+    pointer-events: none;
+}
+
+.ma-alert-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 1.5rem;
+    position: relative;
+    z-index: 1;
+}
+
+.ma-alert-icon {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: white;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.ma-alert-title {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0;
+    color: #1e3c72;
+}
+
+.ma-alert-subtitle {
+    font-size: 16px;
+    color: #6b7280;
+    margin: 4px 0 0 0;
+}
+
+.ma-alert-content {
+    position: relative;
+    z-index: 1;
+}
+
+.deadline-countdown {
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f0ff 100%);
+    border: 2px solid #1e3c72;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.countdown-timer {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: #1e3c72;
+}
+
+.countdown-label {
+    font-size: 14px;
+    color: #6b7280;
+}
+
+/* Target Profile Section */
+.target-profile {
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 1rem 0;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.profile-header {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #1e3c72;
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 0.5rem;
+}
+
+.profile-metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.profile-metric {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+}
+
+.metric-label {
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.metric-value {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1e3c72;
+}
+
+/* Strategic Rationale Grid */
+.strategic-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin: 1rem 0;
+}
+
+.strategic-item {
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 1rem;
+    transition: all 0.3s ease;
+}
+
+.strategic-item:hover {
+    background: #e0f0ff;
+    transform: translateY(-2px);
+    border-color: #1e3c72;
+}
+
+.strategic-item i {
+    font-size: 18px;
+    margin-right: 8px;
+    color: #1e3c72;
+}
+
+.strategic-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: #1e3c72;
+}
+
+.strategic-value {
+    font-size: 13px;
+    color: #6b7280;
+}
+
+/* M&A Sprint Container */
+.ma-sprint-container {
+    display: none;
+    background: white;
+    border-radius: 16px;
+    margin: 1rem;
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+}
+
+.sprint-header {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    color: white;
+    padding: 1.5rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sprint-title {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.countdown-display {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-family: 'Courier New', monospace;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.sprint-content {
+    display: flex;
+    flex-direction: column;
+    min-height: 500px;
+}
+
+.ma-event-stream-container {
+    padding: 1.5rem;
+    flex: 1;
+    background: #f8fafc;
+}
+
+.ma-event-stream-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.ma-event-stream-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0;
+}
+
+.ma-analysis-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: #1e3c72;
+    font-weight: 500;
+}
+
+.ma-event-stream {
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 8px;
+}
+
+.ma-event-item {
+    background: white;
+    border-radius: 8px;
+    padding: 14px;
+    margin-bottom: 12px;
+    border-left: 4px solid;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    animation: slideInLeft 0.4s ease;
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.ma-event-item.agent-orchestrator { border-left-color: #1e3c72; }
+.ma-event-item.agent-market { border-left-color: #1e3c72; }
+.ma-event-item.agent-geographic { border-left-color: #1e3c72; }
+.ma-event-item.agent-financial { border-left-color: #1e3c72; }
+.ma-event-item.agent-permit { border-left-color: #1e3c72; }
+
+.ma-event-timestamp {
+    font-size: 11px;
+    color: #6b7280;
+    font-weight: 600;
+    font-family: 'Courier New', monospace;
+}
+
+.ma-event-agent {
+    font-weight: 700;
+    font-size: 14px;
+    color: #1f2937;
+    margin: 4px 0;
+}
+
+.ma-event-details {
+    font-size: 13px;
+    color: #6b7280;
+    line-height: 1.4;
+}
+
+/* Decision Dashboard */
+.decision-dashboard-container {
+    display: none;
+    background: white;
+    border-radius: 16px;
+    margin: 1rem;
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+}
+
+.decision-header {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    color: white;
+    padding: 1.5rem 2rem;
+    text-align: center;
+}
+
+.decision-title {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0 0 0.5rem 0;
+}
+
+.recommendation-badge {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    display: inline-block;
+    margin-bottom: 0.5rem;
+}
+
+.confidence-score {
+    font-size: 16px;
+    opacity: 0.9;
+    margin: 0;
+}
+
+.decision-content {
+    padding: 2rem;
+}
+
+/* Strategic & Network Fit Cards */
+.fit-cards-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.fit-card {
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.fit-score {
+    font-size: 48px;
+    font-weight: 700;
+    color: #1e3c72;
+    margin-bottom: 0.5rem;
+}
+
+.fit-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 1rem;
+}
+
+.fit-metrics {
+    text-align: left;
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.fit-metrics div {
+    margin-bottom: 0.5rem;
+}
+
+/* Valuation Chart */
+.valuation-section {
+    margin: 2rem 0;
+}
+
+.valuation-chart {
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1rem 0;
+}
+
+.valuation-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.valuation-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.valuation-bar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.bar-label {
+    min-width: 150px;
+    font-size: 14px;
+    color: #374151;
+    font-weight: 500;
+}
+
+.bar-track {
+    flex: 1;
+    height: 24px;
+    background: #e5e7eb;
+    border-radius: 12px;
+    position: relative;
+    overflow: hidden;
+}
+
+.bar-fill {
+    height: 100%;
+    border-radius: 12px;
+    position: relative;
+    transition: width 0.8s ease;
+}
+
+.bar-dcf { background: linear-gradient(90deg, #1e3c72 0%, #2a5298 100%); }
+.bar-comps { background: linear-gradient(90deg, #1e3c72 0%, #2a5298 100%); }
+.bar-asset { background: linear-gradient(90deg, #1e3c72 0%, #2a5298 100%); }
+.bar-synergy { background: linear-gradient(90deg, #1e3c72 0%, #2a5298 100%); }
+
+.bar-value {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: white;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* Bid Strategy Section */
+.bid-strategy {
+    background: linear-gradient(135deg, #f8fafc 0%, #e8f4f8 100%);
+    border: 2px solid #1e3c72;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+}
+
+.strategy-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1e3c72;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.strategy-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.strategy-item {
+    text-align: center;
+    padding: 1rem;
+    background: white;
+    border-radius: 8px;
+}
+
+.strategy-label {
+    font-size: 12px;
+    color: #6b7280;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.strategy-value {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1e3c72;
+}
+
+.structure-section {
+    background: white;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 1rem;
+}
+
+.structure-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.5rem;
+}
+
+.structure-details {
+    font-size: 13px;
+    color: #6b7280;
+    line-height: 1.4;
+}
+
+/* Execution Tracker */
+.deal-execution-container {
+    display: none;
+    background: white;
+    border-radius: 16px;
+    margin: 1rem;
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+}
+
+.execution-header {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    color: white;
+    padding: 1.5rem 2rem;
+    text-align: center;
+}
+
+.execution-content {
+    padding: 2rem;
+}
+
+.deal-summary {
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.deal-price {
+    font-size: 32px;
+    font-weight: 700;
+    color: #1e3c72;
+    margin-bottom: 0.5rem;
+}
+
+.deal-structure {
+    font-size: 14px;
+    color: #6b7280;
+}
+
+/* Timeline */
+.timeline-container {
+    position: relative;
+    padding-left: 2rem;
+}
+
+.timeline-line {
+    position: absolute;
+    left: 12px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #e5e7eb;
+}
+
+.timeline-phase {
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+.phase-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.phase-timeline-dot {
+    position: absolute;
+    left: -2rem;
+    top: 0.25rem;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #1e3c72;
+    border: 3px solid white;
+    box-shadow: 0 0 0 2px #1e3c72;
+}
+
+.timeline-items {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.timeline-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.timeline-item.completed {
+    background: #f0f9ff;
+    border-color: #1e3c72;
+}
+
+.timeline-item.in-progress {
+    background: #f0f9ff;
+    border-color: #2a5298;
+    animation: pulse 2s infinite;
+}
+
+.item-description {
+    font-size: 14px;
+    color: #374151;
+}
+
+.item-status {
+    font-size: 12px;
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-weight: 600;
+}
+
+.status-completed {
+    background: #e0f0ff;
+    color: #1e3c72;
+}
+
+.status-in-progress {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+/* Before & After Transformation */
+.transformation-container {
+    display: none;
+    background: white;
+    border-radius: 16px;
+    margin: 1rem;
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+}
+
+.transformation-header {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    color: white;
+    padding: 1.5rem 2rem;
+    text-align: center;
+}
+
+.transformation-content {
+    padding: 2rem;
+}
+
+.maps-comparison {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 2rem;
+    margin: 1.5rem auto 3rem auto;
+    max-width: 1000px;
+    width: 100%;
+}
+
+.map-section {
+    flex: 1;
+    text-align: center;
+    max-width: 450px;
+    min-width: 400px;
+}
+
+.map-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1e3c72;
+    margin: 0;
+    flex-shrink: 0;
+    z-index: 10;
+    position: relative;
+}
+
+.map-placeholder {
+    height: 530px;
+    width: 100%;
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f0ff 100%);
+    border: 2px solid #1e3c72;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    color: #1e3c72;
+    font-size: 14px;
+    position: relative;
+    padding: 1.5rem;
+    box-sizing: border-box;
+    gap: 0.75rem;
+}
+
+.map-stats {
+    background: rgba(30, 60, 114, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(30, 60, 114, 0.2);
+    padding: 1.25rem;
+    border-radius: 8px;
+    text-align: left;
+    width: 100%;
+    margin-top: auto;
+    flex-shrink: 0;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    padding: 0.75rem;
+    font-size: 14px;
+    background: white;
+    border-radius: 8px;
+    border-left: 4px solid #1e3c72;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.stat-item:last-child {
+    margin-bottom: 0;
+}
+
+.stat-item span:first-child {
+    color: #6b7280;
+    font-weight: 500;
+    font-size: 12px;
+    text-align: center;
+}
+
+.stat-value {
+    font-weight: 700;
+    color: #1e3c72;
+    font-size: 20px;
+    margin-top: 0.5rem;
+}
+
+/* Synergy Tracker */
+.synergy-section {
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1rem 0 1.5rem 0;
+}
+
+.synergy-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.synergy-comparison {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: center;
+}
+
+.synergy-metric {
+    text-align: center;
+}
+
+.synergy-label {
+    font-size: 14px;
+    color: #6b7280;
+    margin-bottom: 0.5rem;
+}
+
+.synergy-value {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.synergy-projected {
+    color: #2a5298;
+}
+
+.synergy-actual {
+    color: #1e3c72;
+}
+
+.synergy-progress {
+    width: 100%;
+    height: 20px;
+    background: #e5e7eb;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 0.5rem;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #1e3c72 0%, #2a5298 100%);
+    border-radius: 10px;
+    transition: width 1s ease;
+}
+
+.synergy-performance {
+    text-align: center;
+    margin-top: 1rem;
+    font-size: 16px;
+    font-weight: 600;
+    color: #1e3c72;
+}
+
+/* Action Buttons */
+.btn-activate-sprint {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    color: white;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 1.5rem auto;
+    box-shadow: 0 4px 16px rgba(30, 60, 114, 0.3);
+}
+
+.btn-activate-sprint:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(30, 60, 114, 0.4);
+    background: linear-gradient(135deg, #2a5298 0%, #4facfe 100%);
+}
+
+.btn-show-decision {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 1rem auto;
+}
+
+.btn-show-decision:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(5, 150, 105, 0.3);
+}
+
+.btn-approve-bid {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-approve-bid:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(30, 64, 175, 0.3);
+}
+
+.btn-close-view {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.btn-close-view:hover {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+/* Decision Actions */
+.decision-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .fit-cards-container {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .maps-comparison {
+        flex-direction: column;
+        align-items: center;
+        gap: 2rem;
+    }
+    
+    .map-section {
+        max-width: 400px;
+        min-width: auto;
+        width: 100%;
+    }
+    
+    .map-placeholder {
+        height: 350px;
+    }
+    
+    .synergy-comparison {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .ma-alert-banner {
+        padding: 1.2rem;
+        margin: 0.5rem;
+    }
+    
+    .strategic-grid {
+        grid-template-columns: 1fr;
+        gap: 0.8rem;
+    }
+    
+    .profile-metrics {
+        grid-template-columns: 1fr;
+    }
+    
+    .strategy-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .decision-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+/* Loading States */
+.loading-spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top: 2px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Sprint Complete State */
+.sprint-complete {
+    background: rgba(16, 185, 129, 0.05);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-top: 1rem;
+    text-align: center;
+}
+
+.completion-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #1e3c72;
+    margin-bottom: 0.5rem;
+}
+
+.completion-indicator i {
+    font-size: 20px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="map-container">
+    <!-- Header -->
+    <div class="map-header">
+        <div class="header-left">
+            <h2 class="map-title" style="color: white;">
+                <i class="fas fa-handshake"></i>
+                Competitive Acquisition (M&A)
+            </h2>
+            <p class="map-subtitle">AI-driven M&A analysis and strategic acquisition execution in 72 hours</p>
+        </div>
+        <div class="header-right">
+            <a href="{{ url_for('demo4_scenario.dashboard') }}" class="btn btn-primary">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+    </div>
+
+    <!-- Phase 1: Confidential M&A Alert -->
+    <div class="ma-alert-banner" id="maAlertBanner">
+        <div class="ma-alert-header">
+            <div class="ma-alert-icon">
+                <i class="fas fa-bell"></i>
+            </div>
+            <div>
+                <h3 class="ma-alert-title">Confidential M&A Opportunity Alert</h3>
+                <p class="ma-alert-subtitle">Target: Statiq Energy (India's #3 CNG Network)</p>
+            </div>
+        </div>
+
+        <div class="ma-alert-content">
+            <div class="deadline-countdown">
+                <div class="countdown-timer" id="countdownTimer">72:00:00</div>
+                <div class="countdown-label">TIME REMAINING FOR LOI SUBMISSION</div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+                <div>
+                    <div class="profile-header">SOURCE & DEADLINE</div>
+                    <div style="font-size: 14px; margin-bottom: 0.5rem;"><strong>Source:</strong> Investment Banker (Confidential)</div>
+                    <div style="font-size: 14px;"><strong>Deadline:</strong> LOI Submission in 72 HOURS</div>
+                </div>
+                
+                <div class="target-profile">
+                    <div class="profile-header">Target Profile (Statiq)</div>
+                    <div class="profile-metrics">
+                        <div class="profile-metric">
+                            <span class="metric-label">Stations:</span>
+                            <span class="metric-value">77 (28 owned + 49 aggregated)</span>
+                        </div>
+                        <div class="profile-metric">
+                            <span class="metric-label">Annual Revenue:</span>
+                            <span class="metric-value">₹18 Cr</span>
+                        </div>
+                        <div class="profile-metric">
+                            <span class="metric-label">EBITDA:</span>
+                            <span class="metric-value">₹2.4 Cr (13% margin)</span>
+                        </div>
+                        <div class="profile-metric">
+                            <span class="metric-label">Asking Price:</span>
+                            <span class="metric-value">₹45-50 Cr</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-header">Strategic Rationale (Preliminary)</div>
+            <div class="strategic-grid">
+                <div class="strategic-item">
+                    <i class="fas fa-chart-line" style="color: #1e3c72;"></i>
+                    <div class="strategic-title">Market Share Jump</div>
+                    <div class="strategic-value">18% → 30% (Instant #2 Position)</div>
+                </div>
+                <div class="strategic-item">
+                    <i class="fas fa-map-marked-alt" style="color: #1e3c72;"></i>
+                    <div class="strategic-title">Geographic Fill</div>
+                    <div class="strategic-value">Critical Tier-2 cities (Lucknow, Indore)</div>
+                </div>
+                <div class="strategic-item">
+                    <i class="fas fa-rocket" style="color: #1e3c72;"></i>
+                    <div class="strategic-title">Speed to Market</div>
+                    <div class="strategic-value">2-3 years of growth in 100 days</div>
+                </div>
+                <div class="strategic-item">
+                    <i class="fas fa-exclamation-triangle" style="color: #1e3c72;"></i>
+                    <div class="strategic-title">Competitive Threat</div>
+                    <div class="strategic-value">Adani & Tata are other bidders</div>
+                </div>
+            </div>
+
+            <div style="background: rgba(255, 255, 255, 0.1); padding: 1rem; border-radius: 6px; margin-top: 1rem; border-left: 3px solid white;">
+                <div style="font-size: 14px; font-weight: 600; margin-bottom: 6px;">AI-POWERED RESPONSE:</div>
+                <div style="font-size: 13px; line-height: 1.4; opacity: 0.9;">
+                    Our Agentic Canvas can perform a comprehensive due diligence sprint to deliver a data-driven bid strategy within 48 hours, giving us competitive advantage in this time-critical opportunity.
+                </div>
+            </div>
+
+            <button class="btn-activate-sprint" id="btnActivateSprint">
+                <i class="fas fa-rocket"></i>
+                Activate Multi-Agent M&A Assessment Sprint
+            </button>
+        </div>
+    </div>
+
+    <!-- Phase 2: M&A Sprint Live View -->
+    <div class="ma-sprint-container" id="maSprint">
+        <div class="sprint-header">
+            <h3 class="sprint-title">
+                <i class="fas fa-cogs"></i>
+                M&A Analysis Sprint - Statiq Acquisition
+            </h3>
+            <div class="countdown-display" id="sprintCountdown">71:59:55</div>
+            <button class="btn-close-view" id="btnCloseSprint">
+                <i class="fas fa-times"></i> Close
+            </button>
+        </div>
+        <div class="sprint-content">
+            <div class="ma-event-stream-container">
+                <div class="ma-event-stream-header">
+                    <h4 class="ma-event-stream-title">Live Agent Activity - Parallel Analysis</h4>
+                    <div class="ma-analysis-status" id="maAnalysisStatus">
+                        <i class="fas fa-spinner fa-spin loading-spinner"></i>
+                        <span>Sprint in progress...</span>
+                    </div>
+                </div>
+                <div class="ma-event-stream" id="maEventStream">
+                    <!-- Events will be populated by JavaScript -->
+                </div>
+                
+                <div class="sprint-complete" id="sprintComplete" style="display: none;">
+                    <div class="completion-indicator">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Sprint Complete - Decision Package Ready</span>
+                    </div>
+                    <p style="font-size: 14px; color: #6b7280; margin: 1rem 0;">
+                        All four agents have completed their analysis. Strategic recommendation is ready for executive review.
+                    </p>
+                    <button class="btn-show-decision" id="btnShowDecision">
+                        <i class="fas fa-chart-bar"></i>
+                        View Executive Decision Package
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Phase 3: Decision Dashboard -->
+    <div class="decision-dashboard-container" id="decisionDashboard">
+        <div class="decision-header">
+            <h3 class="decision-title">M&A Decision Dashboard - Statiq Acquisition</h3>
+            <div class="recommendation-badge">✅ AI-POWERED RECOMMENDATION: PROCEED WITH BID</div>
+            <p class="confidence-score">Confidence Score: 8.5/10 (Strong Buy)</p>
+        </div>
+        <div class="decision-content">
+            <!-- Strategic & Network Fit -->
+            <div class="fit-cards-container">
+                <div class="fit-card">
+                    <div class="fit-score">9/10</div>
+                    <div class="fit-title">Strategic Fit</div>
+                    <div class="fit-metrics">
+                        <div>• Market Share: 18% → 30%</div>
+                        <div>• Position: #2 (vs #1 Tata)</div>
+                        <div>• New Customers: 39,000</div>
+                        <div>• Brand Synergy: Excellent</div>
+                    </div>
+                </div>
+                <div class="fit-card">
+                    <div class="fit-score">9/10</div>
+                    <div class="fit-title">Network Fit</div>
+                    <div class="fit-metrics">
+                        <div>• New Cities: 10 (Lucknow, etc.)</div>
+                        <div>• Complementary: 85% of sites</div>
+                        <div>• Synergy: NH-48 corridor complete</div>
+                        <div>• Integration: Straightforward</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Financial Valuation -->
+            <div class="valuation-section">
+                <div class="valuation-title">Financial Valuation (Agent Consensus)</div>
+                <div class="valuation-chart">
+                    <div class="valuation-bars">
+                        <div class="valuation-bar">
+                            <div class="bar-label">DCF (Standalone):</div>
+                            <div class="bar-track">
+                                <div class="bar-fill bar-dcf" style="width: 62%;">
+                                    <div class="bar-value">₹37 Cr</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="valuation-bar">
+                            <div class="bar-label">Comparable Transactions:</div>
+                            <div class="bar-track">
+                                <div class="bar-fill bar-comps" style="width: 70%;">
+                                    <div class="bar-value">₹42 Cr</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="valuation-bar">
+                            <div class="bar-label">Asset Value:</div>
+                            <div class="bar-track">
+                                <div class="bar-fill bar-asset" style="width: 40%;">
+                                    <div class="bar-value">₹24 Cr</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="valuation-bar">
+                            <div class="bar-label">With Synergies (NPV):</div>
+                            <div class="bar-track">
+                                <div class="bar-fill bar-synergy" style="width: 100%;">
+                                    <div class="bar-value">₹75 Cr</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bid Strategy -->
+            <div class="bid-strategy">
+                <div class="strategy-title">Recommended Bid Strategy</div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1rem;">
+                    <div style="text-align: left;">
+                        <div style="font-size: 14px; color: #6b7280; margin-bottom: 0.5rem;">Asking Price Range</div>
+                        <div style="font-size: 18px; font-weight: 600; color: #374151;">₹45-50 Cr</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 14px; color: #6b7280; margin-bottom: 0.5rem;">Our Fair Value</div>
+                        <div style="font-size: 18px; font-weight: 600; color: #1e3c72;">₹42 Cr</div>
+                    </div>
+                </div>
+                
+                <div class="strategy-grid">
+                    <div class="strategy-item">
+                        <div class="strategy-label">Opening Bid (LOI)</div>
+                        <div class="strategy-value">₹40 Cr</div>
+                    </div>
+                    <div class="strategy-item">
+                        <div class="strategy-label">Target Price</div>
+                        <div class="strategy-value">₹42 Cr</div>
+                    </div>
+                    <div class="strategy-item">
+                        <div class="strategy-label">Walk-Away Price</div>
+                        <div class="strategy-value">₹48 Cr</div>
+                    </div>
+                </div>
+
+                <div class="structure-section">
+                    <div class="structure-title">Recommended Structure:</div>
+                    <div class="structure-details">
+                        • Upfront Cash: ₹36 Cr<br>
+                        • Earnout (Performance-based): ₹4 Cr<br>
+                        <strong>Rationale:</strong> Competitive opening price with room to negotiate to fair value. Earnout structure mitigates execution risk and aligns interests.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Execution & Risk Assessment -->
+            <div style="background: #f8fafc; border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0;">
+                <h4 style="font-size: 16px; font-weight: 600; color: #374151; margin-bottom: 1rem;">Execution & Risk Assessment</h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; font-size: 14px;">
+                    <div>
+                        <div style="font-weight: 600; margin-bottom: 0.5rem;">Regulatory Path:</div>
+                        <div style="color: #1e3c72;">✅ CLEAR - No CCI approval needed</div>
+                    </div>
+                    <div>
+                        <div style="font-weight: 600; margin-bottom: 0.5rem;">Execution Timeline:</div>
+                        <div style="color: #1e3c72;">✅ 100-Day close is feasible</div>
+                    </div>
+                    <div>
+                        <div style="font-weight: 600; margin-bottom: 0.5rem;">Primary Risk:</div>
+                        <div style="color: #f59e0b;">⚠️ Competitive overbidding by Adani</div>
+                    </div>
+                    <div>
+                        <div style="font-weight: 600; margin-bottom: 0.5rem;">Mitigation:</div>
+                        <div style="color: #6b7280;">Emphasize speed & certainty of close</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Decision Actions -->
+            <div class="decision-actions">
+                <button class="btn-approve-bid" id="btnApproveBid">
+                    <i class="fas fa-check"></i>
+                    Approve & Submit LOI at ₹40 Cr
+                </button>
+                <button style="background: #2a5298; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer;">
+                    <i class="fas fa-edit"></i>
+                    Modify Bid Strategy
+                </button>
+                <button style="background: #2a5298; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer;">
+                    <i class="fas fa-times"></i>
+                    Pass on Opportunity
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Phase 4: Deal Execution Tracker -->
+    <div class="deal-execution-container" id="dealExecution" style="display: none;">
+        <div class="execution-header">
+            <h3 style="font-size: 24px; font-weight: 700; margin: 0;">
+                <i class="fas fa-tasks"></i>
+                Deal Execution Tracker - Statiq Acquisition
+            </h3>
+            <p style="margin: 0.5rem 0 0 0; opacity: 0.9;">100-Day Integration Timeline</p>
+        </div>
+        <div class="execution-content">
+            <div class="deal-summary">
+                <div class="deal-price">Final Deal: ₹41 Cr</div>
+                <div class="deal-structure">(₹37 Cr Cash + ₹4 Cr Earnout)</div>
+                <div style="margin-top: 1rem; font-size: 14px; color: #6b7280;">
+                    Target Close Date: June 25, 2026
+                </div>
+            </div>
+
+            <div class="timeline-container">
+                <div class="timeline-line"></div>
+                
+                <!-- Phase 1: Negotiation -->
+                <div class="timeline-phase">
+                    <div class="phase-timeline-dot"></div>
+                    <div class="phase-title">
+                        <i class="fas fa-handshake"></i>
+                        Phase 1: Negotiation (Days 1-14)
+                    </div>
+                    <div class="timeline-items">
+                        <div class="timeline-item completed">
+                            <div class="item-description">[Mar 18] LOI Submitted (₹40 Cr)</div>
+                            <div class="item-status status-completed">✅ Completed</div>
+                        </div>
+                        <div class="timeline-item completed">
+                            <div class="item-description">[Mar 20] Counter-offer Received (₹44 Cr)</div>
+                            <div class="item-status status-completed">✅ Completed</div>
+                        </div>
+                        <div class="timeline-item completed">
+                            <div class="item-description">[Mar 22] Final Agreement (₹41 Cr)</div>
+                            <div class="item-status status-completed">✅ Completed</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Phase 2: Due Diligence -->
+                <div class="timeline-phase">
+                    <div class="phase-timeline-dot"></div>
+                    <div class="phase-title">
+                        <i class="fas fa-search"></i>
+                        Phase 2: Due Diligence (Days 15-44)
+                    </div>
+                    <div class="timeline-items">
+                        <div class="timeline-item completed">
+                            <div class="item-description">[Mar 25] DD Kickoff</div>
+                            <div class="item-status status-completed">✅ Completed</div>
+                        </div>
+                        <div class="timeline-item completed">
+                            <div class="item-description">[Apr 14] DD Report Complete</div>
+                            <div class="item-status status-completed">✅ Completed</div>
+                        </div>
+                        <div class="timeline-item completed">
+                            <div class="item-description">[Apr 18] Price Adjustment to ₹41 Cr</div>
+                            <div class="item-status status-completed">✅ Completed</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Phase 3: Legal & Closing -->
+                <div class="timeline-phase">
+                    <div class="phase-timeline-dot"></div>
+                    <div class="phase-title">
+                        <i class="fas fa-file-contract"></i>
+                        Phase 3: Legal & Closing (Days 45-100)
+                    </div>
+                    <div class="timeline-items">
+                        <div class="timeline-item completed">
+                            <div class="item-description">[May 8] Share Purchase Agreement Signed</div>
+                            <div class="item-status status-completed">✅ Completed</div>
+                        </div>
+                        <div class="timeline-item completed">
+                            <div class="item-description">[May 22] Partner & Landlord Consents</div>
+                            <div class="item-status status-completed">✅ Completed</div>
+                        </div>
+                        <div class="timeline-item completed">
+                            <div class="item-description">[May 20] Financing Secured</div>
+                            <div class="item-status status-completed">✅ Completed</div>
+                        </div>
+                        <div class="timeline-item in-progress">
+                            <div class="item-description">[Jun 25] TRANSACTION CLOSED</div>
+                            <div class="item-status status-in-progress">🟢 Live</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 2rem; padding: 1.5rem; background: #f0fdf4; border: 1px solid #10b981; border-radius: 8px;">
+                <div style="font-size: 16px; font-weight: 600; color: #059669; margin-bottom: 0.5rem;">
+                    <i class="fas fa-newspaper"></i> Press Release Issued
+                </div>
+                <div style="font-size: 14px; color: #374151;">
+                    "TotalEnergies Acquires Statiq Energy to Accelerate CNG Network Expansion Across India"
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 1rem;">
+                <button class="btn-show-decision" id="btnShowTransformation">
+                    <i class="fas fa-chart-line"></i>
+                    View Post-Merger Integration Results
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Phase 5: Before & After Transformation -->
+    <div class="transformation-container" id="transformation" style="display: none;">
+        <div class="transformation-header">
+            <h3 style="font-size: 24px; font-weight: 700; margin: 0;">
+                <i class="fas fa-chart-line"></i>
+                Post-Merger Integration - 6 Months Later
+            </h3>
+            <p style="margin: 0.5rem 0 0 0; opacity: 0.9;">The Strategic Transformation Complete</p>
+        </div>
+        <div class="transformation-content">
+            <h4 style="text-align: center; font-size: 20px; font-weight: 600; color: white; margin-bottom: 1.5rem;">
+                The New Network Map (Before vs. After)
+            </h4>
+
+            <div class="maps-comparison">
+                <div class="map-section">
+                    <div class="map-title">BEFORE (March 2026)</div>
+                    <div class="map-placeholder">
+                        <div style="text-align: center; flex-grow: 1; display: flex; flex-direction: column; justify-content: center;">
+                            <i class="fas fa-map" style="font-size: 48px; color: #1e3c72; margin-bottom: 1rem;"></i>
+                            <div style="font-weight: 600; font-size: 16px; margin-bottom: 0.5rem;">India Network Map</div>
+                            <div style="font-size: 12px; margin-top: 0.5rem; color: #6b7280;">235 TotalEnergies sites (blue)</div>
+                            <div style="font-size: 12px; color: #6b7280;">77 Statiq sites (grey)</div>
+                        </div>
+                        <div class="map-stats">
+                            <div class="stat-item">
+                                <span>Market Share:</span>
+                                <span class="stat-value">18%</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Total Sites:</span>
+                                <span class="stat-value">235</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Market Position:</span>
+                                <span class="stat-value">#3</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="map-section">
+                    <div class="map-title">AFTER (December 2026)</div>
+                    <div class="map-placeholder">
+                        <div style="text-align: center; flex-grow: 1; display: flex; flex-direction: column; justify-content: center;">
+                            <i class="fas fa-map-marked-alt" style="font-size: 48px; color: #1e3c72; margin-bottom: 1rem;"></i>
+                            <div style="font-weight: 600; font-size: 16px; margin-bottom: 0.5rem;">Unified Network Map</div>
+                            <div style="font-size: 12px; margin-top: 0.5rem; color: #6b7280;">311 integrated TotalEnergies sites</div>
+                            <div style="font-size: 12px; color: #6b7280;">Full brand integration complete</div>
+                        </div>
+                        <div class="map-stats">
+                            <div class="stat-item">
+                                <span>Market Share:</span>
+                                <span class="stat-value" style="color: #1e3c72;">30.2%</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Total Sites:</span>
+                                <span class="stat-value" style="color: #1e3c72;">311</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Market Position:</span>
+                                <span class="stat-value" style="color: #1e3c72;">#2</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Synergy Realization -->
+            <div class="synergy-section">
+                <div class="synergy-title">Synergy Realization (Projected vs. Actual)</div>
+                <div class="synergy-comparison">
+                    <div class="synergy-metric">
+                        <div class="synergy-label">PROJECTED (by AI)</div>
+                        <div class="synergy-value synergy-projected">₹9.0 Cr</div>
+                        <div class="synergy-progress">
+                            <div class="progress-fill" style="width: 71%;"></div>
+                        </div>
+                    </div>
+                    <div class="synergy-metric">
+                        <div class="synergy-label">ACTUAL (6 Months In)</div>
+                        <div class="synergy-value synergy-actual">₹12.7 Cr</div>
+                        <div class="synergy-progress">
+                            <div class="progress-fill" style="width: 100%;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="synergy-performance">
+                    Performance: +41% vs. Target ✅
+                </div>
+            </div>
+
+            <!-- Final Business Impact -->
+            <div style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f0ff 100%); border: 2px solid #1e3c72; border-radius: 12px; padding: 2rem; margin: 2rem 0;">
+                <h4 style="text-align: center; font-size: 18px; font-weight: 600; color: #1e3c72; margin-bottom: 1.5rem;">
+                    Final Business Impact
+                </h4>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
+                    <div style="text-align: center;">
+                        <div style="font-size: 14px; color: #6b7280; margin-bottom: 0.5rem;">Customer Retention (from Statiq)</div>
+                        <div style="font-size: 20px; font-weight: 700; color: #10b981;">89%</div>
+                        <div style="font-size: 12px; color: #6b7280;">Target: 80% ✅ Earnout triggered</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 14px; color: #6b7280; margin-bottom: 0.5rem;">NPV Created</div>
+                        <div style="font-size: 20px; font-weight: 700; color: #1e40af;">₹18.2 Cr</div>
+                        <div style="font-size: 12px; color: #6b7280;">46% ROI on investment</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 14px; color: #6b7280; margin-bottom: 0.5rem;">Gap to #1 (Tata Power)</div>
+                        <div style="font-size: 20px; font-weight: 700; color: #1e3c72;">1%</div>
+                        <div style="font-size: 12px; color: #6b7280;">Narrowed from 14% ✅</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 2rem;">
+                <button style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; margin-right: 1rem;">
+                    <i class="fas fa-search"></i>
+                    Explore Next M&A Target
+                </button>
+                <button style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                    <i class="fas fa-arrow-left"></i>
+                    Return to Dashboard
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="{{ url_for('static', filename='js/demo4/scenario6.js') }}"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Scenario 6: Competitive Acquisition (M&A) - Loading...');
+    
+    // Initialize the scenario controller
+    // Clean up existing controller if present
+    if (window.scenario6Controller) {
+        window.scenario6Controller.cleanup();
+    }
+    
+    window.scenario6Controller = new Scenario6Controller();
+});
+</script>
+{% endblock %}

@@ -49,6 +49,13 @@ def scenario4():
     return render_template('demo4/scenario4.html')
 
 
+@demo4_scenario_bp.route('/scenario6')
+@login_required
+def scenario6():
+    """Scenario 6: Competitive Acquisition (M&A)"""
+    return render_template('demo4/scenario6.html')
+
+
 @demo4_scenario_bp.route('/scenario7')
 @login_required
 def scenario7():
@@ -954,5 +961,379 @@ def get_annual_impact():
         
     except Exception as e:
         logger.error(f"Error in get_annual_impact: {str(e)}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+# =============================================================================
+# SCENARIO 6: COMPETITIVE ACQUISITION (M&A)
+# =============================================================================
+
+@demo4_scenario_bp.route('/api/scenario6/ma-opportunity', methods=['GET'])
+@login_required
+def get_ma_opportunity():
+    """Get M&A opportunity alert data"""
+    try:
+        opportunity_data = {
+            'target': {
+                'name': 'Statiq Energy',
+                'description': "India's #3 CNG Network",
+                'stations': 77,
+                'owned_stations': 28,
+                'aggregated_stations': 49,
+                'annual_revenue': 18,  # Crores
+                'ebitda': 2.4,  # Crores  
+                'ebitda_margin': 13,  # Percentage
+                'asking_price_min': 45,  # Crores
+                'asking_price_max': 50   # Crores
+            },
+            'deadline': {
+                'hours_remaining': 72,  
+                'loi_deadline': '2025-10-12T18:00:00'
+            },
+            'strategic_rationale': [
+                {
+                    'title': 'Market Share Jump',
+                    'description': '18% → 30% (Instant #2 Position)',
+                    'icon': 'chart-line',
+                    'color': '#10b981'
+                },
+                {
+                    'title': 'Geographic Fill', 
+                    'description': 'Critical Tier-2 cities (Lucknow, Indore)',
+                    'icon': 'map-marked-alt',
+                    'color': '#3b82f6'
+                },
+                {
+                    'title': 'Speed to Market',
+                    'description': '2-3 years of growth in 100 days', 
+                    'icon': 'rocket',
+                    'color': '#7c3aed'
+                },
+                {
+                    'title': 'Competitive Threat',
+                    'description': 'Adani & Tata are other bidders',
+                    'icon': 'exclamation-triangle',
+                    'color': '#f59e0b'
+                }
+            ],
+            'source': 'Investment Banker (Confidential)',
+            'competitors': ['Adani Group', 'Tata Power', 'Shell India']
+        }
+        
+        return jsonify({
+            'success': True,
+            'data': opportunity_data
+        })
+        
+    except Exception as e:
+        logger.error(f"Error in get_ma_opportunity: {str(e)}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@demo4_scenario_bp.route('/api/scenario6/run-ma-sprint', methods=['POST'])
+@login_required
+def run_ma_sprint():
+    """Trigger M&A analysis sprint"""
+    try:
+        data = request.get_json()
+        target_company = data.get('target', 'Statiq Energy')
+        
+        # Generate correlation ID for this sprint
+        import uuid
+        correlation_id = f"ma_sprint_{uuid.uuid4().hex[:8]}"
+        
+        sprint_data = {
+            'correlation_id': correlation_id,
+            'target_company': target_company,  
+            'sprint_started': datetime.now().isoformat(),
+            'estimated_duration': 92,  # seconds (simulating 48 hours)
+            'agents_deployed': 4,
+            'status': 'initiated'
+        }
+        
+        return jsonify({
+            'success': True,
+            'sprint': sprint_data
+        })
+        
+    except Exception as e:
+        logger.error(f"Error in run_ma_sprint: {str(e)}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@demo4_scenario_bp.route('/api/scenario6/sprint-events/<correlation_id>')
+@login_required
+def get_ma_sprint_events(correlation_id):
+    """Get M&A sprint events"""
+    try:
+        # Simulate progressive event stream for M&A analysis
+        all_events = [
+            {
+                'time': 0,
+                'agent': 'Orchestrator',
+                'action': 'M&A Sprint initiated. All agents deployed in parallel.',
+                'status': 'initiated'
+            },
+            {
+                'time': 1,
+                'agent': 'Market Intel Agent',
+                'action': 'Assessing strategic fit using RAG Engine on market reports.',  # noqa: E501
+                'details': 'Querying Competitor Intel system for bidder analysis.',
+                'status': 'processing'
+            },
+            {
+                'time': 1,
+                'agent': 'Geographic Intel Agent',
+                'action': 'Analyzing network synergy and spatial coverage.',
+                'details': 'Performing spatial analysis against NHAI and Traffic data.',  # noqa: E501
+                'status': 'processing'
+            },
+            {
+                'time': 1,
+                'agent': 'Financial Analysis Agent',
+                'action': 'Building comprehensive valuation models.',
+                'details': 'Accessing VDR via secure tool. Using Reasoning Engine for DCF.',  # noqa: E501
+                'status': 'processing'
+            },
+            {
+                'time': 1,
+                'agent': 'Permit Manager Agent',
+                'action': 'Evaluating regulatory approval requirements.',
+                'details': 'Using RAG Engine on legal KB for CCI compliance rules.',  # noqa: E501
+                'status': 'processing'
+            },
+            {
+                'time': 30,
+                'agent': 'Financial Agent',
+                'action': '✅ DCF Valuation complete: ₹37 Cr standalone value.',
+                'status': 'completed'
+            },
+            {
+                'time': 45,
+                'agent': 'Geographic Agent',
+                'action': '✅ Network synergy calculated: ₹9 Cr/year value creation.',  # noqa: E501
+                'status': 'completed'
+            },
+            {
+                'time': 60,
+                'agent': 'Market Intel Agent',
+                'action': '✅ Competitive threat from Adani confirmed. Speed advantage identified.',  # noqa: E501
+                'status': 'completed'
+            },
+            {
+                'time': 75,
+                'agent': 'Permit Manager Agent',
+                'action': '✅ No CCI approval required. 100-day close feasible.',
+                'status': 'completed'
+            },
+            {
+                'time': 90,
+                'agent': 'Orchestrator',
+                'action': 'Synthesizing reports using Prompt Manager "M&A_Decision_Memo" template.',  # noqa: E501
+                'status': 'processing'
+            },
+            {
+                'time': 92,
+                'agent': 'Orchestrator',
+                'action': '✅ SPRINT COMPLETE. Decision Package ready for executive review.',  # noqa: E501
+                'status': 'completed'
+            }
+        ]
+        
+        # Convert to proper format with timestamps
+        formatted_events = []
+        for event in all_events:
+            event_time = datetime.now() + timedelta(seconds=event['time'])
+            formatted_events.append({
+                'timestamp': event_time.strftime('%H:%M:%S'),
+                'agent': event['agent'],
+                'action': event['action'],
+                'details': event.get('details', ''),
+                'status': event['status'],
+                'correlation_id': correlation_id
+            })
+        
+        return jsonify({
+            'success': True,
+            'correlation_id': correlation_id,
+            'events': formatted_events,
+            'total_events': len(formatted_events),
+            'sprint_complete': len(formatted_events) >= len(all_events)
+        })
+        
+    except Exception as e:
+        logger.error(f"Error in get_ma_sprint_events: {str(e)}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@demo4_scenario_bp.route('/api/scenario6/decision-package', methods=['GET'])
+@login_required
+def get_ma_decision_package():
+    """Get M&A decision package"""
+    try:
+        decision_data = {
+            'recommendation': 'PROCEED_WITH_BID',
+            'confidence_score': 8.5,
+            'strategic_fit': {
+                'score': 9,
+                'market_share_before': 18,
+                'market_share_after': 30,
+                'market_position': '#2 (vs #1 Tata)',
+                'new_customers': 39000,
+                'brand_synergy': 'Excellent'
+            },
+            'network_fit': {
+                'score': 9,
+                'new_cities': 10,
+                'complementary_sites': 85,  # percentage
+                'strategic_corridors': 'NH-48 corridor complete',
+                'integration_complexity': 'Straightforward'
+            },
+            'valuation': {
+                'dcf_standalone': 37,
+                'comparable_transactions': 42,
+                'asset_value': 24,
+                'with_synergies_npv': 75,
+                'fair_value': 42
+            },
+            'bid_strategy': {
+                'asking_price_range': [45, 50],
+                'opening_bid': 40,
+                'target_price': 42,
+                'walk_away_price': 48,
+                'structure': {
+                    'upfront_cash': 36,
+                    'earnout': 4,
+                    'earnout_description': 'Performance-based over 2 years'
+                }
+            },
+            'execution_risk': {
+                'regulatory_path': 'CLEAR - No CCI approval needed',
+                'timeline_feasible': '100-day close is feasible',
+                'primary_risk': 'Competitive overbidding by Adani',
+                'mitigation': 'Emphasize speed, certainty, and strategic fit'
+            }
+        }
+        
+        return jsonify({
+            'success': True,
+            'decision': decision_data
+        })
+        
+    except Exception as e:
+        logger.error(f"Error in get_ma_decision_package: {str(e)}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@demo4_scenario_bp.route('/api/scenario6/approve-bid', methods=['POST'])
+@login_required
+def approve_ma_bid():
+    """Approve M&A bid and start execution"""
+    try:
+        data = request.get_json()
+        bid_amount = data.get('bid_amount', 40)
+        
+        execution_data = {
+            'bid_approved': True,
+            'final_bid_amount': bid_amount,
+            'loi_submitted': datetime.now().isoformat(),
+            'deal_timeline': {
+                'phase_1_negotiation': {
+                    'duration_days': 14,
+                    'milestones': [
+                        {
+                            'date': '2025-10-09',
+                            'event': 'LOI Submitted',
+                            'status': 'completed'
+                        },
+                        {
+                            'date': '2025-10-11',
+                            'event': 'Counter-offer Expected',
+                            'status': 'pending'
+                        },
+                        {
+                            'date': '2025-10-13',
+                            'event': 'Final Agreement Target',
+                            'status': 'pending'
+                        }
+                    ]
+                },
+                'phase_2_due_diligence': {
+                    'duration_days': 30,
+                    'start_date': '2025-10-23'
+                },
+                'phase_3_closing': {  
+                    'duration_days': 56,
+                    'target_close_date': '2026-01-15'
+                }
+            }
+        }
+        
+        return jsonify({
+            'success': True,
+            'execution': execution_data
+        })
+        
+    except Exception as e:
+        logger.error(f"Error in approve_ma_bid: {str(e)}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@demo4_scenario_bp.route('/api/scenario6/post-merger-results', methods=['GET'])
+@login_required
+def get_post_merger_results():
+    """Get post-merger integration results"""
+    try:
+        results_data = {
+            'integration_period': '6 months',
+            'network_transformation': {
+                'before': {
+                    'total_sites': 235,
+                    'market_share': 18,
+                    'market_position': 3,
+                    'separate_brands': True
+                },
+                'after': {
+                    'total_sites': 311,
+                    'market_share': 30.2,
+                    'market_position': 2,
+                    'integrated_brand': True
+                }
+            },
+            'synergy_realization': {
+                'projected_annual': 9.0,  # Crores
+                'actual_6_months': 12.7,  # Crores
+                'performance_vs_target': 141,  # percentage
+                'outperformance': 41  # percentage points
+            },
+            'business_impact': {
+                'customer_retention': {
+                    'actual': 89,  # percentage
+                    'target': 80,  # percentage
+                    'earnout_triggered': True
+                },
+                'npv_created': 18.2,  # Crores
+                'roi_percentage': 46,
+                'market_gap_to_leader': {
+                    'before': 14,  # percentage points
+                    'after': 1  # percentage points
+                }
+            },
+            'strategic_outcomes': [
+                'Achieved #2 market position in India CNG market',
+                'Successfully integrated 77 Statiq stations',
+                'Exceeded all synergy targets by 41%',
+                'Reduced gap to market leader from 14% to 1%',
+                'Completed integration 2 months ahead of schedule'
+            ]
+        }
+        
+        return jsonify({
+            'success': True,
+            'results': results_data
+        })
+        
+    except Exception as e:
+        logger.error(f"Error in get_post_merger_results: {str(e)}")
         return jsonify({'success': False, 'error': str(e)}), 500
 
